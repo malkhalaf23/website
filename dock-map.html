@@ -460,7 +460,7 @@ function build(){
   // photos from SR-002 and pillar 1K-4: the platform carries on past the stations to about lane 2, where an overhead
   // conveyor crosses the green mile from the main mezzanine; two jam-clearing ladders are parked at that end
   {const z0=CFG.greenMile[1]+2, x0=palletX(12)-8, x1=palletX(2)+6, iy=12;
-   const deck=box(x1-x0,0.8,24,(x0+x1)/2,iy,z0+14,"--grate",0.5);mezzParts.push(deck);
+   const deck=box(x1-x0,0.8,40,(x0+x1)/2,iy,z0+20,"--grate",0.5);mezzParts.push(deck);
    pick(deck,{kind:"equip",id:"Induct platform",src:"approx",note:"Raised platform with the induct stations, across the green mile from lanes 12–6"});
    mezzParts.push(beam([x0,iy+3,z0+2],[x1,iy+3,z0+2],0.3,0.3,"--mezz"));
    for(let x=x0;x<=x1;x+=12)mezzParts.push(box(0.8,iy,0.8,x,iy/2,z0+2.5,"--mezz"));
@@ -557,25 +557,17 @@ function build(){
   // At the STG-A end it turns on a round loop (carousel) at pillar 1J-9 with its control cabinet; a JACKPOT chute and
   // corrugate recycling close the far aisle at the induct end; the overhead bridge from the main mezzanine feeds it
   for(let k=0;k<40;k++)pick(box(cw-1,5,4,cA+(k+0.5)*cw,2.5,cz+12,"--tape-blue",0.25),{kind:"equip",id:"Cart chute "+(k+1),src:"photo",note:"Back side of flat sorter chute "+(k+1)+": a go-cart is filled here"});
-  // whole flat sorter path (your sketch, first draft): a hairpin. Bottom run = the 40 built chutes heading to the induct
-  // stations; past them it climbs away from the dock in a tall U with chutes on both sides, comes back along an upper run
-  // (more induct stations, more chutes parallel to the built ones), and turns at the 1J-9 loop into the bottom run
-  {const y=9, z1=cz+7, z2=cz+22, rL=(z2-z1)/2, lx=cA-6, rx=cB+14, ztop=z1+80, uw=16, rr=uw/2;
+  // whole flat sorter (your sketch + answers): one racetrack loop. Bottom run = the 40 built chutes. It carries on along
+  // the back of the induct platform, where Induct Stations 1–4 feed packages onto it, turns at the platform's far end,
+  // and runs back along the upper run to the 1J-9 loop, which turns it into the chute run again
+  {const y=9, z1=cz+7, z2=cz+22, rL=(z2-z1)/2, lx=cA-6, rx=palletX(2)+4;
    const path=[];const arc=(cx0,cz0,r,a0,a1,n=12)=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;path.push([cx0+r*Math.cos(a),cz0+r*Math.sin(a)]);}};
-   path.push([lx,z1],[rx-rr,z1]);arc(rx-rr,z1+rr,rr,-Math.PI/2,0);path.push([rx,ztop-rr]);arc(rx-rr,ztop-rr,rr,0,Math.PI);
-   path.push([rx-uw,z2+rr]);arc(rx-uw-rr,z2+rr,rr,0,-Math.PI/2);path.push([lx,z2]);arc(lx,z1+rL,rL,Math.PI/2,1.5*Math.PI);
+   path.push([lx,z1],[rx-rL,z1]);arc(rx-rL,z1+rL,rL,-Math.PI/2,Math.PI/2);path.push([lx,z2]);arc(lx,z1+rL,rL,Math.PI/2,1.5*Math.PI);
    for(let i=0;i<path.length-1;i++){const[a,b]=[path[i],path[i+1]];if(Math.hypot(b[0]-a[0],b[1]-a[1])>0.01)beam([a[0],y,a[1]],[b[0],y,b[1]],3,1,"--steel-dark");}
+   pick(box(rx-cB,0.4,4,(cB+rx)/2,y-0.8,z1,"--accent",0.25),{kind:"equip",id:"Induct feed run",src:"sketch",note:"Part of the flat sorter loop behind the induct platform: Induct Stations 1–4 put packages onto it here"});
    pick(box(3,6,2,lx-rL,3,z1+rL,"--steel-dark"),{kind:"equip",id:"Flat sorter loop",src:"photo",note:"Where the flat sorter turns back, at pillar 1J-9; control cabinet underneath"});
    label("1J-9",lx-rL,27,z1+rL,2.4,"--fg",{bg:"--panel",weight:700});
-   // the last leg of the U is lined with induct stations on both sides (sketch: ~5 each side)
-   const induct=(id,x,z,note)=>{pick(box(5,4,5,x,2,z,"--tape-yellow",0.6),{kind:"equip",id,src:"sketch",note});};
-   for(let k=0;k<5;k++){const zz=z1+16+k*(ztop-z1-30)/4;
-     induct("Induct (U leg, inside) "+(k+1),rx-4.5,zz,"From your sketch: induct stations on both sides of the last conveyor; count and spacing approximate");
-     induct("Induct (U leg, outside) "+(k+1),rx+4.5,zz,"From your sketch: induct stations on both sides of the last conveyor; count and spacing approximate");}
-   label("INDUCT STATIONS (sketch)",rx+10,8,(z1+ztop)/2,1.8,"--fg",{bg:"--panel"});
-   // upper run: more induct stations, parallel to those on the U leg (sketch: 3 marks near the U)
-   for(let k=0;k<3;k++)induct("Induct (upper run) "+(k+1),rx-uw-14-k*8,z2+4.5,"From your sketch: more induct stations on the upper run; number and position approximate");
-   label("Flat sorter loop (sketch)",rx-uw/2,14,ztop-20,2.4,"--muted");}
+   label("Flat sorter loop · fed by Induct 1–4",(lx+rx)/2,14,z2+4,2.4,"--muted");}
   pick(box(4,6,1,cB+3,3,cz+15,"--s-full",0.6),{kind:"equip",id:"Jackpot chute",src:"photo",note:"JACKPOT sign at the induct end of the cart-side aisle (parcels the sorter can't place)"});
   label("JACKPOT",cB+3,9,cz+15,1.6,"--fg",{bg:"--panel"});
   pick(box(6,0.1,6,palletX(9),0.05,CFG.greenMile[1]+30,"--tape-green",0.3),{kind:"equip",id:"Severe weather assembly area",src:"photo",note:"Hanging sign on the pillar by the induct platform end"});
