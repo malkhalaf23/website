@@ -378,6 +378,8 @@ function build(){
   for(let i=1;i<=10;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
     const mid=(laneX(19)+10.5+laneX(17)-7.5)/2;   // centred between the W022 green mile and lane 17's red zone, not tied to a lane
     addSpot("STG-163-"+i,mid+(odd?-2:2),18+CFG.spotD/2+row*CFG.spotD,{door:163,short:"163-"+i});}
+  // lane 17's own staging (from you): just two spots, STG-163-11 and 163-12, behind its red zone (side toward lane 19: guess)
+  for(const i of[11,12])addSpot("STG-163-"+i,laneX(17)-4.5,18+CFG.spotD/2+(i-11)*CFG.spotD,{door:163,short:"163-"+i,lane:"SR-017"});
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
