@@ -70,6 +70,18 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - CORRECTION FROM THE USER: auto scan lanes start at door 155 with SR-029 in front of 155. SR-025 at 157 and SR-023 at 159 stay as stated earlier, so SR-027 is at 156 (confirmed by the user). Pallet lanes follow: SR-028 ≈ 155.5, SR-026 ≈ 156.5. Nothing in front of 153.
 
+- WHOLE-DEPARTMENT RECONCILIATION (all photos + user statements), wall outward:
+  1. Doors 149–177. Fluid doors 149–152, 154 (MaxxReach booms fed from the mezzanine). Driver's cage 154/155. Risers + exit W022 in the 162–163 gap.
+  2. Green mile along the doors from 155.
+  3. Dock zone (~10–40 ft): auto scan lanes SR-029 (155) … SR-007 (172), each a roller table fed by an incline from a spiral; stage columns at the cart doors; taped row at ~33 ft past 165 (incl. STG-170); stage-only doors 163, 167, 173–177.
+  4. Mezzanine with spirals (~44–58 ft); red stairs up beside SR-018.
+  5. Ship order pallet lanes SR-028 (≈155.5) … SR-002 (177), each between its odd neighbours, printer + screens at the back end.
+  6. Back walkway (the sketch's green mile) with ENTER HERE / DO NOT ENTER signs and row-K pillars.
+  7. Floor staging (STG-F across from SR-016, STG-A) and the flat sorter beyond (seen behind SR-028).
+  - The sketch's "auto scan" at 155 = the start of the scan lanes, so that separate box was removed. Its roller-table rectangles at 156–163 match the scan lanes.
+  - Pallet lanes are spread evenly (palletX(): SR-028 at 155.5, SR-002 at 177, ~23 ft apart); each still lands between or beside its odd neighbours. Exact interpolation made 28/26 and 10/8 overlap, which can't be right for built lanes.
+  - Pillar grid: 50 ft bays, column 9 at SR-028, column 6 in line with 165 (pillarX()). The green-mile photos suggesting other positions for 1K-7 and the lane order (SR-016 → SR-014) conflict with the user's lane list and were set aside; the far sign was probably misread.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.

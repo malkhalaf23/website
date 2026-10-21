@@ -178,6 +178,9 @@ const sun=new THREE.DirectionalLight(0xffffff,0.45); sun.position.set(150,400,25
 const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
 // x of a lane from its number: straight lines between the anchors; past the last anchor, the average spacing of 23→13
 const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-doorX(n));};
+// pallet lanes are built evenly: SR-028 between scan lanes 29 and 27, SR-002 across from 177, the rest spread between
+const palletX=n=>laneX(28)+(28-n)/26*(laneX(2)-laneX(28));
+const pillarX=col=>palletX(28)+6+(9-col)*50;   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
 function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
@@ -328,9 +331,9 @@ function build(){
    label("Check dome mirror",x,0.5,11,0.9,"--s-full",{weight:700});
    for(const bx of[x-4,x+3])box(0.6,4,0.6,bx,2,CFG.mezz[0]-1,"--tape-yellow");   // bollards where it passes under the deck
    pick(box(1.2,5,0.3,x+3,2.5,CFG.mezz[0]+1,"--tape-pink"),{kind:"equip",id:"Hearing protection sign",src:"photo",note:"On a stand where the 165 walkway passes under the mezzanine"});DETAIL=false;
-   const pl=box(2,30,2,doorX(165)+0.5,15,CFG.mezz[0]+7,"--wall");box(2.6,4,2.6,doorX(165)+0.5,2,CFG.mezz[0]+7,"--tape-yellow");box(2.1,2.5,2.1,doorX(165)+0.5,24,CFG.mezz[0]+7,"--s-full");
+   const px=pillarX(6),pl=box(2,30,2,px,15,CFG.mezz[0]+7,"--wall");box(2.6,4,2.6,px,2,CFG.mezz[0]+7,"--tape-yellow");box(2.1,2.5,2.1,px,24,CFG.mezz[0]+7,"--s-full");
    pick(pl,{kind:"equip",id:"Pillar 1L-6",src:"photo",note:"Straight out from door 165, just past the spirals. Row L is the dock-side row; K (at SR-028) and J lie further toward the flat sorter"});
-   label("1L-6",doorX(165)+0.5,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
+   label("1L-6",px,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
   }
   // STG-170: a row parallel to the wall, out past the lane tables, numbered from the higher-door end (1–3 read; 5 assumed)
   for(let i=1;i<=5;i++)addSpot("STG-170-"+i,doorX(171)-3-(i-1)*CFG.spotW,33,{door:170,approx:true,short:"170-"+i});
@@ -368,12 +371,11 @@ function build(){
   label("Mezzanine sorter · spiral chutes",cx,2,m0+10,2.8,"--muted");
 
   // from your sketch only: auto scan and palletizing lanes behind 155–158
-  pick(box(4,4,10,doorX(155),2,CFG.greenMile[1]+6,"--steel",0.4),{kind:"equip",id:"Auto scan",src:"sketch"});
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
   const lz0=CFG.mezz[1]-1;
   for(let n=2;n<=28;n+=2){
-    const x=laneX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18;
+    const x=palletX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18;
     pick(rollerTable(x,lz0+15,30,0),{kind:"equip",id:id+" roller table",src:seen?"photo":"approx",note:"Ship order lane: parcels come down from the sorter and are built onto pallets"});
     beam([x,CFG.mezzY,CFG.mezz[1]-3],[x,3,lz0+1],2.4,0.4,"--steel",0.85);
     "ABCDEF".split("").forEach((c,i)=>addSpot(id+"-"+c,x-4.5,lz0+CFG.spotD/2+i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
@@ -384,13 +386,15 @@ function build(){
     box(2.5,3,2,x+2.5,1.5,lz0+32.5,"--steel");                       // printer table
     flat(x-4,x-1,lz0+31,lz0+34,"--tape-yellow",0.06,0.8);              // SHRINK WRAP spot
   }
-  label("Ship order lanes SR-002 … SR-028",laneX(16),2,lz0+36,2.6,"--muted");
+  label("Ship order (pallet) lanes SR-028 … SR-002",palletX(15),2,lz0+36,2.6,"--muted");
+  for(const [t,x,z] of[["FLUID LANES · MaxxReach",(doorX(149)+doorX(154))/2,40],["AUTO SCAN LANES SR-029 … SR-007",laneX(18),40.5],
+                       ["STAGE AREAS",(doorX(173)+doorX(177))/2,40]])label(t,x,3,z,2.6,"--muted",{bg:"--bg"});
   // one-way signs hanging over the green mile (photos)
   DETAIL=true;
-  label("ENTER HERE ↓",laneX(19)-8,16,CFG.greenMile[0]+4,2,"--panel",{bg:"--tape-green"});
-  label("DO NOT ENTER ↓",laneX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});DETAIL=false;
+  label("ENTER HERE ↓",palletX(19)-8,16,CFG.greenMile[0]+4,2,"--panel",{bg:"--tape-green"});
+  label("DO NOT ENTER ↓",palletX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});DETAIL=false;
   // red staircase up to the mezzanine beside SR-018, with an ENTER HERE sign (photo)
-  {const x=laneX(19); // between SR-018 and SR-020 (lower-door side of SR-018)
+  {const x=palletX(19); // between SR-018 and SR-020 (lower-door side of SR-018)
    pick(beam([x,CFG.mezzY,CFG.mezz[1]],[x,0.5,CFG.mezz[1]+22],4,0.6,"--s-full"),{kind:"equip",id:"Stairs to mezzanine",src:"photo",note:"Red staircase next to SR-018, yellow guardrail at its foot"});
    label("ENTER HERE",x,14,CFG.mezz[1]+10,1.6,"--tape-green",{bg:"--panel"});}
 
@@ -410,15 +414,15 @@ function build(){
   DETAIL=false;
   // building pillars with grid labels; only 1K-9 is placed by a photo, the others by direction (spacing guessed)
   // row K stands just past the green mile: 1K-7 a little past SR-018 (photo down the green mile), 1K-9 at SR-028; 1K-8 between
-  const p28=laneX(28)+6, p7=laneX(19), pz=CFG.greenMile[1]+2;
-  for(const [id,px,pz2,src] of[["1K-7",p7,pz,"photo"],["1K-8",(p7+p28)/2,pz,"approx"],["1K-9",p28,pz,"photo"],["1J-9",p28,f1+6,"approx"]]){const pz=pz2;
+  const p28=pillarX(9), pz=CFG.greenMile[1]+2;
+  for(const [id,px,pz2,src] of[["1K-7",pillarX(7),pz,"approx"],["1K-8",pillarX(8),pz,"approx"],["1K-9",p28,pz,"photo"],["1J-9",p28,f1+6,"approx"]]){const pz=pz2;
     const pl=box(1.6,30,1.6,px,15,pz,"--wall");box(2.2,3,2.2,px,1.5,pz,"--tape-yellow");box(1.7,2,1.7,px,24,pz,"--s-full");
     pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
     label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
   DETAIL=true;pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});DETAIL=false;
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,laneX(16)-26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,palletX(16)-26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
   // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
-  const ax=laneX(26);
+  const ax=palletX(26);
   line(ax-4.5,f0-2-3,ax-4.5,f0-2+20,"--s-full",0.6);
   label("Handles toward the aisle",ax+8.5,0.5,f0+6,0.9,"--tape-green",{weight:700});
   for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,ax-2+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
