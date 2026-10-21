@@ -98,17 +98,15 @@ textarea{width:100%;box-sizing:border-box;min-height:62px;font-family:var(--mono
     <div class="prog" id="prog"></div>
   </div>
   <div class="box">
-    <label class="label" for="feed">Spot status · id,status,dest,time,pkg,door</label>
-    <textarea id="feed" spellcheck="false">SR-018-A,empty,&NGB
-SR-018-B,active,&NVA,04:53,59,166
-SR-018-C,active,YHM6,01:53,24,169
-SR-018-D,active,DCG4-CYHM,02:23,24,171
-SR-018-E,active,&NSY,02:23,8
-SR-018-G,active,JYH1,08:53,2
-SR-018-H,active,DLC8,05:23,5,168
-SR-018-I,active,&NMN,01:53,29,158
-SR-018-J,active,DOI2,16:53,3
-SR-018-L,empty,&NMT
+    <label class="label" for="feed">Spot status · id,status,door</label>
+    <textarea id="feed" spellcheck="false">SR-018-B,active,166
+SR-018-C,active,169
+SR-018-D,active,171
+SR-018-E,active
+SR-018-G,active
+SR-018-H,active,168
+SR-018-I,active,158
+SR-018-J,active
 STG-157-1,cart
 STG-161-1,full</textarea>
     <div class="row"><button id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
@@ -519,9 +517,9 @@ const msg=document.getElementById("msg");
 function applyFeed(text){
   let ok=0,bad=[];
   text.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{
-    const [id,st,dest,time,pkgs,door]=l.split(/[,\t;]/).map(s=>s&&s.trim());const key=(id||"").toUpperCase(),status=(st||"").toLowerCase();
-    // extra columns mirror a lane screen row: destination, time, package count, door it ships from
-    if(spots[key]&&STATUSES.includes(status)){Object.assign(spots[key].userData,{status,dest,time,pkgs,shipDoor:door&&door.replace(/^DD/i,"")});ok++;}else if(!/^id\b/i.test(l))bad.push(id);
+    const [id,st,door]=l.split(/[,\t;]/).map(s=>s&&s.trim());const key=(id||"").toUpperCase(),status=(st||"").toLowerCase();
+    // optional third column: the dock door this location ships from (no sort codes)
+    if(spots[key]&&STATUSES.includes(status)){Object.assign(spots[key].userData,{status,shipDoor:door&&door.replace(/^DD/i,"")});ok++;}else if(!/^id\b/i.test(l))bad.push(id);
   });
   paint();msg.textContent=`Updated ${ok}`+(bad.length?` · skipped ${bad.length} (${bad.slice(0,3).join(", ")})`:"");
 }
@@ -547,7 +545,7 @@ function select(o){
   const p=new THREE.Vector3();o.getWorldPosition(p);marker.position.set(p.x,0.3,p.z);marker.visible=true;
   const u=o.userData,tag=`<span class="src">${u.src?SRC[u.src]:"Not surveyed yet"}</span>`;
   if(u.kind==="spot"){
-    const live=[u.dest,u.time&&"time "+u.time,u.pkgs&&u.pkgs+" pkg",u.shipDoor&&"→ door "+u.shipDoor].filter(Boolean).join(" · ");
+    const live=u.shipDoor?"Ships from door "+u.shipDoor:"";
     info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}${live?"<br>"+live:""}<br>${tag}`;
     if(u.shipDoor&&byId["DOOR "+u.shipDoor]){const p=new THREE.Vector3();byId["DOOR "+u.shipDoor].getWorldPosition(p);doorMark.position.set(p.x,0.3,4);doorMark.visible=true;}else doorMark.visible=false;}
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
