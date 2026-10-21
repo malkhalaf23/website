@@ -60,4 +60,5 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Real door spacing and the 162→163 gap, by pacing it off.
 
 ## Working style
+- PRIORITY (user, current phase): first pin down where each conveyor and each pallet line (SR-002…SR-028) sits relative to the dock doors. Small details come after. The map opens in layout view; the Details button shows signs, door fittings and decals.
 User sends photos one section at a time; update the map after each batch, say what changed and what is still a guess, then ask for the next specific shots. Keep replies short; the user is on a phone on the warehouse floor.

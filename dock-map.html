@@ -64,6 +64,7 @@ textarea{width:100%;box-sizing:border-box;min-height:62px;font-family:var(--mono
     <button id="vplan" aria-pressed="true">Plan</button>
     <button id="vdock" aria-pressed="false">Doors 149–163</button>
     <button id="v3d" aria-pressed="false">3D</button>
+    <button id="vdetail" aria-pressed="false" title="Show signs, door fittings and floor decals">Details</button>
     <button id="vmezz" aria-pressed="true" title="Show or hide the mezzanine deck">Mezzanine</button>
     <input id="find" placeholder="Find: 157-3, 161, SR-028" aria-label="Find a door, spot or station">
   </div>
@@ -159,6 +160,8 @@ const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 view.prepend(renderer.domElement);
 const scene=new THREE.Scene();
+// small details (door kit, signs, decals) are tagged so the layout view can hide them
+let DETAIL=false; const details=[]; {const add=scene.add.bind(scene);scene.add=(...o)=>{if(DETAIL)details.push(...o);return add(...o);};}
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.95));
 const sun=new THREE.DirectionalLight(0xffffff,0.45); sun.position.set(150,400,250); scene.add(sun);
 
@@ -248,6 +251,7 @@ function build(){
     }
   }
   const half=CFG.doorPitch/2;
+  DETAIL=true;
   // the kit every door has (photos of 149–161 and the view down 166–175): dock lock panel, wall fan,
   // door screen, yellow apron tape, bollards; dome mirrors hang between doors
   const mirrorGeo=new THREE.SphereGeometry(2,16,8,0,Math.PI*2,0,Math.PI/2);
@@ -279,11 +283,12 @@ function build(){
   // STOP decals where walkways cross (photos at 154, 157/158, 162 and down the dock)
   for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(168)+9,11]]){
     const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
+  DETAIL=false;
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
   for(let x=doorX(165)+9;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
-  {const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
-   label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}
+  DETAIL=true;{const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
+   label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}DETAIL=false;
   // walkways seen in photos
   walk([[doorX(154)+half,3],[doorX(154)+half,42]]);
   {const x=doorX(161)+4.6; walk([[x,7],[x,34],[x+8.6,40]]);}
@@ -306,10 +311,10 @@ function build(){
   {const x=doorX(165)+3.5;
    walk([[x,8.1],[x,30],[x-2.5,35],[x-2.5,CFG.greenMile[0]]]);
    hatch(doorX(164)+1,doorX(165)-1.5,6,12);
-   const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(x+4,0.12,12);scene.add(st);
+   DETAIL=true;const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(x+4,0.12,12);scene.add(st);
    label("Check dome mirror",x,0.5,11,0.9,"--s-full",{weight:700});
    for(const bx of[x-4,x+3])box(0.6,4,0.6,bx,2,CFG.mezz[0]-1,"--tape-yellow");   // bollards where it passes under the deck
-   pick(box(1.2,5,0.3,x+3,2.5,CFG.mezz[0]+1,"--tape-pink"),{kind:"equip",id:"Hearing protection sign",src:"photo",note:"On a stand where the 165 walkway passes under the mezzanine"});
+   pick(box(1.2,5,0.3,x+3,2.5,CFG.mezz[0]+1,"--tape-pink"),{kind:"equip",id:"Hearing protection sign",src:"photo",note:"On a stand where the 165 walkway passes under the mezzanine"});DETAIL=false;
    const pl=box(2,30,2,doorX(165)+0.5,15,CFG.mezz[0]+7,"--wall");box(2.6,4,2.6,doorX(165)+0.5,2,CFG.mezz[0]+7,"--tape-yellow");box(2.1,2.5,2.1,doorX(165)+0.5,24,CFG.mezz[0]+7,"--s-full");
    pick(pl,{kind:"equip",id:"Pillar 1L-6",src:"photo",note:"Straight out from door 165, just past the spirals. Row L is the dock-side row; K (at SR-028) and J lie further toward the flat sorter"});
    label("1L-6",doorX(165)+0.5,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
@@ -371,8 +376,9 @@ function build(){
   }
   label("Ship order lanes SR-002 … SR-028",laneX(16),2,lz0+36,2.6,"--muted");
   // one-way signs hanging over the green mile (photos)
+  DETAIL=true;
   label("ENTER HERE ↓",laneX(19)-8,16,CFG.greenMile[0]+4,2,"--panel",{bg:"--tape-green"});
-  label("DO NOT ENTER ↓",laneX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});
+  label("DO NOT ENTER ↓",laneX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});DETAIL=false;
   // red staircase up to the mezzanine beside SR-018, with an ENTER HERE sign (photo)
   {const x=laneX(17); // in the gap between SR-018 and SR-016 (lower-door side of SR-018)
    pick(beam([x,CFG.mezzY,CFG.mezz[1]],[x,0.5,CFG.mezz[1]+22],4,0.6,"--s-full"),{kind:"equip",id:"Stairs to mezzanine",src:"photo",note:"Red staircase next to SR-018, yellow guardrail at its foot"});
@@ -389,7 +395,8 @@ function build(){
     pick(ch,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute positions not surveyed yet"});}
   box(W-X0-20,1,4,cx+5,8.5,f1+8,"--steel-dark");
   label("Flat sorter",cx,14,f1+4,3.4,"--fg");
-  for(let k=0;k<20;k++)box(2.6,2.2,0.2,20+k*14,11,f1-1,"--fg",0.9);   // FLAT SORTER sign over each chute
+  DETAIL=true;for(let k=0;k<20;k++)box(2.6,2.2,0.2,20+k*14,11,f1-1,"--fg",0.9);   // FLAT SORTER sign over each chute
+  DETAIL=false;
   // building pillars with grid labels; only 1K-9 is placed by a photo, the others by direction (spacing guessed)
   // row K stands just past the green mile: 1K-7 a little past SR-018 (photo down the green mile), 1K-9 at SR-028; 1K-8 between
   const p28=laneX(28)+6, p7=laneX(19), pz=CFG.greenMile[1]+2;
@@ -397,7 +404,7 @@ function build(){
     const pl=box(1.6,30,1.6,px,15,pz,"--wall");box(2.2,3,2.2,px,1.5,pz,"--tape-yellow");box(1.7,2,1.7,px,24,pz,"--s-full");
     pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
     label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
-  pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});
+  DETAIL=true;pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});DETAIL=false;
   for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,laneX(16)-26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
   // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
   const ax=laneX(26);
@@ -448,6 +455,9 @@ function mezzFade(){ // in plan the deck is see-through so the floor underneath 
   mezzParts.forEach(p=>{p.visible=mezzOn;});
   const deck=mezzParts[0].material;deck.opacity=mode==="3d"?0.55:0.12;
 }
+let detailOn=false;
+function detailSync(){details.forEach(o=>o.visible=detailOn);}
+document.getElementById("vdetail").onclick=e=>{detailOn=!detailOn;e.currentTarget.setAttribute("aria-pressed",detailOn);detailSync();};
 document.getElementById("vmezz").onclick=e=>{mezzOn=!mezzOn;e.currentTarget.setAttribute("aria-pressed",mezzOn);mezzFade();};
 ["plan","dock","3d"].forEach(v=>document.getElementById("v"+v).onclick=()=>setMode(v));
 
@@ -512,6 +522,6 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",themeSync);
 new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 if(document.fonts)document.fonts.ready.then(()=>labels.forEach(drawLabel));
 
-themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · example data";
+detailSync();themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · example data";
 (function loop(){(mode==="3d"?ctl3d:ctlPlan).update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
 </script>
