@@ -107,7 +107,7 @@ SR-018-G,active
 SR-018-H,active,168
 SR-018-I,active,158
 SR-018-J,active
-STG-157-1,cart
+STG-159-1,cart
 STG-161-1,full</textarea>
     <div class="row"><button id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
   </div>
@@ -495,6 +495,8 @@ function build(){
    const ux=palletX(16)-9;
    block("U",ux,9);
    "LKJIHGFEDCBA".split("").forEach((c,k)=>block(c,ux-(k+1)*pitch,10));
+   // past A (from you): STG-AA, 10 spots, 6 ft on as usual; then 3 ft gap and STG-AB, 12 spots (2 columns of 6)
+   const aa=ux-13*pitch; block("AA",aa,10); block("AB",aa-(2*CFG.spotW+3),12);
    label("Keep handles facing the aisle",ux,0.5,z0+28,0.9,"--tape-green",{weight:700});}
 }
 function addSpot(id,x,z,o={}){
