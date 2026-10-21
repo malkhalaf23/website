@@ -15,7 +15,7 @@ A 3D layout map of a warehouse outbound ship dock, built from floor photos and t
 
 ## The department as a whole (all photos + user, current truth)
 Wall outward, door 148 (low-door end, by the entrance) to door 180 (far end):
-1. Doors 148–180. Fluid doors 149, 150, 151, 154 with MaxxReach booms (user confirmed 151 yes, 152 no). 152 and 153 have no fluid lane. Driver's cage (emergency exit used by drivers) between 154 and 155. Sprinkler risers + exit W022 in the 162–163 gap. Exit W019 by 179. Hard-hat storage and PIT charging past 180.
+1. Doors 148–180. Fluid doors 149, 150, 151, 153, 154 with MaxxReach booms (user confirmed 151 and 153 yes, 152 no). 152 has no fluid lane. Driver's cage (emergency exit used by drivers) between 154 and 155. Sprinkler risers + exit W022 in the 162–163 gap. Exit W019 by 179. Hard-hat storage and PIT charging past 180.
 2. Green mile (walkway) along the doors from 155 to the end. Others run out from the driver's cage, 165, 171 and to W022.
 3. Dock zone: odd auto-scan lanes SR-029 (155), 027 (156), 025 (157), 023 (159), 021 (161), 019 (midway 162/163, 35 ft before 017), 017 (164), 015 (166), 013 (168), 011 (169/170), 009 (170/171), 007 (172). Each: spiral → incline → straight roller table out from the wall, printer at the incline foot, two 6×7 ft red/white no-staging zones at the dock end, staging columns 1 ft past them.
    - Lane staging (user): 23: STG-157-6 | STG-159-1…4. 21: STG-159-5,6 | STG-161-1…5. 19: STG-161-6 | STG-162-1…5. Free-standing STG-163-1…10 in the 19–17 gap past a 4 ft green mile to W022. 17: STG-163-11,12. 15: STG-165-1…5. 13: STG-167-1…4 | STG-168-1…5. 11: STG-170-1…5 | STG-169-1…4. 9, 25, 27, 29: none.
@@ -27,7 +27,7 @@ Wall outward, door 148 (low-door end, by the entrance) to door 180 (far end):
 7. Across it: floor staging blocks U (9), L, K, J, I, H, G, F, E, D, C, B, A (10 each), AA (10), AB (12), 6 ft apart (3 ft before AB), odds on the right facing away from the lanes, spot 1 at the green mile. Behind them an aisle, then the flat sorter: 40 chutes (gaylords) from STG-A to the induct stations (names not mapped, user). Further toward the entrance: ShipDock-Main staging (layout to come) and pallet storage.
 8. Induct platform across from lanes 12 → 2: Induct Stations 1–4 (stairs, PS collection spot), overhead conveyor over the back green mile at lanes 2–4, jam-clearing ladders, corrugate/trash bins, pillars 1K-5, 1K-4.
 
-Parcel flow (Flow toggle): induct stations → overhead conveyor → mezzanine sorter → (a) spirals → scan lanes → carts → cart doors, (b) MaxxReach → fluid doors 149–151, 154, (c) pallet lanes → pallets → floor staging → door shown on the lane screen; flat sorter chutes → gaylords → floor staging → doors.
+Parcel flow (Flow toggle): induct stations → overhead conveyor → mezzanine sorter → (a) spirals → scan lanes → carts → cart doors, (b) MaxxReach → fluid doors 149–151, 153, 154, (c) pallet lanes → pallets → floor staging → door shown on the lane screen; flat sorter chutes → gaylords → floor staging → doors.
 
 ## Still open
 - SR-025 screens over 155/156 vs SR-025 at 157.
