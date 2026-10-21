@@ -450,18 +450,27 @@ function build(){
   // induct stations (from you + photos): a second, raised platform across the back green mile from pallet lanes 12 → 6.
   // Each station: stairs up, a PS COLLECTION SPOT taped in front, control cabinets beside it. Station 1 at the lane 12 end
   // (guess), 4 stations seen; pillar 1K-5 with its 6 FT mark, corrugate recycling and trash at the lane 12 end
-  {const z0=CFG.greenMile[1]+2, x0=palletX(12)-8, x1=palletX(6)+8, iy=12;
+  // photos from SR-002 and pillar 1K-4: the platform carries on past the stations to about lane 2, where an overhead
+  // conveyor crosses the green mile from the main mezzanine; two jam-clearing ladders are parked at that end
+  {const z0=CFG.greenMile[1]+2, x0=palletX(12)-8, x1=palletX(2)+6, iy=12;
    const deck=box(x1-x0,0.8,24,(x0+x1)/2,iy,z0+14,"--grate",0.5);mezzParts.push(deck);
    pick(deck,{kind:"equip",id:"Induct platform",src:"approx",note:"Raised platform with the induct stations, across the green mile from lanes 12–6"});
    mezzParts.push(beam([x0,iy+3,z0+2],[x1,iy+3,z0+2],0.3,0.3,"--mezz"));
    for(let x=x0;x<=x1;x+=12)mezzParts.push(box(0.8,iy,0.8,x,iy/2,z0+2.5,"--mezz"));
-   for(let k=1;k<=4;k++){const sx=x0+(k-0.5)*(x1-x0)/4;
+   const sx1=palletX(6)+8;
+   for(let k=1;k<=4;k++){const sx=x0+(k-0.5)*(sx1-x0)/4;
      pick(beam([sx,0.3,z0+3],[sx,iy,z0+14],3.5,0.5,"--tape-yellow"),{kind:"equip",id:"Induct Station "+k,src:"photo",note:"Stairs up to induct station "+k+" (order along the row is a guess)"});
      label("INDUCT "+k,sx,iy+5,z0+2,1.8,"--fg",{bg:"--panel",weight:700});
      line(sx+3,z0,sx+7,z0,"--tape-blue",0.4);line(sx+7,z0,sx+7,z0-3.5,"--tape-blue",0.4);line(sx+7,z0-3.5,sx+3,z0-3.5,"--tape-blue",0.4);line(sx+3,z0-3.5,sx+3,z0,"--tape-blue",0.4);
      label("PS collection",sx+5,0.5,z0-1.7,0.7,"--fg",{weight:700});
      box(5,6,2,sx-6,3,z0+5,"--steel");}
    const px=pillarX(5);label("1K-5",px,27,z0+1,2.4,"--fg",{bg:"--panel",weight:700});
+   mezzParts.push(beam([palletX(3),CFG.mezzY,CFG.mezz[1]],[palletX(3),iy+1,z0+8],5,1.2,"--steel",0.85));   // overhead conveyor over the green mile
+   for(const k of[0,1]){const lx=palletX(2)+1+k*5;line(lx-2,z0,lx+2,z0,"--tape-blue",0.4);line(lx+2,z0,lx+2,z0+5,"--tape-blue",0.4);line(lx+2,z0+5,lx-2,z0+5,"--tape-blue",0.4);line(lx-2,z0+5,lx-2,z0,"--tape-blue",0.4);}
+   pick(box(9,0.1,5,palletX(2)+3.5,0.05,z0+2.5,"--tape-blue",0.1),{kind:"equip",id:"Jam clearing ladders",src:"photo",note:"Two rolling ladders parked in taped spots at the lane 2 end of the induct platform"});
+   // 1K-4 (photos): stands beside SR-002/004 across the green mile — closer than the 4-lane grid spacing predicts
+   {const qx=palletX(4)-3,pl=box(2,30,2,qx,15,z0+1,"--wall");box(2.6,4,2.6,qx,2,z0+1,"--tape-yellow");
+    pick(pl,{kind:"equip",id:"Pillar 1K-4",src:"photo",note:"Seen beside SR-002 and SR-004 across the green mile"});label("1K-4",qx,27,z0+1,2.4,"--fg",{bg:"--panel",weight:700});}
    pick(box(4,4,4,x0-4,2,z0+3,"--tape-blue"),{kind:"equip",id:"Corrugate recycling",src:"photo",note:"Blue corrugate bin and grey TRASH ONLY bin at the end of the induct platform"});}
   // department entrance side, past STG-AB toward lower doors (walk-through photos; all positions approximate):
   // the back green mile carries on past AB, pallet storage sits behind the fluid doors, then the walkway turns out past the
