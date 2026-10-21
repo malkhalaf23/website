@@ -373,7 +373,9 @@ function build(){
   // lane staging starts 1 ft past the lane's red zone (z 12–19) on the same side
   const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,18+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
   laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
-  laneStage("STG-161",5,laneX(21)-4.5,161,"SR-021");   // lane 21's lower-door side (photo + you)
+  laneStage("STG-161",5,laneX(21)+4.5,161,"SR-021");   // lane 21's side toward lane 19 (moved: the lane 23 side holds 159-5/6)
+  // lane 21, side toward lane 23 (from you): only two spots, STG-159-5 and 159-6
+  for(const i of[5,6])addSpot("STG-159-"+i,laneX(21)-4.5,18+CFG.spotD/2+(i-5)*CFG.spotD,{door:159,short:"159-"+i,lane:"SR-021"});
   // STG-163-1…10 (from you): free-standing in the middle of the gap, 2 columns of 5, odds on the walkway side (guess), 1 nearest the wall
   for(let i=1;i<=10;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
     const mid=(laneX(19)+10.5+laneX(17)-7.5)/2;   // centred between the W022 green mile and lane 17's red zone, not tied to a lane
