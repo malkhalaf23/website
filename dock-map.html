@@ -434,6 +434,16 @@ function build(){
   label("Mezzanine sorter · spiral chutes",cx,2,m0+10,2.8,"--muted");
 
   // from your sketch only: auto scan and palletizing lanes behind 155–158
+  // between SR-028 and SR-030 (from you), going from SR-028 toward SR-030: SR-028's slots, 6 ft empty, STG-P-1…11 (one row),
+  // 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape. Rows run along the lane; spot 1 at the
+  // back green-mile end and the spots turned 5 ft across × 4 ft along (both guesses so the rows fit the lane)
+  {const x28=palletX(28), gz=CFG.greenMile[0]-0.5;
+   const row=(name,n,x)=>{for(let i=1;i<=n;i++)addSpot("STG-"+name+"-"+i,x,gz-2-(i-1)*CFG.spotW,{area:"Block "+name+" · between SR-028 and SR-030",short:name+"-"+i,turned:true});
+     label("STG-"+name,x,1.5,gz+0.8,1.6,"--tape-blue",{weight:700});};
+   const pX=x28-6.5-6-2.5; row("P",11,pX);
+   const gx0=pX-2.5-6, ox=palletX(30)+2.3+3+2.5;
+   walk([[ (gx0+ox+2.5+1)/2, gz],[(gx0+ox+2.5+1)/2,CFG.mezz[1]]]);
+   row("O",10,ox);}
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
   const lz0=CFG.mezz[1]-1;
@@ -501,9 +511,10 @@ function build(){
    label("Keep handles facing the aisle",ux,0.5,z0+28,0.9,"--tape-green",{weight:700});}
 }
 function addSpot(id,x,z,o={}){
-  const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.6,0.12,CFG.spotD-0.6),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
+  const sw=o.turned?CFG.spotD:CFG.spotW, sd=o.turned?CFG.spotW:CFG.spotD;
+  const m=new THREE.Mesh(new THREE.BoxGeometry(sw-0.6,0.12,sd-0.6),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
   m.position.set(x,0.1,z);scene.add(m);
-  const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CFG.spotW,0.16,CFG.spotD)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(sw,0.16,sd)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
   e.position.copy(m.position);scene.add(e);themed.push([e.material,"--tape-blue"]);
   if(!id){pick(m,{kind:"equip",id:"Staging spot (label not read)",src:"approx",note:o.note});return;}
   if(o.short)label(o.short,x,0.4,z,0.95,"--fg",{weight:700});
