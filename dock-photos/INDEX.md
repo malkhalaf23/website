@@ -33,5 +33,6 @@ Floor photos the user sent, numbered in the order they were sent (resized to 160
 | 67 | Pillar 1K-5 between lanes 12 and 10 |
 | 68–69 | Flat sorter chutes (FR-323-A), chute aisle |
 | 70–75 | Overhead conveyor bridge, severe weather sign, JACKPOT, STG-V-8, flat sorter loop at 1J-9, cart-side chutes |
+| 76 | User's sketch of the whole flat sorter loop (hairpin, U leg, upper run, ShipDock-Main) |
 
 Ranges are approximate; open the photo to check.

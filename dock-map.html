@@ -201,7 +201,7 @@ function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
   const[a,xa]=A[A.length-2],[b,xb]=A[A.length-1];return xb+(n-b)*(xb-xa)/(b-a);}
-const W=Math.max(doorX(CFG.lastDoor)+40,palletX(2)+60), X0=-70, cx=(X0+W)/2, D=CFG.flat[1]+50;
+const W=Math.max(doorX(CFG.lastDoor)+40,palletX(2)+60), X0=-70, cx=(X0+W)/2, D=CFG.flat[1]+110;
 
 const themed=[];
 function mat(token,opacity=1,extra={}){const m=new THREE.MeshLambertMaterial(Object.assign({color:css(token),transparent:opacity<1,opacity},extra));themed.push([m,token]);return m;}
@@ -487,7 +487,8 @@ function build(){
    const zone=(x0,x1,z0,z1,id,note,tok="--tape-blue")=>{line(x0,z0,x1,z0,tok,0.5);line(x1,z0,x1,z1,tok,0.5);line(x1,z1,x0,z1,tok,0.5);line(x0,z1,x0,z0,tok,0.5);
      pick(box(x1-x0,0.1,z1-z0,(x0+x1)/2,0.05,(z0+z1)/2,tok,0.08),{kind:"equip",id,src:"approx",note});label(id,(x0+x1)/2,1.2,(z0+z1)/2,2.2,"--muted");};
    zone(-65,-30,CFG.mezz[1]+2,CFG.greenMile[0]-1,"Pallet storage","Empty wooden and blue plastic pallets, pallet jacks and airbags, behind fluid doors ~148–151");
-   zone(-18,15,CFG.flat[0],CFG.flat[1]+6,"ShipDock-Main staging","Grid of taped spots labelled ShipDock-Main-1, -2 … (odd numbers seen along one edge: 17, 19, 21, 23). Layout and count to come from you");
+   // ShipDock-Main (your sketch): two taped grids between the entrance green mile and the flat sorter's 1J-9 end
+   zone(-18,15,CFG.flat[1]+14,CFG.flat[1]+40,"ShipDock-Main staging","Grid of taped spots labelled ShipDock-Main-1, -2 … (odd numbers seen along one edge: 17, 19, 21, 23). Layout and count to come from you");
    for(let k=0;k<5;k++)box(0.4,6,6,ex-3,3,CFG.flat[0]+4+k*7,"--wall",0.9);   // whiteboards on wheels
    label("Whiteboards",ex-6,7,CFG.flat[0]+18,1.6,"--muted");
    const pl=box(2,30,2,ex+4,15,fz-6,"--wall");box(2.6,4,2.6,ex+4,2,fz-6,"--tape-yellow");
@@ -556,9 +557,26 @@ function build(){
   // At the STG-A end it turns on a round loop (carousel) at pillar 1J-9 with its control cabinet; a JACKPOT chute and
   // corrugate recycling close the far aisle at the induct end; the overhead bridge from the main mezzanine feeds it
   for(let k=0;k<40;k++)pick(box(cw-1,5,4,cA+(k+0.5)*cw,2.5,cz+12,"--tape-blue",0.25),{kind:"equip",id:"Cart chute "+(k+1),src:"photo",note:"Back side of flat sorter chute "+(k+1)+": a go-cart is filled here"});
-  {const lx=cA-10,lz=cz+7;const loop=new THREE.Mesh(new THREE.TorusGeometry(9,1,8,32),mat("--steel",0.9));loop.rotation.x=Math.PI/2;loop.position.set(lx,9,lz);scene.add(loop);
-   pick(box(3,6,2,lx,3,lz,"--steel-dark"),{kind:"equip",id:"Flat sorter loop",src:"photo",note:"Round overhead loop where the flat sorter turns, at pillar 1J-9; control cabinet underneath"});
-   label("1J-9",lx,27,lz,2.4,"--fg",{bg:"--panel",weight:700});}
+  // whole flat sorter path (your sketch, first draft): a hairpin. Bottom run = the 40 built chutes heading to the induct
+  // stations; past them it climbs away from the dock in a tall U with chutes on both sides, comes back along an upper run
+  // (more induct stations, more chutes parallel to the built ones), and turns at the 1J-9 loop into the bottom run
+  {const y=9, z1=cz+7, z2=cz+22, rL=(z2-z1)/2, lx=cA-6, rx=cB+14, ztop=z1+80, uw=16, rr=uw/2;
+   const path=[];const arc=(cx0,cz0,r,a0,a1,n=12)=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;path.push([cx0+r*Math.cos(a),cz0+r*Math.sin(a)]);}};
+   path.push([lx,z1],[rx-rr,z1]);arc(rx-rr,z1+rr,rr,-Math.PI/2,0);path.push([rx,ztop-rr]);arc(rx-rr,ztop-rr,rr,0,Math.PI);
+   path.push([rx-uw,z2+rr]);arc(rx-uw-rr,z2+rr,rr,0,-Math.PI/2);path.push([lx,z2]);arc(lx,z1+rL,rL,Math.PI/2,1.5*Math.PI);
+   for(let i=0;i<path.length-1;i++){const[a,b]=[path[i],path[i+1]];if(Math.hypot(b[0]-a[0],b[1]-a[1])>0.01)beam([a[0],y,a[1]],[b[0],y,b[1]],3,1,"--steel-dark");}
+   pick(box(3,6,2,lx-rL,3,z1+rL,"--steel-dark"),{kind:"equip",id:"Flat sorter loop",src:"photo",note:"Where the flat sorter turns back, at pillar 1J-9; control cabinet underneath"});
+   label("1J-9",lx-rL,27,z1+rL,2.4,"--fg",{bg:"--panel",weight:700});
+   // chutes on both sides of the U's outer leg (sketch: ~6 each side)
+   for(let k=0;k<6;k++){const zz=z1+20+k*(ztop-z1-34)/5;
+     for(const sd of[-1,1])pick(box(4,6,cw-0.6,rx+sd*4.5,3,zz,"--tape-yellow",0.35),{kind:"equip",id:"Flat sorter chute (U leg) "+(k+1)+(sd<0?"a":"b"),src:"sketch",note:"From your sketch: chutes on both sides of the far leg past the induct stations; count and spacing approximate"});}
+   // upper run: more chutes parallel to the built ones (right half), and more induct stations (middle)
+   for(let k=0;k<12;k++){const x=(cA+cB)/2+(k+0.5)*cw*1.6;
+     pick(box(cw-0.6,6,4,x,3,z2+5,"--tape-yellow",0.35),{kind:"equip",id:"Flat sorter chute (upper run) "+(k+1),src:"sketch",note:"From your sketch: more chutes on the upper run, parallel to the built ones; count approximate"});}
+   for(const [k,x] of[[5,(cA+cB)/2-20],[6,(cA+cB)/2-6]]){
+     pick(box(6,4,4,x,2,z2-4,"--tape-yellow",0.6),{kind:"equip",id:"Induct Station "+k+" (sketch)",src:"sketch",note:"From your sketch: more induct stations on the upper run; number and position approximate"});
+     label("INDUCT (sketch)",x,8,z2-4,1.4,"--fg",{bg:"--panel"});}
+   label("Flat sorter loop (sketch)",rx-uw/2,14,ztop-20,2.4,"--muted");}
   pick(box(4,6,1,cB+3,3,cz+15,"--s-full",0.6),{kind:"equip",id:"Jackpot chute",src:"photo",note:"JACKPOT sign at the induct end of the cart-side aisle (parcels the sorter can't place)"});
   label("JACKPOT",cB+3,9,cz+15,1.6,"--fg",{bg:"--panel"});
   pick(box(6,0.1,6,palletX(9),0.05,CFG.greenMile[1]+30,"--tape-green",0.3),{kind:"equip",id:"Severe weather assembly area",src:"photo",note:"Hanging sign on the pillar by the induct platform end"});
