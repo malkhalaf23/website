@@ -542,7 +542,7 @@ function build(){
   const cA=palletX(16)-9-12*14-4, cB=palletX(12)-8, cz=CFG.greenMile[1]+2+5*CFG.spotD+4, cw=(cB-cA)/40;
   for(let k=0;k<40;k++){const x=cA+(k+0.5)*cw;
     const fr=box(cw-0.6,8,5.5,x,4,cz+2.75,"--tape-yellow",0.35);
-    pick(fr,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute "+(k+1)+" of 40 counted from the STG-A end. Labels read FR-3nn-A (e.g. FR-311-A, FR-323-A); exact numbering not mapped yet"});
+    pick(fr,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute "+(k+1)+" of 40, counted from the STG-A end"});
     box(cw-1.6,0.3,4,x,0.15,cz+2.5,"--s-pallet",0.6);}
   box(cB-cA,1,4,(cA+cB)/2,9,cz+7,"--steel-dark");
   label("Flat sorter · 40 chutes",(cA+cB)/2,14,cz+4,3.4,"--fg");

@@ -154,7 +154,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER + photo: pillar 1K-5 is between lanes 12 and 10 (6 FT / K5 mark, SR-010 beside it, door 178 visible). Grid now pillarX(c)=palletX(16)+(c-6)*(palletX(16)-palletX(11)) — ~2.5 pallet lanes (~58 ft) per column. That puts 1K-4 ≈ SR-006, 1K-7 ≈ SR-021, 1K-9 ≈ SR-031 (beside SR-028/030). Resolves the 1K-4 conflict.
 
-- FROM THE USER + photos: the flat sorter has 40 chutes in one row behind the floor staging, from STG-A to the induct stations, with a walking aisle between staging and chutes. Each chute: yellow frame with strip curtain, pallet + gaylord, red side flaps, FLAT SORTER sign with label FR-3nn-A (FR-311-A, FR-323-A seen; "If you close, print and stage within 8 minutes"). Old generic 20 chutes replaced. Pillar 1J-6 visible among them.
+- FROM THE USER + photos: the flat sorter has 40 chutes in one row behind the floor staging, from STG-A to the induct stations, with a walking aisle between staging and chutes. Each chute: yellow frame with strip curtain, pallet + gaylord, red side flaps, FLAT SORTER sign with label FR-3nn-A (FR-311-A, FR-323-A seen; "If you close, print and stage within 8 minutes"). Old generic 20 chutes replaced. USER: don't map chute names (the FR numbers jump); chutes are just numbered 1–40 by position. Pillar 1J-6 visible among them.
 
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
