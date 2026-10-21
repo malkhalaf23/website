@@ -142,7 +142,7 @@ const DOORS = {
   161:{src:"photo", load:"cart", sr:"SR-021", srOff:0, hatch:true, staging:{cols:1,spots:5}},
   162:{src:"photo", load:"cart", sr:"SR-019", srOff:22.5, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
   163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}, note:"Stage area, no conveyor"},
-  164:{src:"photo", sr:"SR-017", srOff:0},
+  164:{src:"photo", sr:"SR-017", srOff:0, poster:"Check brakes before moving carts"},
   165:{src:"photo", load:"cart", staging:{cols:1,spots:4,off:-5,inferred:true}, note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
   166:{src:"photo", load:"cart", sr:"SR-015", srOff:0, hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-7,inferred:true}, note:"Carts and a pallet staged on blue tape between the 165 green mile and lane SR-015; label not read"},
   167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Stage area. Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
@@ -180,7 +180,8 @@ const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
 const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-doorX(n));};
 // pallet lanes are built evenly: SR-028 between scan lanes 29 and 27, SR-002 across from 177, the rest spread between
 const palletX=n=>laneX(28)+(28-n)/26*(laneX(2)-laneX(28));
-const pillarX=col=>palletX(28)+6+(9-col)*50;   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
+// building grid columns: wall labels M-10 (above 150/151) and M-6 (above 165/166) give the spacing, ~53 ft
+const pillarX=col=>doorPos(150.5)+(10-col)*(doorPos(165.5)-doorPos(150.5))/4;   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
 function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
@@ -261,6 +262,7 @@ function build(){
       label(d.sr,sx,5,15,2.2,"--fg",{bg:"--panel",weight:700});
       hatch(sx-5,sx+5,11,28);
       pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+1.5,3,28],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
+      DETAIL=true;pick(box(2.5,3,2,sx+6,1.5,CFG.mezz[0]-3,"--steel"),{kind:"equip",id:d.sr+" printer",src:"photo",note:"Label printer table with bins at the foot of the incline, next to the spiral guard (photo at STG-161)"});DETAIL=false;
     }
     if(d.staging){
       // columns sit just to the lower-number side of their door
@@ -304,6 +306,19 @@ function build(){
   // STOP decals where walkways cross (photos at 154, 157/158, 162 and down the dock)
   for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(168)+9,11]]){
     const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
+  // second pass over the photos: things on the wall and floor between 163 and 165
+  {const x163=doorX(163);
+   pick(box(2.4,4.5,1.6,x163-6,2.25,1.2,"--steel"),{kind:"equip",id:"Water cooler + broom",src:"photo",note:"Information sign WATER COOLER + BROOM on the wall by 163, with a bin beside it"});
+   box(0.6,1.6,0.6,x163-8.5,4,0.7,"--s-full");                                        // fire extinguisher
+   pick(box(2.2,5.5,2,doorX(164)+5.5,2.75,2.6,"--steel-dark"),{kind:"equip",id:"Kiosk 164/165",src:"photo",note:"Grey kiosk with a screen beside door 164, like the one at 157/158"});
+   const dn=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,0.06,20),mat("--s-full"));dn.position.set(x163+3,0.12,11);scene.add(dn);
+   label("DO NOT ENTER",x163+3,0.5,11,0.7,"--fg",{weight:700});}
+  // wall column M-6 (label high on the dock wall, photo from 163): row M is the dock wall line of the pillar grid
+  for(const c of[10,6])label("M-"+c,pillarX(c),26,0.6,2,"--fg",{bg:"--panel",weight:700});
+  // far end, seen in the long view from 176: storm drain pipe at 175/176, a grey kiosk at 174/175, TDR COMPLETE sign at 176
+  {const p=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,28,10),mat("--wall"));p.position.set(doorX(175)+half,14,0.9);scene.add(p);
+   pick(box(2.2,5.5,2,doorX(174)+half,2.75,2.6,"--steel-dark"),{kind:"equip",id:"Kiosk 174/175",src:"approx",note:"Grey kiosk between doors, seen down the dock from 176"});
+   label("TDR COMPLETE",doorX(176)-5.4,7,1,0.8,"--fg",{bg:"--tape-green"});}
   DETAIL=false;
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
   for(let x=doorX(165)+9;x<doorX(175)+4;x+=4.2)if(x<doorX(170)-9||x>doorX(171)+1)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});

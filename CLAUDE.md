@@ -82,6 +82,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
   - Pallet lanes are spread evenly (palletX(): SR-028 at 155.5, SR-002 at 177, ~23 ft apart); each still lands between or beside its odd neighbours. Exact interpolation made 28/26 and 10/8 overlap, which can't be right for built lanes.
   - Pillar grid: 50 ft bays, column 9 at SR-028, column 6 in line with 165 (pillarX()). The green-mile photos suggesting other positions for 1K-7 and the lane order (SR-016 → SR-014) conflict with the user's lane list and were set aside; the far sign was probably misread.
 
+- Second pass over the photos: wall columns M-10 (above 150/151) and M-6 (above 165/166) set the grid spacing (~53 ft, pillarX()). Kiosk beside 164, water cooler + broom and DO NOT ENTER decal at 163, "Check brakes" poster on 164, storm drain at 175/176, kiosk at 174/175, TDR COMPLETE sign at 176. STG-161-1…5 run straight out from the wall between the 160/161 hatching and the 161/162 walkway; each scan lane has a printer table at the incline foot beside the spiral guard.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
