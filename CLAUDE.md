@@ -101,6 +101,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER + photos: staging area U (STG-U-1…9) sits across the back green mile from door 166, on the left of lane SR-016 seen from the green mile, beside pillar 1K-6 and the flat sorter. Two columns: odd 1–9 (5 spots) on one side, even 2–8 (4 spots) on the other; numbering assumed to start at the green mile, odd column assumed nearer SR-016. Pillar 1K-6 stands beside STG-U / SR-016, so the grid is now pillarX(c)=palletX(16+4*(c-6)): 1K-7 ≈ SR-020, 1K-9 = SR-028 — all three pillar photos now agree. STG-F was moved out of that spot toward lower doors (position unknown now).
 
+- FROM THE USER, floor staging row: across the back green mile, starting at STG-U (lane 16, 9 spots) and going toward lower doors (lanes 18, 20 …), a block every 6 ft: L, K, J, I, H, G, F, E, D, C, B, A. Each has 10 spots, odd 1–9 in one column and even 2–10 in the other (photo: STG-K-9). Replaces the old guessed STG-F and STG-A blocks. Orange-padded pillars stand among these blocks.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.

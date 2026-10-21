@@ -446,17 +446,17 @@ function build(){
     pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
     label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
   DETAIL=true;pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});DETAIL=false;
-  // STG-U (from you): across the back green mile from door 166, on the left of lane SR-016 seen from the green mile, beside pillar 1K-6.
-  // Two columns running away from the green mile: odd 1–9 in one, even 2–8 in the other (which column is which: guessed)
-  {const ux=palletX(16)-9, uz=CFG.greenMile[1]+2;
-   for(let i=1;i<=9;i++){const odd=i%2===1,row=Math.floor((i-1)/2);addSpot("STG-U-"+i,odd?ux+2:ux-2,uz+CFG.spotD/2+row*CFG.spotD,{area:"Block U · across from door 166",short:"U-"+i});}
-   label("STG-U",ux,1.5,uz-0.8,1.6,"--tape-blue",{weight:700});}
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,palletX(16)-80+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
-  // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
-  const ax=palletX(26);
-  line(ax-4.5,f0-2-3,ax-4.5,f0-2+20,"--s-full",0.6);
-  label("Handles toward the aisle",ax+8.5,0.5,f0+6,0.9,"--tape-green",{weight:700});
-  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,ax-2+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
+  // Floor staging across the back green mile (from you). STG-U (9 spots) faces lane SR-016, beside pillar 1K-6. From U toward
+  // lower doors (toward lanes 18, 20 …) a block every 6 ft: L, K, J, I, H, G, F, E, D, C, B, A, each 10 spots in two columns
+  // running away from the green mile, odd 1–9 in one and even 2–10 in the other. Which column holds the odds: guessed
+  {const z0=CFG.greenMile[1]+2, pitch=2*CFG.spotW+6;
+   const block=(name,cx,n)=>{for(let i=1;i<=n;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
+       addSpot("STG-"+name+"-"+i,odd?cx+2:cx-2,z0+CFG.spotD/2+row*CFG.spotD,{area:"Block "+name+" · floor staging",short:name+"-"+i});}
+     label("STG-"+name,cx,1.5,z0-0.8,1.6,"--tape-blue",{weight:700});};
+   const ux=palletX(16)-9;
+   block("U",ux,9);
+   "LKJIHGFEDCBA".split("").forEach((c,k)=>block(c,ux-(k+1)*pitch,10));
+   label("Keep handles facing the aisle",ux,0.5,z0+28,0.9,"--tape-green",{weight:700});}
 }
 function addSpot(id,x,z,o={}){
   const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.6,0.12,CFG.spotD-0.6),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
