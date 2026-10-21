@@ -60,12 +60,18 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
   - Odd (scan) dock lanes: SR-027 in front of 155, SR-025 in front of 157, SR-023 in front of 159, SR-021 in front of 161, SR-019 midway between 162 and 163. One lane number per door. (User said "I think 29" as a possible start; unconfirmed.) Even pallet lanes sit between them: SR-026 ≈ 156, SR-024 ≈ 158, SR-022 ≈ 160, SR-020 ≈ 162.
   - Exit W022 moved to past SR-019 in the 162–163 gap; the sketch exit at 152/153 was removed.
 
+- FROM THE USER, doors 163–177 and the word "green mile":
+  - "Green mile" = a green/pink taped walkway. One runs along the doors, so a lane "in front of" a door sits beyond that walkway, never against the dock plate. Others run straight out from 165 and 171.
+  - 163 stage area, no conveyor. SR-017 in front of 164. 165 green mile. SR-015 in front of 166. 167 stage area. SR-013 in front of 168. SR-011 between 169 and 170. SR-009 between 170 and 171. 171 green mile. SR-007 in front of 172. 173, 174, 175, 176 and 177 have stage areas only, no lanes. So door 177 exists (lastDoor 177); the block past 176 is 177's.
+  - CFG.laneAnchors now holds every odd lane 27→7 from the user; even lanes interpolate between them (SR-002 ≈ 175).
+- Removed in this pass: the guessed roller tables at 165/166 and 173, the stations near 164 and 166/167, and the photo-guessed table at 170–172 (all covered by the lane list).
+
 ## Still open
 - Is there an SR-029, and where SR-028 sits (by extrapolation ≈ 154). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
 - Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167. Which side of each lane holds A–F.
-- Doors 170–175 up close (roller tables there are approximate). STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
+- Stage areas at 173–175: how many columns and spots each. STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
 - Real door spacing and the 162→163 gap, by pacing it off.
 
 ## Working style
