@@ -9,7 +9,7 @@
   --floor:#cfd4d8; --floor-2:#c3c9ce; --wall:#f6f7f8; --door:#7f8b96; --door-faint:#dde1e5;
   --tape-blue:#2f5bd3; --tape-green:#2fae6a; --tape-pink:#b4469a; --tape-yellow:#e8b400;
   --steel:#9aa3ab; --steel-dark:#4c555d; --mezz:#f2c200; --grate:#6c7680;
-  --s-empty:#eef1f4; --s-cart:#2f5bd3; --s-pallet:#b8873c; --s-full:#d64545; --s-ready:#2fae6a;
+  --s-empty:#eef1f4; --s-active:#7ed957; --s-cart:#2f5bd3; --s-pallet:#b8873c; --s-full:#d64545; --s-ready:#2fae6a;
   --accent:#2f5bd3;
   --display:"Archivo",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
 }
@@ -98,12 +98,19 @@ textarea{width:100%;box-sizing:border-box;min-height:62px;font-family:var(--mono
     <div class="prog" id="prog"></div>
   </div>
   <div class="box">
-    <label class="label" for="feed">Spot status (CSV: id,status)</label>
-    <textarea id="feed" spellcheck="false">STG-157-1,cart
-STG-157-2,cart
-STG-161-1,full
-STG-161-2,ready
-STG-176-1,pallet</textarea>
+    <label class="label" for="feed">Spot status · id,status,dest,time,pkg,door</label>
+    <textarea id="feed" spellcheck="false">SR-018-A,empty,&NGB
+SR-018-B,active,&NVA,04:53,59,166
+SR-018-C,active,YHM6,01:53,24,169
+SR-018-D,active,DCG4-CYHM,02:23,24,171
+SR-018-E,active,&NSY,02:23,8
+SR-018-G,active,JYH1,08:53,2
+SR-018-H,active,DLC8,05:23,5,168
+SR-018-I,active,&NMN,01:53,29,158
+SR-018-J,active,DOI2,16:53,3
+SR-018-L,empty,&NMT
+STG-157-1,cart
+STG-161-1,full</textarea>
     <div class="row"><button id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
   </div>
 </section>
@@ -157,10 +164,10 @@ const DOORS = {
   176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8}, note:"Stage area only, no lane"},
   177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8,off:-5.2,inferred:true}, note:"Stage area only, no lane. Its block sits past 176's; label not read. PIT charging area beyond"}
 };
-const STATUSES=["empty","cart","pallet","full","ready"];
+const STATUSES=["empty","active","cart","pallet","full","ready"];
 // Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
 const LOADS={fluid:"Fluid (MaxxReach)",cart:"Carts","cart?":"Carts (guess: no conveyor)"};
-const NAMES={empty:"Empty",cart:"Cart staged",pallet:"Pallet",full:"Full / needs load",ready:"Ready to load"};
+const NAMES={empty:"Empty",active:"Active (green on the lane screen)",cart:"Cart staged",pallet:"Pallet",full:"Full / needs load",ready:"Ready to load"};
 const SRC={inferred:"Seen in photos; label not read yet",photo:"Confirmed in photos",sketch:"From your sketch",approx:"Approximate position"};
 
 /* ===== scene ===== */
@@ -512,8 +519,9 @@ const msg=document.getElementById("msg");
 function applyFeed(text){
   let ok=0,bad=[];
   text.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{
-    const [id,st]=l.split(/[,\t;]/).map(s=>s&&s.trim());const key=(id||"").toUpperCase(),status=(st||"").toLowerCase();
-    if(spots[key]&&STATUSES.includes(status)){spots[key].userData.status=status;ok++;}else if(!/^id\b/i.test(l))bad.push(id);
+    const [id,st,dest,time,pkgs,door]=l.split(/[,\t;]/).map(s=>s&&s.trim());const key=(id||"").toUpperCase(),status=(st||"").toLowerCase();
+    // extra columns mirror a lane screen row: destination, time, package count, door it ships from
+    if(spots[key]&&STATUSES.includes(status)){Object.assign(spots[key].userData,{status,dest,time,pkgs,shipDoor:door&&door.replace(/^DD/i,"")});ok++;}else if(!/^id\b/i.test(l))bad.push(id);
   });
   paint();msg.textContent=`Updated ${ok}`+(bad.length?` · skipped ${bad.length} (${bad.slice(0,3).join(", ")})`:"");
 }
@@ -530,12 +538,18 @@ renderer.domElement.addEventListener("pointerup",e=>{
   const r=renderer.domElement.getBoundingClientRect();ptr.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
   ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(pickables.filter(o=>o.visible))[0];select(hit&&hit.object);
 });
+const doorMark=new THREE.Mesh(new THREE.RingGeometry(4,5,32),new THREE.MeshBasicMaterial({color:css("--s-active"),depthTest:false,transparent:true}));
+doorMark.rotation.x=-Math.PI/2;doorMark.renderOrder=9;doorMark.visible=false;scene.add(doorMark);
 function select(o){
+  doorMark.visible=false;
   sel=o;const info=document.getElementById("info");
   if(!o){marker.visible=false;info.textContent="Tap a door, staging spot or piece of equipment.";return;}
   const p=new THREE.Vector3();o.getWorldPosition(p);marker.position.set(p.x,0.3,p.z);marker.visible=true;
   const u=o.userData,tag=`<span class="src">${u.src?SRC[u.src]:"Not surveyed yet"}</span>`;
-  if(u.kind==="spot")info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}<br>${tag}`;
+  if(u.kind==="spot"){
+    const live=[u.dest,u.time&&"time "+u.time,u.pkgs&&u.pkgs+" pkg",u.shipDoor&&"→ door "+u.shipDoor].filter(Boolean).join(" · ");
+    info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}${live?"<br>"+live:""}<br>${tag}`;
+    if(u.shipDoor&&byId["DOOR "+u.shipDoor]){const p=new THREE.Vector3();byId["DOOR "+u.shipDoor].getWorldPosition(p);doorMark.position.set(p.x,0.3,4);doorMark.visible=true;}else doorMark.visible=false;}
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
 document.getElementById("find").addEventListener("keydown",e=>{
@@ -554,6 +568,6 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",themeSync);
 new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 if(document.fonts)document.fonts.ready.then(()=>labels.forEach(drawLabel));
 
-detailSync();themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · example data";
+detailSync();themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · SR-018 from its screen at 12:07, rest example";
 (function loop(){(mode==="3d"?ctl3d:ctlPlan).update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
 </script>

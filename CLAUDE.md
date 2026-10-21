@@ -89,6 +89,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER, pallet lane spots: standing on the back green mile at the end of a ship order lane, facing the lane, A–F run on the right-hand side (higher-door side) and G–L on the left. Assumed A and G are the spots nearest the green mile (to confirm).
 
+- Lane screen S0118 (photo, SR-018): two columns, A–F on the left with arrows pointing left, G–L on the right pointing right; the screen faces into the lane, which matches the user's "A–F on the right seen from the green mile". Each row = destination code (&NGB, YHM6, DCG4-CYHM…), a time, package count and the dock door it ships from (DD166, DD169, DD171, DD168, DD158); green = active, grey = idle. This is the live data source for pallet spots. The status box accepts id,status,destination,time,packages,door; tapping a spot rings the door it ships from.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
