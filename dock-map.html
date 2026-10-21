@@ -158,9 +158,9 @@ const DOORS = {
   172:{src:"photo", sr:"SR-007", srOff:0},
   173:{src:"photo", load:"cart", note:"Stage area only, no lane"},
   174:{src:"photo", load:"cart", note:"Stage area only, no lane"},
-  175:{src:"photo", load:"cart", note:"Stage area only, no lane"},
-  176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8}, note:"Stage area only, no lane"},
-  177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8,off:-5.2,inferred:true}, note:"Stage area only, no lane. Its block sits past 176's; label not read. PIT charging area beyond"}
+  175:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
+  176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
+  177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14,off:-5.2,inferred:true}, note:"Stage area only, no lane. 14 spots in 2 columns of 7; labels not read. PIT charging area beyond"}
 };
 const STATUSES=["empty","active","cart","pallet","full","ready"];
 // Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
@@ -252,7 +252,8 @@ function build(){
     label(String(n),x,12,2.5,4.2,seen?"--fg":"--muted");
     box(8,0.12,5,x,0.06,3.1,"--steel",seen?1:0.4);   // dock leveler plate
     if(!d) continue;
-    if(d.hatch) hatch(x-5,x+5,6,12,d.hatch==="yellow"?"yellow":"red");
+    if(d.hatch){const hx=d.staging&&d.staging.cols===2?x+(d.staging.off??-CFG.doorPitch*0.4):x, hw=d.staging&&d.staging.cols===2?4:5;   // 2-column blocks: keep-clear spans the block
+      hatch(hx-hw,hx+hw,6,12,d.hatch==="yellow"?"yellow":"red");}
     if(d.maxreach){
       const inf=d.maxreach!==true, g=box(6,4,30,x,2,21,"--steel");
       box(4.6,0.2,29,x,4.1,21,"--steel-dark");
@@ -326,7 +327,7 @@ function build(){
    label("TDR COMPLETE",doorX(176)-5.4,7,1,0.8,"--fg",{bg:"--tape-green"});}
   DETAIL=false;
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
-  for(let x=doorX(165)+9;x<doorX(175)+4;x+=4.2)if(x<doorX(170)-9||x>doorX(171)+1)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
+  for(let x=doorX(165)+9;x<doorX(174)-6;x+=4.2)if(x<doorX(170)-9||x>doorX(171)+1)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
   DETAIL=true;{const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}DETAIL=false;
