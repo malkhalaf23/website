@@ -373,7 +373,7 @@ function build(){
   // lane staging starts 1 ft past the lane's red zone (z 12–19) on the same side
   const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,18+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
   laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
-  laneStage("STG-161",5,laneX(21)+4.5,161,"SR-021");   // lane 21's side toward lane 19 (moved: the lane 23 side holds 159-5/6)
+  laneStage("STG-161",5,laneX(21)+4.5,161,"SR-021");   // lane 21's side toward lane 19 (confirmed by you)
   // lane 21, side toward lane 23 (from you): only two spots, STG-159-5 and 159-6
   for(const i of[5,6])addSpot("STG-159-"+i,laneX(21)-4.5,18+CFG.spotD/2+(i-5)*CFG.spotD,{door:159,short:"159-"+i,lane:"SR-021"});
   // STG-163-1…10 (from you): free-standing in the middle of the gap, 2 columns of 5, odds on the walkway side (guess), 1 nearest the wall
@@ -385,6 +385,7 @@ function build(){
   // lane 23, on its side toward lane 25 (from you): one spot, STG-157-6
   addSpot("STG-157-6",laneX(23)-4.5,18+CFG.spotD/2,{door:157,short:"157-6",lane:"SR-023"});
   laneStage("STG-159",4,laneX(23)+4.5,159,"SR-023");   // lane 23's other side, toward lane 21 (from you)
+  addSpot("STG-161-6",laneX(19)-4.5,18+CFG.spotD/2,{door:161,short:"161-6",lane:"SR-019"});   // lane 19's side toward lane 21: one spot (from you)
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
