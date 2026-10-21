@@ -6,6 +6,8 @@ A 3D layout map of a warehouse outbound ship dock, built from floor photos and t
 - This repo also holds an unrelated Hugo site (bettercap docs: `content/`, `docs/`, `themes/` …). Leave it alone; dock work only touches `dock-map.html` and this file.
 - `dock-map.html`: the whole app. One self-contained page, Three.js r128 + OrbitControls from jsDelivr. Published as a private artifact: https://claude.ai/artifact/TxdeD2V6JQy9foHPaJXBo2 (republish the same file to keep the URL).
 
+- `dock-photos/`: all floor photos (01–75, in the order sent) with `INDEX.md` describing each. Look at them before changing the layout.
+
 ## Code map
 - `CFG`: dimensions in feet. x runs along the dock wall (door numbers grow with x), z runs into the building. `doorX(n)` is based on door 149; `CFG.laneAnchors` [lane, door] place the odd scan lanes; `laneX()` interpolates; `palletX(n)` spreads pallet lanes SR-028→SR-002 evenly (SR-030 is 35 ft past SR-028); `pillarX(c)` is the K-row grid (1K-6 at SR-016, 1K-5 between SR-012/010).
 - `DOORS`: one entry per door: `src`, `note`, `load`, `screen`, `poster`, `louver`, `hatch` (`"yellow"` only), `maxreach`, `sr` + `srOff` (odd scan lane in front), `staging` (2-column blocks at 175–177).
