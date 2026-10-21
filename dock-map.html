@@ -274,7 +274,7 @@ function build(){
       const {cols,spots:count,inferred,off}=d.staging, base=x+(off??-CFG.doorPitch*0.4);
       for(let i=1;i<=count;i++){
         const col=cols===2?(i%2===1?0:1):0, row=cols===2?Math.floor((i-1)/2):i-1;
-        addSpot(`STG-${n}-${i}`, base-(cols*CFG.spotW)/2+CFG.spotW/2+col*CFG.spotW, CFG.stagingStart+CFG.spotD/2+row*CFG.spotD, {door:n,inferred,short:`${n}-${i}`});
+        addSpot(`STG-${n}-${i}`, base-(cols*CFG.spotW)/2+CFG.spotW/2+col*CFG.spotW, CFG.stagingStart+CFG.spotD/2+row*CFG.spotD, {door:n,inferred,short:`${n}-${i}`,lane:d.sr});
       }
     }
   }
@@ -458,7 +458,7 @@ function addSpot(id,x,z,o={}){
   e.position.copy(m.position);scene.add(e);themed.push([e.material,"--tape-blue"]);
   if(!id){pick(m,{kind:"equip",id:"Staging spot (label not read)",src:"approx",note:o.note});return;}
   if(o.short)label(o.short,x,0.4,z,0.95,"--fg",{weight:700});
-  spots[id]=pick(m,{kind:"spot",id,door:o.door,area:o.area,status:"empty",src:o.inferred?"inferred":o.approx?"approx":"photo"});
+  spots[id]=pick(m,{kind:"spot",id,door:o.door,lane:o.lane,area:o.area,status:"empty",src:o.inferred?"inferred":o.approx?"approx":"photo"});
 }
 build();
 
@@ -548,7 +548,7 @@ function select(o){
   const u=o.userData,tag=`<span class="src">${u.src?SRC[u.src]:"Not surveyed yet"}</span>`;
   if(u.kind==="spot"){
     const live=u.shipDoor?"Ships from door "+u.shipDoor:"";
-    info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}${live?"<br>"+live:""}<br>${tag}`;
+    info.innerHTML=`<b>${u.id}</b>${u.lane?"Staging for lane "+u.lane+" · ":""}${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}${live?"<br>"+live:""}<br>${tag}`;
     if(u.shipDoor&&byId["DOOR "+u.shipDoor]){const p=new THREE.Vector3();byId["DOOR "+u.shipDoor].getWorldPosition(p);doorMark.position.set(p.x,0.3,4);doorMark.visible=true;}else doorMark.visible=false;}
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
