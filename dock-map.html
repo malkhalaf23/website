@@ -154,8 +154,8 @@ const DOORS = {
   173:{src:"photo", load:"cart", note:"Stage area only, no lane"},
   174:{src:"photo", load:"cart", note:"Stage area only, no lane"},
   175:{src:"photo", load:"cart", note:"Stage area only, no lane"},
-  176:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8}, note:"Stage area only, no lane"},
-  177:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8,off:-5.2,inferred:true}, note:"Stage area only, no lane. Its block sits past 176's; label not read. PIT charging area beyond"}
+  176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8}, note:"Stage area only, no lane"},
+  177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:8,off:-5.2,inferred:true}, note:"Stage area only, no lane. Its block sits past 176's; label not read. PIT charging area beyond"}
 };
 const STATUSES=["empty","cart","pallet","full","ready"];
 // Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
@@ -247,7 +247,7 @@ function build(){
     label(String(n),x,12,2.5,4.2,seen?"--fg":"--muted");
     box(8,0.12,5,x,0.06,3.1,"--steel",seen?1:0.4);   // dock leveler plate
     if(!d) continue;
-    if(d.hatch) hatch(x-5,x+5,6,12);
+    if(d.hatch) hatch(x-5,x+5,6,12,d.hatch==="yellow"?"yellow":"red");
     if(d.maxreach){
       const inf=d.maxreach!==true, g=box(6,4,30,x,2,21,"--steel");
       box(4.6,0.2,29,x,4.1,21,"--steel-dark");
@@ -363,7 +363,8 @@ function build(){
    pick(box(4,8,0.8,x,4,0.4,"--s-full"),{kind:"equip",id:"Driver's cage exit",src:"photo",note:"Emergency exit between 154 and 155, also used by drivers"});
    for(const [a,b] of[[[x-4,0.8],[x-4,7]],[[x-4,7],[x+4,7]],[[x+4,7],[x+4,0.8]]])beam([a[0],3.5,a[1]],[b[0],3.5,b[1]],0.2,7,"--tape-yellow",0.5);
    pick(box(8,0.1,6,x,0.05,3.9,"--tape-yellow",0.15),{kind:"equip",id:"Driver's cage",src:"photo",note:"Fenced area at the exit between 154 and 155; size not measured"});
-   label("Driver's cage",x,9,4,1.6,"--fg",{bg:"--panel"});}
+   label("Driver's cage",x,9,4,1.6,"--fg",{bg:"--panel"});
+   DETAIL=true;label("SHIPPING CLERK ↓",x,16,6,1.4,"--fg",{bg:"--panel"});label("Truckers cage",x-3,19,6,1.2,"--panel",{bg:"--tape-blue"});DETAIL=false;}
   // past 177: the fenced PIT charging area
   {const x=doorX(177);
    pick(box(1,7,40,x+8,3.5,26,"--mezz",0.75),{kind:"equip",id:"PIT charging area",src:"photo",note:"Fenced with yellow barrier and netting, at the end of the dock"});

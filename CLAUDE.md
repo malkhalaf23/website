@@ -84,6 +84,9 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - Second pass over the photos: wall columns M-10 (above 150/151) and M-6 (above 165/166) set the grid spacing (~53 ft, pillarX()). Kiosk beside 164, water cooler + broom and DO NOT ENTER decal at 163, "Check brakes" poster on 164, storm drain at 175/176, kiosk at 174/175, TDR COMPLETE sign at 176. STG-161-1…5 run straight out from the wall between the 160/161 hatching and the 161/162 walkway; each scan lane has a printer table at the incline foot beside the spiral guard.
 
+- Third pass: 176/177 keep-clear between spot 1 and the wall is yellow/black (not red), and both blocks are framed in green tape; STG-176 odd spots on the lower-door column, confirmed. Hanging SHIPPING CLERK and "Truckers cage" signs at the driver's cage. Every door has a TDR COMPLETE sign and a KEYS box.
+- PHOTO VS USER CONFLICTS (left as the user said, asked to recheck): (1) 151 and 152 photos show open dock plates with carts and no MaxxReach, only 149/150 and 153/154 booms visible; (2) the twin SR-025 screens hang over 155/156 with a roller table at 156, while the user puts SR-029 at 155 and SR-025 at 157.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
