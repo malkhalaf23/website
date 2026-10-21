@@ -18,6 +18,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Doors 149–176 on one wall, ~9 ft wide on ~13 ft centres (estimated). Open doors show their number high, closed doors low.
 - Staging spots: 4 ft wide × 5 ft deep (measured by user), in columns of 5 running straight out from the wall, starting ~12 ft off it. Spot 1 is nearest the door. QR code in each spot, label on one side edge.
 - Columns usually sit just to the lower-number side of their door (157, 160, 161). Exception: 162 and 163 flank the walkway to exit W022.
+- Doors 166–169 (photo): STG-167 is 1 column of 4 spots (not 5), sitting between 167 and 168, on the higher-number side. So the "lower-number side" rule does not hold everywhere. Carts on blue tape at 165/166 (STG-166 inferred, 4 spots assumed). Red/white hatching in front of 166–168. SR-013 (twin screens) hangs in front of 169 with its roller table and incline at 169/170. Airbag roller table at 165/166. Posters: 168 "Keep safe spacing between moving carts", 166 PPE. Louvers above 168, 169. Screen DD166.
+- SR numbers drop going up the dock: 025 (155), 023 (158), 021 (162), 013 (169). So 019/017/015 probably sit at 163–168, not seen yet.
 - Door 176 staging: 2 columns, 8 spots, odd numbers front, even behind.
 - MaxxReach extendable conveyors at doors 149, 150 and 154, each with taped and chained keep-out areas. 151 and 152 have no conveyor.
 - SR stations between doors, each with a roller table angled toward the dock: SR-025 (155/156), SR-023 (158/159), SR-021 (beside 162, in front of the riser wall).
@@ -46,7 +48,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Confirm the 153 MaxxReach and the 152/153 exit. Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
-- Doors 166–175 up close (roller tables there are approximate).
+- Doors 170–175 up close (roller tables there are approximate). STG-166 label; where SR-015…019 are.
 - Real door spacing and the 162→163 gap, by pacing it off.
 
 ## Working style

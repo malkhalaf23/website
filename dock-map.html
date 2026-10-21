@@ -139,6 +139,10 @@ const DOORS = {
   163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}},
   164:{src:"photo"},
   165:{src:"photo"},
+  166:{src:"photo", load:"cart", hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-4,inferred:true}, note:"Carts staged on blue tape in front of 165/166; label not read"},
+  167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
+  168:{src:"photo", hatch:true, louver:true, poster:"Keep safe spacing between moving carts"},
+  169:{src:"photo", louver:true, sr:"SR-013", note:"SR-013's twin screens hang in front of this door"},
   176:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8}, note:"Another 2-column block sits past this one, then the PIT charging area"}
 };
 const STATUSES=["empty","cart","pallet","full","ready"];
@@ -294,9 +298,10 @@ function build(){
    pick(box(10,0.1,2,doorX(162)+10.5,0.05,1.5,"--s-full",0.5),{kind:"equip",id:"Sprinkler risers 621–643",src:"photo",note:"With electrical panels, on the wall between 162 and 163"});
    hatch(doorX(162)+5,doorX(162)+16,10,16);}
   // repeating roller tables with airbags and keep-clear hatching, seen down the dock (spacing approximate)
-  for(let n=166;n<=174;n+=2){
-    hatch(doorX(n)+half-8,doorX(n)+half+8,13,23);
-    pick(rollerTable(doorX(n)+half,18,14,Math.PI/2,0.9),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:"approx",note:"Seen down the dock with dunnage airbags; exact door not confirmed"});
+  for(const n of[165,171,173]){ // 165/166 seen in the 166–169 photo; 171+ only in the long view down the dock
+    const seen=n===165, tx=seen?doorX(n)-1:doorX(n)+half;
+    hatch(tx-8,tx+8,13,23);
+    pick(rollerTable(tx,18,14,Math.PI/2,0.9),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:seen?"photo":"approx",note:seen?"Dunnage airbags on it, next to the carts at 166":"Seen down the dock with dunnage airbags; exact door not confirmed"});
   }
   pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel-dark"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
   {const x=doorX(154)+half-4;flat(x-2.5,x+2.5,33,38,"--tape-blue",0.06,0.5);
