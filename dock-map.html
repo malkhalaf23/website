@@ -308,9 +308,10 @@ function build(){
   DETAIL=true;{const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}DETAIL=false;
   // walkways seen in photos
-  walk([[doorX(154)+half,3],[doorX(154)+half,42]]);
+  walk([[doorX(154)+half,7],[doorX(154)+half,42]]);   // from the driver's cage straight out
   {const x=doorX(161)+4.6; walk([[x,7],[x,34],[x+8.6,40]]);}
-  walk([[doorX(157)+half,3],[doorX(158)+half+2,8.1],[W-12,8.1]]);
+  walk([[doorX(155)-2,8.1],[W-12,8.1]]);                                  // green mile along the doors, from 155 on
+  walk([[doorX(157)+half,3],[doorX(158)+half-2,8.1]]);                     // short branch to the kiosk at 157/158
   // emergency exit W022, sprinkler risers, walkway straight to the exit
   {const ex=doorX(162)+33; // exit W022 sits past SR-019, which is midway between 162 and 163
    pick(box(4,8,0.8,ex,4,0.4,"--s-full"),{kind:"equip",id:"Exit W022",src:"photo",note:"Emergency exit between 162 and 163; a walkway runs straight to it"});

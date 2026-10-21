@@ -61,7 +61,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
   - Exit W022 moved to past SR-019 in the 162–163 gap; the sketch exit at 152/153 was removed.
 
 - FROM THE USER, doors 163–177 and the word "green mile":
-  - "Green mile" = a green/pink taped walkway. One runs along the doors, so a lane "in front of" a door sits beyond that walkway, never against the dock plate. Others run straight out from 165 and 171.
+  - "Green mile" = a green/pink taped walkway. One runs along the doors, so a lane "in front of" a door sits beyond that walkway, never against the dock plate. It starts at door 155 (user) and runs to the end. Others run straight out from 165 and 171, and from the driver's cage at 154/155.
   - 163 stage area, no conveyor. SR-017 in front of 164. 165 green mile. SR-015 in front of 166. 167 stage area. SR-013 in front of 168. SR-011 between 169 and 170. SR-009 between 170 and 171. 171 green mile. SR-007 in front of 172. 173, 174, 175, 176 and 177 have stage areas only, no lanes. So door 177 exists (lastDoor 177); the block past 176 is 177's.
   - CFG.laneAnchors now holds every odd lane 27→7 from the user; even lanes interpolate between them (SR-002 ≈ 175).
 - Removed in this pass: the guessed roller tables at 165/166 and 173, the stations near 164 and 166/167, and the photo-guessed table at 170–172 (all covered by the lane list).
