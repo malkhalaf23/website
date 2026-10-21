@@ -112,7 +112,6 @@ STG-176-1,pallet</textarea>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 /* ===== LAYOUT (feet). x runs along the dock wall (door numbers grow with x), z runs out into the building. ===== */
-const CFG_PITCH=13;
 const CFG = {
   firstDoor:149, lastDoor:176,
   doorPitch:13,        // estimated from photos: ~9 ft doors on ~13 ft centres
@@ -123,24 +122,25 @@ const CFG = {
   mezz:[44,58], greenMile:[92,100], flat:[112,142],
   // lanes SR-0nn: one numbered sequence along the dock. Odd = dock lane (spiral → incline → roller table toward a door),
   // even = ship order (pallet) lane behind the mezzanine. Numbers FALL toward higher doors. Anchors: [lane, door it lines up with]
-  laneAnchors:[[25,155.5],[23,159],[21,162.5],[18,164.5],[13,169.5]]  // approximate
+  laneAnchors:[[27,155],[25,157],[23,159],[21,161],[19,162.5],[13,169.5]]  // 27–19 from you; 13 from a photo  // approximate
 };
-/* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
+/* What each door looks like. src: "photo" = seen in your photos or told by you, "sketch" = from your drawing only.
+   sr + srOff: an odd dock lane's roller table, srOff feet past the door centre. */
 const DOORS = {
   149:{src:"photo", maxreach:true, load:"fluid", screen:"DD149 · CP-CENTRAL", louver:true, note:"Screen also shows UR-GROUND"},
   150:{src:"photo", maxreach:true, load:"fluid", louver:true, poster:"Three points of contact, every time", note:"MaxxReach unit; keep-out hatching in front. Hazmat signs hang above 149/150"},
-  151:{src:"photo", load:"cart?", screen:"DD151", note:"No conveyor; open floor in front, likely loaded from carts. Storm drain pipe between 150 and 151"},
-  152:{src:"photo", load:"cart?", screen:"DD152 · AZNG", note:"No conveyor; carts staged nearby"},
-  153:{src:"photo", maxreach:"inferred", load:"fluid", screen:"DD153", note:"Door closed; a second MaxxReach boom sits beside 154's with its wall end at 153"},
-  154:{src:"photo", maxreach:true, load:"fluid", note:"AED, electrical panels, a wall clock and a ladder rack on the wall between 154 and 155"},
-  155:{src:"photo", sr:"SR-025"},
-  156:{src:"photo", hatch:true, poster:"Test the weight and lift within your power zone"},
-  157:{src:"photo", load:"cart", staging:{cols:1,spots:5}},
-  158:{src:"photo", sr:"SR-023", srOff:CFG_PITCH, screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
-  159:{src:"photo", load:"cart", hatch:true, louver:true, screen:"DD159 · DYT3-CART-A", note:"Dock lane SR-023 sits in front of this door, between pallet lanes SR-022 and SR-024. Trailer AZNG DVC260128"},
+  151:{src:"photo", maxreach:true, load:"fluid", screen:"DD151", note:"Fluid lane with a MaxxReach. Storm drain pipe between 150 and 151"},
+  152:{src:"photo", maxreach:true, load:"fluid", screen:"DD152 · AZNG", note:"Fluid lane with a MaxxReach"},
+  153:{src:"photo", screen:"DD153", note:"No fluid lane in front of this door"},
+  154:{src:"photo", maxreach:true, load:"fluid", note:"Fluid lane with a MaxxReach. The driver's cage (emergency exit used by drivers) is between 154 and 155"},
+  155:{src:"photo", load:"cart", sr:"SR-027", srOff:0},
+  156:{src:"photo", load:"cart", hatch:true, poster:"Test the weight and lift within your power zone"},
+  157:{src:"photo", load:"cart", sr:"SR-025", srOff:0, staging:{cols:1,spots:5}},
+  158:{src:"photo", load:"cart", screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
+  159:{src:"photo", load:"cart", sr:"SR-023", srOff:0, hatch:true, louver:true, screen:"DD159 · DYT3-CART-A", note:"Dock lane SR-023 sits in front of this door, between pallet lanes SR-022 and SR-024. Trailer AZNG DVC260128"},
   160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", staging:{cols:1,spots:5,inferred:true}, note:"Column seen between 159 and 160, label not read"},
-  161:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:5}},
-  162:{src:"photo", load:"cart", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
+  161:{src:"photo", load:"cart", sr:"SR-021", srOff:0, hatch:true, staging:{cols:1,spots:5}},
+  162:{src:"photo", load:"cart", sr:"SR-019", srOff:22.5, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
   163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}},
   164:{src:"photo"},
   165:{src:"photo", load:"cart", staging:{cols:1,spots:4,off:-5,inferred:true}, note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
@@ -305,7 +305,7 @@ function build(){
   {const x=doorX(161)+4.6; walk([[x,7],[x,34],[x+8.6,40]]);}
   walk([[doorX(157)+half,3],[doorX(158)+half+2,8.1],[W-12,8.1]]);
   // emergency exit W022, sprinkler risers, walkway straight to the exit
-  {const ex=doorX(162)+22;
+  {const ex=doorX(162)+33; // exit W022 sits past SR-019, which is midway between 162 and 163
    pick(box(4,8,0.8,ex,4,0.4,"--s-full"),{kind:"equip",id:"Exit W022",src:"photo",note:"Emergency exit between 162 and 163; a walkway runs straight to it"});
    label("EXIT W022",ex,10,2,2.2,"--s-full",{bg:"--panel"});
    walk([[ex-0.9,9.2],[ex-0.9,45]]);walk([[ex+0.9,45],[ex+0.9,9.2]]);
@@ -330,7 +330,7 @@ function build(){
    pick(pl,{kind:"equip",id:"Pillar 1L-6",src:"photo",note:"Straight out from door 165, just past the spirals. Row L is the dock-side row; K (at SR-028) and J lie further toward the flat sorter"});
    label("1L-6",doorX(165)+0.5,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
    // stations with screens and inclines either side of the walkway (numbers not read; screens not read)
-   for(const [sx,id] of[[doorX(164)-3,"Dock lane near 164 (probably SR-019)"],[doorX(166)+5,"Dock lane near 166/167 (probably SR-017 or SR-015)"]]){
+   for(const [sx,id] of[[doorX(164)-3,"Dock lane near 164 (probably SR-017)"],[doorX(166)+5,"Dock lane near 166/167 (probably SR-015)"]]){
      pick(rollerTable(sx,36,12,0),{kind:"equip",id:id+" roller table",src:"approx",note:"Fed by an incline from a spiral; station number not read"});
      beam([sx,CFG.mezzY-3,CFG.mezz[0]+2],[sx,3,40],2.4,0.4,"--steel",0.85);
      pick(box(3.4,2.2,0.3,sx+2,12,CFG.mezz[0]-2,"--steel-dark"),{kind:"equip",id:id+" screen",src:"photo",note:"Station screen hanging by the spiral; text not read"});}}
@@ -344,7 +344,12 @@ function build(){
   {const x=doorX(154)+half-4;flat(x-2.5,x+2.5,33,38,"--tape-blue",0.06,0.5);
    pick(box(5,0.2,5,x,0.1,35.5,"--tape-blue",0.2),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
    label("Trailer seals",x,1.5,35.5,1.6,"--tape-blue");}
-  pick(box(4,8,0.8,doorX(152)+half,4,0.4,"--s-full",0.45),{kind:"equip",id:"Exit (152/153)",src:"sketch",note:"Marked on your sketch; not seen in photos yet"});
+  // driver's cage between 154 and 155: emergency exit door that drivers also use, fenced off from the dock floor
+  {const x=doorX(154)+half;
+   pick(box(4,8,0.8,x,4,0.4,"--s-full"),{kind:"equip",id:"Driver's cage exit",src:"photo",note:"Emergency exit between 154 and 155, also used by drivers"});
+   for(const [a,b] of[[[x-4,0.8],[x-4,7]],[[x-4,7],[x+4,7]],[[x+4,7],[x+4,0.8]]])beam([a[0],3.5,a[1]],[b[0],3.5,b[1]],0.2,7,"--tape-yellow",0.5);
+   pick(box(8,0.1,6,x,0.05,3.9,"--tape-yellow",0.15),{kind:"equip",id:"Driver's cage",src:"photo",note:"Fenced area at the exit between 154 and 155; size not measured"});
+   label("Driver's cage",x,9,4,1.6,"--fg",{bg:"--panel"});}
   // past 176: a second staging block (label not read) and the fenced PIT charging area
   {const x=doorX(176)+CFG.doorPitch;
    for(let c=0;c<2;c++)for(let r=0;r<4;r++)addSpot(null,x-7.2+c*CFG.spotW,CFG.stagingStart+CFG.spotD/2+r*CFG.spotD,{note:"Block past 176; label not read"});

@@ -53,8 +53,15 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Door 159 (photo): screen DD159 · DYT3-CART-A, trailer AZNG DVC260128; SR-023's roller table with airbags, fed by an incline straight from a spiral, sits in front of it inside keep-clear hatching.
 - The green-mile photos seemed to show lane numbers rising toward higher doors; the user's lane 23 at 159 and the odd dock-lane series say the opposite, so the green-mile reading was wrong. 1K-7 and STG-F placements built on it are suspect.
 
+- FROM THE USER (overrides photos where they differ), doors 149–163:
+  - 149, 150, 151, 152 and 154: fluid lanes, each with a MaxxReach. 153 has no fluid lane.
+  - Between 154 and 155: emergency exit also used by drivers, called the driver's cage.
+  - 155–162 are cart doors.
+  - Odd (scan) dock lanes: SR-027 in front of 155, SR-025 in front of 157, SR-023 in front of 159, SR-021 in front of 161, SR-019 midway between 162 and 163. One lane number per door. (User said "I think 29" as a possible start; unconfirmed.) Even pallet lanes sit between them: SR-026 ≈ 156, SR-024 ≈ 158, SR-022 ≈ 160, SR-020 ≈ 162.
+  - Exit W022 moved to past SR-019 in the 162–163 gap; the sketch exit at 152/153 was removed.
+
 ## Still open
-- Confirm the 153 MaxxReach and the 152/153 exit. Is there a door 177 (for the block past 176)?
+- Is there an SR-029, and where SR-028 sits (by extrapolation ≈ 154). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
 - Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167. Which side of each lane holds A–F.
