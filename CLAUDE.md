@@ -140,7 +140,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: one more pallet (ship order) lane after SR-028, 35 ft from it toward lower doors, behind the fluid lanes in line with door 152 (SR-030, confirmed). SR-030 has no slots/locations; SR-028 keeps A–L.
 
-- FROM THE USER: between SR-028 and SR-030, from SR-028's slots toward SR-030: 6 ft empty, STG-P-1…11 (one row along the lane), 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape (photo: yellow/black taped zone beside the SR-030 conveyor). Spot 1 at the back green-mile end and turned spots (5 across × 4 along) are guesses so the rows fit.
+- FROM THE USER: between SR-028 and SR-030, from SR-028's slots toward SR-030: 6 ft empty, STG-P-1…11 (one row along the lane), 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape (photo: yellow/black taped zone beside the SR-030 conveyor). Photo: STG-P-11 is the spot nearest the back green mile, so numbers fall toward the mezzanine (O assumed the same). Turned spots (5 across × 4 along) are guesses so the rows fit.
 
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?

@@ -435,10 +435,10 @@ function build(){
 
   // from your sketch only: auto scan and palletizing lanes behind 155–158
   // between SR-028 and SR-030 (from you), going from SR-028 toward SR-030: SR-028's slots, 6 ft empty, STG-P-1…11 (one row),
-  // 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape. Rows run along the lane; spot 1 at the
-  // back green-mile end and the spots turned 5 ft across × 4 ft along (both guesses so the rows fit the lane)
+  // 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape. Rows run along the lane; the highest number at the
+  // back green-mile end (photo: STG-P-11 nearest it) and the spots turned 5 ft across × 4 ft along (both guesses so the rows fit the lane)
   {const x28=palletX(28), gz=CFG.greenMile[0]-0.5;
-   const row=(name,n,x)=>{for(let i=1;i<=n;i++)addSpot("STG-"+name+"-"+i,x,gz-2-(i-1)*CFG.spotW,{area:"Block "+name+" · between SR-028 and SR-030",short:name+"-"+i,turned:true});
+   const row=(name,n,x)=>{for(let i=1;i<=n;i++)addSpot("STG-"+name+"-"+i,x,gz-2-(n-i)*CFG.spotW,{area:"Block "+name+" · between SR-028 and SR-030",short:name+"-"+i,turned:true});
      label("STG-"+name,x,1.5,gz+0.8,1.6,"--tape-blue",{weight:700});};
    const pX=x28-6.5-6-2.5; row("P",11,pX);
    const gx0=pX-2.5-6, ox=palletX(30)+2.3+3+2.5;
