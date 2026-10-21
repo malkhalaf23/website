@@ -45,13 +45,16 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - Flat sorter side: SR-028 sits at building pillar 1K-9. Its screen (S0128) lists 12 positions: SR-028-A–F on one side of a roller table and G–L on the other, laid out as taped columns running toward the flat sorter chutes. Exact layout and position are approximate.
 - STG-A is a 2 × 4 block (A-1…A-8) with odd numbers on the aisle side ("Keep handles facing towards the aisle"), same scheme as STG-F and 176. Lettered blocks probably run A, B, C… along the flat sorter. Position not surveyed.
-- Guess: dock-side SR stations are odd (SR-025, 023, 021) and flat-sorter ones even (SR-028). That would put SR-027 near 152/153 and SR-022/024/026 along the flat sorter.
 - Building pillars carry grid labels (1J-9, 1K-8, 1K-9). This is a real coordinate system: photos of pillar labels plus one paced pillar-to-pillar distance would fix the scale of the whole map.
+
+- SHIP ORDER LANES (user + photos of SR-018): SR = ship order lane for palletizing. Lanes are even-numbered only, SR-002 to SR-028 (14 lanes), each with locations A–L. They sit BEHIND the mezzanine, between it and the green mile: a roller table fed from the deck runs out from the sorter, pallet spots A–F on one side and G–L on the other, floor-marked PALLET; at the green-mile end a pole with twin screens and andon light, a printer table (floor tape PRINTER) and a SHRINK WRAP spot. SR-018 is in line with 164/165, with a red staircase up to the mezzanine on its lower-door side (ENTER HERE sign). SR-028 is at pillar 1K-9 just past the green mile. Lane spacing (CFG.lanePitch 22 ft) and direction (numbers rise toward lower doors) are inferred from SR-018 and SR-028.
+- The odd SR numbers read earlier from the dock (SR-025 at 155/156, 023 at 158/159, 021 at 162, 013 at 169) conflict with "even only". They were screens seen from the dock, probably misread; the roller tables and inclines there are real and kept, but no longer labelled as SR stations.
 
 ## Still open
 - Confirm the 153 MaxxReach and the 152/153 exit. Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
+- Which lane sits where: a photo at SR-028 or SR-002 showing the doors behind it would pin the spacing. Which side of each lane holds A–F.
 - Doors 170–175 up close (roller tables there are approximate). STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
 - Real door spacing and the 162→163 gap, by pacing it off.
 
