@@ -141,7 +141,7 @@ const DOORS = {
   165:{src:"photo"},
   166:{src:"photo", load:"cart", hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-4,inferred:true}, note:"Carts staged on blue tape in front of 165/166; label not read"},
   167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
-  168:{src:"photo", hatch:true, louver:true, poster:"Keep safe spacing between moving carts"},
+  168:{src:"photo", load:"cart", hatch:true, louver:true, poster:"Keep safe spacing between moving carts", staging:{cols:1,spots:4,off:5.5,inferred:true}, note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169, toward SR-013"},
   169:{src:"photo", louver:true, sr:"SR-013", note:"SR-013's twin screens hang in front of this door"},
   176:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8}, note:"Another 2-column block sits past this one, then the PIT charging area"}
 };
@@ -278,10 +278,10 @@ function build(){
   for(const hx of[doorX(149)+half,doorX(156),doorX(166),doorX(172)])
     pick(box(5,6,0.2,hx,22,hx<doorX(151)?8:CFG.mezz[0]-1,"--s-full",0.85),{kind:"equip",id:"Prohibited hazmat sign",src:hx<doorX(151)?"photo":"approx",note:"Hanging sign listing hazmat labels that may not ship"});
   // STOP decals where walkways cross (photos at 154, 157/158, 162 and down the dock)
-  for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(170),11]]){
+  for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(168)+9,11]]){
     const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
-  for(let x=doorX(165)+4;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped go-cart lane on the sorter side; label not read"});
+  for(let x=doorX(165)+4;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
   {const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}
