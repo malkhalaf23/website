@@ -328,7 +328,7 @@ function build(){
    label("TDR COMPLETE",doorX(176)-5.4,7,1,0.8,"--fg",{bg:"--tape-green"});}
   DETAIL=false;
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
-  for(let x=doorX(165)+9;x<doorX(174)-6;x+=4.2)if(x<laneX(9)-12||x>laneX(9)+30)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
+  for(let x=doorX(165)+9;x<doorX(174)-6;x+=4.2)if((x<laneX(9)-12||x>laneX(9)+8)&&(x<laneX(11)-11||x>laneX(11)-4))addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
   DETAIL=true;{const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}DETAIL=false;
@@ -358,10 +358,14 @@ function build(){
    label("1L-6",px,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
   }
   // STG-170: a row parallel to the wall, out past the lane tables, numbered from the higher-door end (1–3 read; 5 assumed)
-  // STG-170 is one row along the dock; numbers rise toward lower doors. 6–9 belong to lane SR-009 (from you + photo),
-  // centred on its table; 1–5 continue on the higher-door side past the 171 green mile (positions approximate)
-  for(let i=1;i<=9;i++){const lane9=i>=6, x=laneX(9)+(lane9?4-(i-6)*CFG.spotW:26-(i-1)*CFG.spotW);
-    addSpot("STG-170-"+i,x,33,{door:170,approx:!lane9,short:"170-"+i,lane:lane9?"SR-009":undefined});}
+  // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
+  // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
+  for(let i=1;i<=5;i++)addSpot("STG-170-"+i,laneX(11)-7.5,CFG.stagingStart+CFG.spotD/2+(i-1)*CFG.spotD,{door:170,short:"170-"+i,lane:"SR-011"});
+  for(let i=6;i<=9;i++)addSpot("STG-170-"+i,laneX(9)+4-(i-6)*CFG.spotW,33,{door:170,short:"170-"+i,lane:"SR-009"});
+  // pillar 1L-5 stands by the spirals behind lane 11 (photo): row-L numbers fall toward higher doors, like row K
+  {const px=pillarX(5),pz=CFG.mezz[0]+7,pl=box(2,30,2,px,15,pz,"--wall");box(2.6,4,2.6,px,2,pz,"--tape-yellow");box(2.1,2.5,2.1,px,24,pz,"--s-full");
+   pick(pl,{kind:"equip",id:"Pillar 1L-5",src:"photo",note:"Behind lane SR-011, with a JAM CLEARING STATION board"});
+   label("1L-5",px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
   // green mile (walkway) straight out from 171, as at 165
   walk([[doorX(171),8.1],[doorX(171),CFG.mezz[0]]]);
   pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel-dark"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});

@@ -107,7 +107,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: floor staging blocks start about 2 ft back from the green mile tape (z0 = greenMile[1]+2, already so). Spot 1 at that end.
 
-- FROM THE USER + photo: lane SR-009 has staging STG-170-6 … STG-170-9, a row of 4 along the dock just past the lane's table; facing away from the door, 6 is on the left (higher-door side) and 9 on the right. STG-170-1…5 continue on the higher-door side (approx).
+- FROM THE USER + photo: lane SR-009 has staging STG-170-6 … STG-170-9, a row of 4 along the dock just past the lane's table; facing away from the door, 6 is on the left (higher-door side) and 9 on the right. STG-170-1…5 belong to lane SR-011 (user + photo): a column of 5 on the lane's right facing away from the door, starting at the keep-clear and running out beside the table. Pillar 1L-5 behind lane 11 (photo) — row L numbers fall toward higher doors, matching pillarX().
 
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
