@@ -122,7 +122,7 @@ const CFG = {
   mezz:[44,58], greenMile:[92,100], flat:[112,142],
   // lanes SR-0nn: one numbered sequence along the dock. Odd = dock lane (spiral → incline → roller table toward a door),
   // even = ship order (pallet) lane behind the mezzanine. Numbers FALL toward higher doors. Anchors: [lane, door it lines up with]
-  laneAnchors:[[27,155],[25,157],[23,159],[21,161],[19,162.5],[17,164],[15,166],[13,168],[11,169.5],[9,170.5],[7,172]]  // all from you  // approximate
+  laneAnchors:[[29,153],[27,155],[25,157],[23,159],[21,161],[19,162.5],[17,164],[15,166],[13,168],[11,169.5],[9,170.5],[7,172],[2,177]]  // all from you; odd scan lanes stop at 7, pallet lanes run on to SR-002 across from 177  // approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos or told by you, "sketch" = from your drawing only.
    sr + srOff: an odd dock lane's roller table, srOff feet past the door centre. */
@@ -131,7 +131,7 @@ const DOORS = {
   150:{src:"photo", maxreach:true, load:"fluid", louver:true, poster:"Three points of contact, every time", note:"MaxxReach unit; keep-out hatching in front. Hazmat signs hang above 149/150"},
   151:{src:"photo", maxreach:true, load:"fluid", screen:"DD151", note:"Fluid lane with a MaxxReach. Storm drain pipe between 150 and 151"},
   152:{src:"photo", maxreach:true, load:"fluid", screen:"DD152 · AZNG", note:"Fluid lane with a MaxxReach"},
-  153:{src:"photo", screen:"DD153", note:"No fluid lane in front of this door"},
+  153:{src:"photo", sr:"SR-029", srOff:0, screen:"DD153", note:"No fluid lane. Scan lane SR-029 here (you think the scan lanes start at 29; to confirm)"},
   154:{src:"photo", maxreach:true, load:"fluid", note:"Fluid lane with a MaxxReach. The driver's cage (emergency exit used by drivers) is between 154 and 155"},
   155:{src:"photo", load:"cart", sr:"SR-027", srOff:0},
   156:{src:"photo", load:"cart", hatch:true, poster:"Test the weight and lift within your power zone"},

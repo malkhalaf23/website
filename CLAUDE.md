@@ -66,8 +66,10 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
   - CFG.laneAnchors now holds every odd lane 27→7 from the user; even lanes interpolate between them (SR-002 ≈ 175).
 - Removed in this pass: the guessed roller tables at 165/166 and 173, the stations near 164 and 166/167, and the photo-guessed table at 170–172 (all covered by the lane list).
 
+- FROM THE USER, pallet lanes: each even (ship order) lane sits between its odd neighbours: SR-028 between 29 and 27, SR-026 between 27 and 25, SR-020 between 21 and 19, and so on. Odd scan lanes stop at SR-007; pallet lanes continue to SR-002, which sits across from 177. Anchors [29,153] (user thinks scan lanes start at 29) and [2,177] added, so SR-006 ≈ 173, SR-004 ≈ 175.
+
 ## Still open
-- Is there an SR-029, and where SR-028 sits (by extrapolation ≈ 154). Is there a door 177 (for the block past 176)?
+- Confirm SR-029 at 153. Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
 - Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167. Which side of each lane holds A–F.
