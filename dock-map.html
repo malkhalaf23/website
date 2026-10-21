@@ -382,6 +382,7 @@ function build(){
   for(const i of[11,12])addSpot("STG-163-"+i,laneX(17)-4.5,18+CFG.spotD/2+(i-11)*CFG.spotD,{door:163,short:"163-"+i,lane:"SR-017"});
   // lane 23, on its side toward lane 25 (from you): one spot, STG-157-6
   addSpot("STG-157-6",laneX(23)-4.5,18+CFG.spotD/2,{door:157,short:"157-6",lane:"SR-023"});
+  laneStage("STG-159",4,laneX(23)+4.5,159,"SR-023");   // lane 23's other side, toward lane 21 (from you)
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
