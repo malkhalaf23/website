@@ -138,7 +138,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: the floor staging row continues past A (toward lower doors): STG-AA (10 spots, odd/even as usual, 6 ft after A), then 3 ft later STG-AB (12 spots, 2 columns of 6).
 
-- FROM THE USER: one more pallet (ship order) lane after SR-028, 35 ft from it toward lower doors, behind the fluid lanes in line with door 152 (named SR-030 by me; standard orientation assumed — user's "pallets not facing the wall" to clarify).
+- FROM THE USER: one more pallet (ship order) lane after SR-028, 35 ft from it toward lower doors, behind the fluid lanes in line with door 152 (SR-030, confirmed). SR-030 has no slots/locations; SR-028 keeps A–L.
 
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
