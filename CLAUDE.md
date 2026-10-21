@@ -28,7 +28,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - STG-F spots follow the same numbering as 176: odd numbers in front, even behind (F-9 in front of F-10, with F-7/F-8 beside them).
 - Door load type, worked out from the door screens and equipment: MaxxReach doors are fluid-loaded (149, 150, 154, and probably 153). Doors with staging columns are cart-loaded (160's screen reads DYT3-CART-A). 151 and 152 have no conveyor, so they are probably cart doors.
 - 153: door closed. A second MaxxReach boom sits beside 154's, with its wall end at 153 (inferred).
-- Sketch: an exit between 152 and 153, and 155 marked "DP". The sketch's "fluid lanes" at 149/150 match the MaxxReach doors in the photos.
+- Sketch: an exit between 152 and 153. The sketch's "fluid lanes" at 149/150 match the MaxxReach doors in the photos.
 - Past 176: a second 2-column staging block (label not read), then the fenced PIT charging area. 176 has keep-clear hatching between spot 1 and the wall.
 - Main walkway and the roller tables with airbags continue all the way down past 166–175. Go-carts line the sorter side (not modelled).
 
@@ -38,7 +38,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Building pillars carry grid labels (1J-9, 1K-8, 1K-9). This is a real coordinate system: photos of pillar labels plus one paced pillar-to-pillar distance would fix the scale of the whole map.
 
 ## Still open
-- Confirm the 153 MaxxReach and the 152/153 exit. What "DP" at 155 means. Is there a door 177 (for the block past 176)?
+- Confirm the 153 MaxxReach and the 152/153 exit. Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
 - Doors 166–175 up close (roller tables there are approximate).
