@@ -196,7 +196,7 @@ function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
   const[a,xa]=A[A.length-2],[b,xb]=A[A.length-1];return xb+(n-b)*(xb-xa)/(b-a);}
-const W=Math.max(doorX(CFG.lastDoor)+40,laneX(2)+20), X0=-15, cx=(X0+W)/2, D=CFG.flat[1]+12;
+const W=Math.max(doorX(CFG.lastDoor)+40,laneX(2)+20), X0=-70, cx=(X0+W)/2, D=CFG.flat[1]+50;
 
 const themed=[];
 function mat(token,opacity=1,extra={}){const m=new THREE.MeshLambertMaterial(Object.assign({color:css(token),transparent:opacity<1,opacity},extra));themed.push([m,token]);return m;}
@@ -447,6 +447,21 @@ function build(){
    const gx0=pX-2.5-6, ox=palletX(30)+2.3+3+2.5;
    walk([[ (gx0+ox+2.5+1)/2, gz],[(gx0+ox+2.5+1)/2,CFG.mezz[1]]]);
    row("O",10,ox);}
+  // department entrance side, past STG-AB toward lower doors (walk-through photos; all positions approximate):
+  // the back green mile carries on past AB, pallet storage sits behind the fluid doors, then the walkway turns out past the
+  // flat sorter's end, with whiteboards on one side and the ShipDock-Main staging on the other, to the entrance by pillar 1H-9
+  {const gz=(CFG.greenMile[0]+CFG.greenMile[1])/2, ex=-25, fz=CFG.flat[1]+40;
+   walk([[20,gz],[ex,gz],[ex,fz]]);
+   const zone=(x0,x1,z0,z1,id,note,tok="--tape-blue")=>{line(x0,z0,x1,z0,tok,0.5);line(x1,z0,x1,z1,tok,0.5);line(x1,z1,x0,z1,tok,0.5);line(x0,z1,x0,z0,tok,0.5);
+     pick(box(x1-x0,0.1,z1-z0,(x0+x1)/2,0.05,(z0+z1)/2,tok,0.08),{kind:"equip",id,src:"approx",note});label(id,(x0+x1)/2,1.2,(z0+z1)/2,2.2,"--muted");};
+   zone(-65,-30,CFG.mezz[1]+2,CFG.greenMile[0]-1,"Pallet storage","Empty wooden and blue plastic pallets, pallet jacks and airbags, behind fluid doors ~148–151");
+   zone(-18,15,CFG.flat[0],CFG.flat[1]+6,"ShipDock-Main staging","Grid of taped spots labelled ShipDock-Main-1, -2 … (odd numbers seen along one edge: 17, 19, 21, 23). Layout and count to come from you");
+   for(let k=0;k<5;k++)box(0.4,6,6,ex-3,3,CFG.flat[0]+4+k*7,"--wall",0.9);   // whiteboards on wheels
+   label("Whiteboards",ex-6,7,CFG.flat[0]+18,1.6,"--muted");
+   const pl=box(2,30,2,ex+4,15,fz-6,"--wall");box(2.6,4,2.6,ex+4,2,fz-6,"--tape-yellow");
+   pick(pl,{kind:"equip",id:"Pillar 1H-9",src:"photo",note:"At the department entrance, beside the Fastenal machine (earplugs)"});label("1H-9",ex+4,27,fz-6,2.4,"--fg",{bg:"--panel",weight:700});
+   pick(box(3,7,2,ex+8,3.5,fz-12,"--tape-blue"),{kind:"equip",id:"Fastenal machine",src:"photo",note:"PPE vending (earplugs) with a padded orange pillar beside it"});
+   label("ENTRANCE · Main Office · AFE",ex,2,fz+3,2.6,"--fg",{bg:"--panel"});}
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
   const lz0=CFG.mezz[1]-1;

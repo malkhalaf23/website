@@ -144,6 +144,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - USER: flip the map left↔right. Done as a display mirror (scene.scale.x = MX = -1); layout coordinates and all data unchanged. Camera/marker code converts with MX.
 
+- WALK-THROUGH PHOTOS (entrance → lane 30): department entrance with Main Office / AFE / hi-vis and safety-shoe signs by pillar 1H-9 and a Fastenal PPE machine; walkway lined with whiteboards (NACF AR SHIP DOCK banners); a staging area labelled ShipDock-Main-N (QR labels, e.g. ShipDock-Main-2, odd 17–23 along one edge) beside the flat sorter's end near pillar 1H-8 ("MOBILE CART" sign); pallet storage (wood + blue plastic pallets, jacks) behind fluid doors ~148–151; the back green mile continues past STG-AB to there. Door 148 exists below 149 (not on the map yet). All drawn as approximate outlines (X0 widened to -70); ShipDock-Main spots await the user's layout.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
