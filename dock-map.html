@@ -143,15 +143,15 @@ const DOORS = {
   157:{src:"photo", load:"cart", sr:"SR-025", srOff:0, staging:{cols:1,spots:5}},
   158:{src:"photo", load:"cart", screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
   159:{src:"photo", load:"cart", sr:"SR-023", srOff:0, hatch:true, louver:true, screen:"DD159 · DYT3-CART-A", note:"Dock lane SR-023 sits in front of this door, between pallet lanes SR-022 and SR-024. Trailer AZNG DVC260128"},
-  160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", staging:{cols:1,spots:5,inferred:true}, note:"Column seen between 159 and 160, label not read"},
+  160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", note:"Column seen between 159 and 160, label not read"},
   161:{src:"photo", load:"cart", sr:"SR-021", srOff:0, hatch:true, staging:{cols:1,spots:5}},
-  162:{src:"photo", load:"cart", sr:"SR-019", srOff:22.5, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
-  163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}, note:"Stage area, no conveyor"},
+  162:{src:"photo", load:"cart", sr:"SR-019", srOff:22.5, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
+  163:{src:"photo", load:"cart", note:"Stage area, no conveyor"},
   164:{src:"photo", sr:"SR-017", srOff:0, poster:"Check brakes before moving carts"},
-  165:{src:"photo", load:"cart", staging:{cols:1,spots:4,off:-5,inferred:true}, note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
-  166:{src:"photo", load:"cart", sr:"SR-015", srOff:0, hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-7,inferred:true}, note:"Carts and a pallet staged on blue tape between the 165 green mile and lane SR-015; label not read"},
+  165:{src:"photo", load:"cart", note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
+  166:{src:"photo", load:"cart", sr:"SR-015", srOff:0, hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", note:"Carts and a pallet staged on blue tape between the 165 green mile and lane SR-015; label not read"},
   167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Stage area. Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
-  168:{src:"photo", load:"cart", sr:"SR-013", srOff:0, hatch:true, louver:true, poster:"Keep safe spacing between moving carts", staging:{cols:1,spots:4,off:5.5,inferred:true}, note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169"},
+  168:{src:"photo", load:"cart", sr:"SR-013", srOff:0, hatch:true, louver:true, poster:"Keep safe spacing between moving carts", note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169"},
   169:{src:"photo", louver:true, sr:"SR-011", srOff:6.5, note:"Lane SR-011 sits between 169 and 170"},
   170:{src:"photo", sr:"SR-009", srOff:6.5, note:"Lane SR-009 sits between 170 and 171"},
   171:{src:"photo", note:"A green mile (walkway) runs out from this door"},
@@ -160,7 +160,7 @@ const DOORS = {
   174:{src:"photo", note:"No stage area and no lane"},
   175:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
   176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
-  177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14,off:-5.2,inferred:true}, note:"Stage area only, no lane. 14 spots in 2 columns of 7; labels not read. PIT charging area beyond"}
+  177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14,off:-5.2}, note:"Stage area only, no lane. 14 spots in 2 columns of 7; labels not read. PIT charging area beyond"}
 };
 const STATUSES=["empty","active","cart","pallet","full","ready"];
 // Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
@@ -327,8 +327,6 @@ function build(){
    pick(box(2.2,5.5,2,doorX(174)+half,2.75,2.6,"--steel-dark"),{kind:"equip",id:"Kiosk 174/175",src:"approx",note:"Grey kiosk between doors, seen down the dock from 176"});
    label("TDR COMPLETE",doorX(176)-5.4,7,1,0.8,"--fg",{bg:"--tape-green"});}
   DETAIL=false;
-  // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
-  for(let x=doorX(165)+9;x<doorX(174)-6;x+=4.2)if((x<laneX(9)-12||x>laneX(9)+8)&&(x<laneX(11)-10||x>laneX(11)+10))addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
   DETAIL=true;{const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}DETAIL=false;
@@ -358,6 +356,11 @@ function build(){
    label("1L-6",px,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
   }
   // STG-170: a row parallel to the wall, out past the lane tables, numbered from the higher-door end (1–3 read; 5 assumed)
+  // STG-165 (photo): beside the 165 green mile on its higher-door side, a 6 × 7 ft red box at the dock end,
+  // 1 ft gap, then STG-165-1…5 running out toward the spirals, alongside lane SR-015's table
+  {const x=doorX(165)+7.3, z0=9.5;
+   hatch(x-3,x+3,z0,z0+7);
+   for(let i=1;i<=5;i++)addSpot("STG-165-"+i,x,z0+8+CFG.spotD/2+(i-1)*CFG.spotD,{door:165,short:"165-"+i});}
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
   for(let i=1;i<=5;i++)addSpot("STG-170-"+i,laneX(11)-6,CFG.stagingStart+CFG.spotD/2+(i-1)*CFG.spotD,{door:170,short:"170-"+i,lane:"SR-011"});
