@@ -122,18 +122,18 @@ const CFG = {
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
-  149:{src:"photo", maxreach:true, load:"fluid", note:"Screen: DD149 · UR-GROUND · CP-CENTRAL"},
-  150:{src:"photo", maxreach:true, load:"fluid", note:"MaxxReach unit; keep-out hatching in front"},
-  151:{src:"photo", load:"cart?", note:"No conveyor; open floor in front, likely loaded from carts"},
-  152:{src:"photo", load:"cart?", note:"No conveyor; carts staged nearby. Screen: AZNG route"},
-  153:{src:"photo", maxreach:"inferred", load:"fluid", note:"Door closed; a second MaxxReach boom sits beside 154's with its wall end at 153. Screen: DD153"},
-  154:{src:"photo", maxreach:true, load:"fluid", note:"AED on wall to the right"},
+  149:{src:"photo", maxreach:true, load:"fluid", screen:"DD149 · CP-CENTRAL", louver:true, note:"Screen also shows UR-GROUND"},
+  150:{src:"photo", maxreach:true, load:"fluid", louver:true, poster:"Three points of contact, every time", note:"MaxxReach unit; keep-out hatching in front. Hazmat signs hang above 149/150"},
+  151:{src:"photo", load:"cart?", screen:"DD151", note:"No conveyor; open floor in front, likely loaded from carts. Storm drain pipe between 150 and 151"},
+  152:{src:"photo", load:"cart?", screen:"DD152 · AZNG", note:"No conveyor; carts staged nearby"},
+  153:{src:"photo", maxreach:"inferred", load:"fluid", screen:"DD153", note:"Door closed; a second MaxxReach boom sits beside 154's with its wall end at 153"},
+  154:{src:"photo", maxreach:true, load:"fluid", note:"AED, electrical panels, a wall clock and a ladder rack on the wall between 154 and 155"},
   155:{src:"photo", sr:"SR-025"},
-  156:{src:"photo", hatch:true},
+  156:{src:"photo", hatch:true, poster:"Test the weight and lift within your power zone"},
   157:{src:"photo", load:"cart", staging:{cols:1,spots:5}},
-  158:{src:"photo", sr:"SR-023", note:"Kiosk and walkway between 157 and 158"},
-  159:{src:"photo", hatch:true},
-  160:{src:"photo", load:"cart", staging:{cols:1,spots:5,inferred:true}, note:"Screen: DD160 · DYT3-CART-A. Column seen between 159 and 160, label not read"},
+  158:{src:"photo", sr:"SR-023", screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
+  159:{src:"photo", hatch:true, louver:true},
+  160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", staging:{cols:1,spots:5,inferred:true}, note:"Column seen between 159 and 160, label not read"},
   161:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:5}},
   162:{src:"photo", load:"cart", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
   163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}},
@@ -245,6 +245,42 @@ function build(){
     }
   }
   const half=CFG.doorPitch/2;
+  // the kit every door has (photos of 149–161 and the view down 166–175): dock lock panel, wall fan,
+  // door screen, yellow apron tape, bollards; dome mirrors hang between doors
+  const mirrorGeo=new THREE.SphereGeometry(2,16,8,0,Math.PI*2,0,Math.PI/2);
+  for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++){
+    const d=DOORS[n]||{}, x=doorX(n), a=DOORS[n]?1:0.45;
+    box(1.4,2,0.5,x-5.4,4.5,0.5,"--steel-dark",a);                       // dock lock / leveler controls
+    box(1.6,1.6,1.2,x+3.2,10.8,1.4,"--tape-yellow",a);                   // wall fan on its arm
+    const scr=box(3.4,2,0.3,x+6.2,9,0.6,"--steel-dark",a);
+    pick(scr,{kind:"equip",id:"Door screen "+n,src:d.screen?"photo":"approx",note:d.screen?"Shows: "+d.screen+". Likely live data source":"Every door has one; text not read"});
+    if(d.screen)label(d.screen,x+6.2,7.4,1.2,0.9,"--fg",{bg:"--panel",weight:700});
+    line(x-4.6,0.6,x-4.6,5.6,"--tape-yellow",0.35);line(x+4.6,0.6,x+4.6,5.6,"--tape-yellow",0.35);line(x-4.6,5.6,x+4.6,5.6,"--tape-yellow",0.35);
+    for(const s of[-1,1]){const b=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,4,10),mat("--tape-yellow",a));b.position.set(x+s*5,2,1.2);scene.add(b);}
+    if(d.poster){pick(box(8,4.5,0.2,x,8.6,0.7,"--tape-green",0.9),{kind:"equip",id:"Safety poster · Door "+n,src:"photo",note:"\u201C"+d.poster+"\u201D"});}
+    if(d.louver)box(7,5,0.3,x,19,0.2,"--steel");
+    if(n<CFG.lastDoor&&n!==162){const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(x+half,15,5);scene.add(m);}
+  }
+  // wall between 154 and 155: AED, electrical panels, clock, ladder rack (photo)
+  {const x=doorX(154)+half;
+   pick(box(3,4,0.6,x-1,6,0.4,"--steel"),{kind:"equip",id:"Electrical panels (154/155)",src:"photo"});
+   pick(box(2.4,2.4,0.3,x+2,13,0.4,"--s-full"),{kind:"equip",id:"AED",src:"photo",note:"Sign on the wall between 154 and 155"});
+   label("AED",x+2,15.4,1,1.6,"--s-full",{bg:"--panel"});
+   box(2,0.7,0.3,x-1,10,0.4,"--fg");                                     // red digital clock
+   box(1,9,3,x+4.5,4.5,2,"--tape-blue",0.7);}                            // ladder rack
+  // storm drain pipe between 150 and 151; hazmat signs hanging over 149/150 and along the mezzanine edge
+  {const p=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,28,10),mat("--wall"));p.position.set(doorX(150)+half,14,0.9);scene.add(p);
+   label("STORM DRAIN",doorX(150)+half,6,1.6,0.9,"--tape-green",{bg:"--panel"});}
+  for(const hx of[doorX(149)+half,doorX(156),doorX(166),doorX(172)])
+    pick(box(5,6,0.2,hx,22,hx<doorX(151)?8:CFG.mezz[0]-1,"--s-full",0.85),{kind:"equip",id:"Prohibited hazmat sign",src:hx<doorX(151)?"photo":"approx",note:"Hanging sign listing hazmat labels that may not ship"});
+  // STOP decals where walkways cross (photos at 154, 157/158, 162 and down the dock)
+  for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(170),11]]){
+    const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
+  // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
+  for(let x=doorX(165)+4;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped go-cart lane on the sorter side; label not read"});
+  // dome mirror and floor sign at the corner by the PIT area (photo)
+  {const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
+   label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}
   // walkways seen in photos
   walk([[doorX(154)+half,3],[doorX(154)+half,42]]);
   {const x=doorX(161)+4.6; walk([[x,7],[x,34],[x+8.6,40]]);}
@@ -305,7 +341,15 @@ function build(){
     const ch=beam([x,8,f1+6],[x,3,f1-2],8,0.6,"--steel",0.9);
     pick(ch,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute positions not surveyed yet"});}
   box(W-X0-20,1,4,cx+5,8.5,f1+8,"--steel-dark");
-  label("Flat sorter",cx,12,f1+4,3.4,"--fg");
+  label("Flat sorter",cx,14,f1+4,3.4,"--fg");
+  for(let k=0;k<20;k++)box(2.6,2.2,0.2,20+k*14,11,f1-1,"--fg",0.9);   // FLAT SORTER sign over each chute
+  // building pillars with grid labels; only 1K-9 is placed by a photo, the others by direction (spacing guessed)
+  for(const [id,px,pz,src] of[["1K-9",150,f0-7,"photo"],["1J-9",150,f1-6,"approx"],["1K-8",110,f0-7,"approx"]]){
+    const pl=box(1.6,30,1.6,px,15,pz,"--wall");box(2.2,3,2.2,px,1.5,pz,"--tape-yellow");box(1.7,2,1.7,px,24,pz,"--s-full");
+    pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
+    label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
+  pick(box(4,3,0.2,175,20,f0-6,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});
+  label("6 FT",150,6,f0-6.2,0.9,"--fg",{bg:"--panel"});
   for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
   // SR-028 at pillar 1K-9: roller table with SR-028-A–F on one side and G–L on the other
   {const x=150,z0=f0-4;
@@ -314,7 +358,9 @@ function build(){
    label("SR-028",x,11.5,z0-2,2.4,"--fg",{bg:"--panel",weight:700});
    "ABCDEF".split("").forEach((c,i)=>addSpot("SR-028-"+c,x-4,z0+CFG.spotD/2+i*CFG.spotD,{area:"SR-028 · flat sorter",short:c,approx:true}));
    "GHIJKL".split("").forEach((c,i)=>addSpot("SR-028-"+c,x+4,z0+CFG.spotD/2+i*CFG.spotD,{area:"SR-028 · flat sorter",short:c,approx:true}));}
-  // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed)
+  // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
+  line(198-2.5,f0-2-3,198-2.5,f0-2+20,"--s-full",0.6);
+  label("Handles toward the aisle",206.5,0.5,f0+6,0.9,"--tape-green",{weight:700});
   for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,200+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
 }
 function addSpot(id,x,z,o={}){

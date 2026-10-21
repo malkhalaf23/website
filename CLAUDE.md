@@ -12,7 +12,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Doors with no entry render faded as "not surveyed yet". The progress bar counts `DOORS` entries.
 - Everything tapped shows its source: confirmed in photos, label not read yet, from the sketch, or approximate.
 - A CSV box (`id,status`) colors staging spots: empty, cart, pallet, full, ready.
-- Views: Plan (orthographic, default; rotates so the dock runs top-to-bottom on phones), Doors 149–163 close-up, 3D. Mezzanine toggle. Find box jumps to a door, spot or station. Helpers: `hatch()` striped tape, `rollerTable()`, `walk()` green/pink walkway, `beam()` for inclines, `addSpot()`.
+- Views: Plan (orthographic, default; rotates so the dock runs top-to-bottom on phones), Doors 149–163 close-up, 3D. Mezzanine toggle. Find box jumps to a door, spot or station. Helpers: `hatch()` striped tape, `rollerTable()`, `walk()` green/pink walkway, `beam()` for inclines, `addSpot()` (pass `null` id for a taped spot whose label is unread). Per-door wall kit is drawn in one loop from `DOORS` fields `screen`, `poster`, `louver`.
 
 ## Facts confirmed from photos
 - Doors 149–176 on one wall, ~9 ft wide on ~13 ft centres (estimated). Open doors show their number high, closed doors low.
@@ -31,6 +31,10 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - 153: door closed. A second MaxxReach boom sits beside 154's, with its wall end at 153 (inferred).
 - Sketch: an exit between 152 and 153. The sketch's "fluid lanes" at 149/150 match the MaxxReach doors in the photos.
 - Past 176: a second 2-column staging block (label not read), then the fenced PIT charging area. 176 has keep-clear hatching between spot 1 and the wall.
+- Every door has the same kit: dock lock panel left, yellow wall fan, door screen right, yellow apron tape around the leveler, yellow bollards; dome mirrors hang between doors. Screens read: DD149 CP-CENTRAL, DD151, DD152 AZNG, DD153, DD158, DD160 DYT3-CART-A.
+- Posters on doors 150, 156, 158, 160; louvers above 149, 150, 159. Wall between 154 and 155: AED, electrical panels, clock, ladder rack. Storm drain pipe between 150 and 151. Hazmat signs hang over 149/150 and along the mezzanine edge. STOP decals where walkways cross.
+- Past 165, go-carts park in a taped lane on the sorter side of the aisle (lane modelled, carts not).
+- Flat sorter: a FLAT SORTER sign over each chute; pillar 1K-9 (yellow guard, red label band, 6 FT mark) at SR-028; DO NOT ENTER sign nearby; red tape edges STG-A.
 - Main walkway and the roller tables with airbags continue all the way down past 166–175. Go-carts line the sorter side (not modelled).
 
 - Flat sorter side: SR-028 sits at building pillar 1K-9. Its screen (S0128) lists 12 positions: SR-028-A–F on one side of a roller table and G–L on the other, laid out as taped columns running toward the flat sorter chutes. Exact layout and position are approximate.
