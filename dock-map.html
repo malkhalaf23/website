@@ -1,0 +1,291 @@
+<title>Ship Dock Twin</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 3D floor view on top, control strip below; floor tape colors double as the UI palette */
+:root{
+  --bg:#eef0f2; --panel:#ffffff; --fg:#1d2329; --muted:#5d6872; --line:#d3d8dd;
+  --floor:#c9ced3; --wall:#f4f5f6; --door:#8a96a1; --door-faint:#dde1e5;
+  --tape-blue:#2f5bd3; --tape-green:#2fae6a; --tape-pink:#b4469a; --hatch:#d64545;
+  --amz-yellow:#f2c200; --steel:#7d8790; --accent:#2f5bd3;
+  --s-empty:#e3e6e9; --s-cart:#2f5bd3; --s-pallet:#b8873c; --s-full:#d64545; --s-ready:#2fae6a;
+  --display:"Archivo",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121619; --panel:#1a1f24; --fg:#e6e9ec; --muted:#97a1aa; --line:#2b3238;
+  --floor:#3a4148; --wall:#262c31; --door:#9aa5af; --door-faint:#323940; --steel:#8c969f; --s-empty:#4f575f; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121619; --panel:#1a1f24; --fg:#e6e9ec; --muted:#97a1aa; --line:#2b3238;
+  --floor:#3a4148; --wall:#262c31; --door:#9aa5af; --door-faint:#323940; --steel:#8c969f; --s-empty:#4f575f; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);display:flex;flex-direction:column}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.01em}
+.sub{font-family:var(--mono);font-size:12px;color:var(--muted)}
+#view{position:relative;flex:1 1 60%;min-height:340px}
+#view canvas{display:block;width:100%;height:100%;touch-action:none}
+#hint{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none}
+.views{position:absolute;top:10px;right:max(10px,env(safe-area-inset-right,0px));display:flex;gap:6px}
+button{font-family:var(--mono);font-size:12px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--accent)} button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-top:1px solid var(--line);background:var(--panel)}
+.box{min-width:0;display:flex;flex-direction:column;gap:8px}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#info{font-family:var(--mono);font-size:13px;line-height:1.6}
+#info b{font-family:var(--display);font-size:18px;display:block}
+.src{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:2px;display:inline-block}
+.prog{font-family:var(--mono);font-size:12px;line-height:1.7;font-variant-numeric:tabular-nums}
+.prog em{font-style:normal;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--tape-green)}
+textarea{width:100%;box-sizing:border-box;min-height:70px;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#msg{font-family:var(--mono);font-size:12px;color:var(--muted)}
+</style>
+
+<header>
+  <h1>Ship Dock Twin</h1>
+  <span class="sub">Doors 149–176 · staging spots 4 × 5 ft · built section by section from photos</span>
+</header>
+
+<div id="view">
+  <div class="views">
+    <button id="v3d">3D</button><button id="vtop">Top</button><button id="vdock">Doors 149–161</button>
+  </div>
+  <div id="hint">Drag to orbit · pinch or scroll to zoom · tap anything</div>
+</div>
+
+<section class="strip">
+  <div class="box">
+    <div class="label">Selected</div>
+    <div id="info">Tap a door, staging spot or piece of equipment.</div>
+  </div>
+  <div class="box">
+    <div class="label">Survey progress</div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="prog" id="prog"></div>
+    <div class="legend">
+      <span><i style="background:var(--door)"></i>Confirmed in photos</span>
+      <span><i style="background:var(--door-faint);border:1px solid var(--line)"></i>Not surveyed yet</span>
+    </div>
+  </div>
+  <div class="box">
+    <label class="label" for="feed">Load spot data (CSV: id,status)</label>
+    <textarea id="feed" spellcheck="false" placeholder="STG-157-1,cart"></textarea>
+    <div class="row"><button class="primary" id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ===== LAYOUT (feet). x runs along the dock wall, z runs out into the building. ===== */
+const CFG = {
+  firstDoor:149, lastDoor:176,
+  doorPitch:13,        // estimated from photos: ~9 ft doors on ~13 ft centres
+  spotW:4, spotD:5,    // measured by you
+  gapAfter162:32,     // riser wall + W022 exit sit between 162 and 163
+  stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
+  walkwayZ:42,         // walkway running behind the staging columns
+  mezz:[55,67], greenMile:[85,93], flat:[105,119]  // from sketch, positions approximate
+};
+/* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
+const DOORS = {
+  149:{src:"photo", maxreach:true, note:"Door screen shows its load (e.g. DD149 · CP-CENTRAL)"},
+  150:{src:"photo", maxreach:true, note:"MaxxReach unit; keep-out hatching in front"},
+  151:{src:"photo", note:"No conveyor; open floor in front, likely loaded from carts"},
+  152:{src:"photo", note:"No conveyor; carts staged nearby"},
+  153:{src:"photo", note:"Setup in front not confirmed yet"},
+  154:{src:"photo", maxreach:true, note:"AED on wall to the right"},
+  155:{src:"photo", sr:"SR-025"},
+  156:{src:"photo", hatch:true},
+  157:{src:"photo", staging:{cols:1,spots:5}},
+  158:{src:"photo", sr:"SR-023", note:"Kiosk and walkway between 157 and 158"},
+  159:{src:"photo", hatch:true},
+  160:{src:"photo", staging:{cols:1,spots:5,inferred:true}, note:"Clear path in front for dock carts"},
+  161:{src:"photo", hatch:true, staging:{cols:1,spots:5}},
+  162:{src:"photo", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
+  163:{src:"photo", staging:{cols:1,spots:5,off:6,inferred:true}},
+  164:{src:"photo"},
+  165:{src:"photo"},
+  176:{src:"photo", staging:{cols:2,spots:8}}
+};
+const STATUSES=["empty","cart","pallet","full","ready"];
+const NAMES={empty:"Empty",cart:"Cart staged",pallet:"Pallet",full:"Full / needs load",ready:"Ready to load"};
+
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const view=document.getElementById("view");
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+view.prepend(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(45,1,1,4000);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.maxPolarAngle=Math.PI/2.05;
+scene.add(new THREE.HemisphereLight(0xffffff,0x888888,0.9));
+const sun=new THREE.DirectionalLight(0xffffff,0.5); sun.position.set(200,400,300); scene.add(sun);
+
+const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
+const W=doorX(CFG.lastDoor)+30, cx=W/2-15;
+const themed=[]; // [material, token]
+function mat(token,opacity=1){const m=new THREE.MeshLambertMaterial({color:css(token),transparent:opacity<1,opacity});themed.push([m,token]);return m;}
+function box(w,h,d,x,y,z,token,opacity){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(token,opacity));m.position.set(x,y,z);scene.add(m);return m;}
+function flat(x0,x1,z0,z1,token,y=0.06,opacity){return box(x1-x0,0.1,z1-z0,(x0+x1)/2,y,(z0+z1)/2,token,opacity);}
+function line(x0,z0,x1,z1,token,w=0.6){const len=Math.hypot(x1-x0,z1-z0),m=box(len,0.12,w,(x0+x1)/2,0.08,(z0+z1)/2,token);m.rotation.y=-Math.atan2(z1-z0,x1-x0);return m;}
+const labels=[];
+function label(text,x,y,z,size,token="--fg"){
+  const c=document.createElement("canvas"),g=c.getContext("2d");c.width=512;c.height=128;
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({depthTest:false}));
+  s.userData={text,token,c,g};s.scale.set(size*4,size,1);s.position.set(x,y,z);scene.add(s);labels.push(s);drawLabel(s);return s;
+}
+function drawLabel(s){const{text,token,c,g}=s.userData;g.clearRect(0,0,512,128);g.font="800 60px Archivo, system-ui, sans-serif";g.fillStyle=css(token);g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,64);
+  if(s.material.map)s.material.map.dispose();s.material.map=new THREE.CanvasTexture(c);s.material.needsUpdate=true;}
+const pickables=[],spots={};
+function pick(o,data){o.userData=data;pickables.push(o);return o;}
+function hatch(x0,x1,z0,z1){flat(x0,x1,z0,z1,"--hatch",0.05,0.25);
+  [[x0,z0,x1,z0],[x1,z0,x1,z1],[x1,z1,x0,z1],[x0,z1,x0,z0]].forEach(a=>line(...a,"--hatch",0.4));}
+
+function build(){
+  flat(-15,W,0,130,"--floor",0);
+  box(W+15,30,1,cx,15,-0.5,"--wall");
+  for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++){
+    const d=DOORS[n], x=doorX(n), seen=!!d;
+    pick(box(9,10,0.6,x,5,0.3,seen?"--door":"--door-faint"),{kind:"door",n,id:"Door "+n,src:seen?"photo":null,note:d&&d.note});
+    label(String(n),x,12.5,1,4,seen?"--fg":"--muted");
+    flat(x-4.5,x+4.5,0.6,5,"--amz-yellow",0.07,seen?1:0.35);   // dock leveler / apron
+    if(!d) continue;
+    if(d.hatch) hatch(x-5,x+5,6,12);
+    if(d.fluid) pick(box(3,2.5,24,x,1.25,17,"--steel",0.45),{kind:"equip",id:"Fluid lane · Door "+n,src:"sketch",note:"Floor-loaded lane from your sketch"});
+    if(d.maxreach){
+      pick(box(6,4,32,x,2,21,"--steel"),{kind:"equip",id:"Max-reach conveyor · Door "+n,src:"photo",note:"Extends into the trailer; keep-out tape and chain around it"});
+      hatch(x-6,x+6,5,38);
+    }
+    if(d.sr){ // station between this door and the next, with its roller table angled toward the dock
+      const sx=x+(d.srOff??CFG.doorPitch/2);
+      pick(box(2,9,2,sx,4.5,20,"--muted"),{kind:"equip",id:d.sr+" station",src:"photo",note:"Between doors "+n+" and "+(n+1)+" · monitor, andon light, printer"});
+      const r=pick(box(3,2.6,15,sx,1.3,13,"--steel",0.8),{kind:"equip",id:d.sr+" roller table",src:"photo",note:"Feeds toward the doors; dunnage airbags often sit on it"});
+      r.rotation.y=0.25;
+    }
+    if(d.staging){
+      // columns sit just to the lower-number side of their door
+      const {cols,spots:count,inferred,off}=d.staging, base=x+(off??-CFG.doorPitch*0.4);
+      for(let i=1;i<=count;i++){
+        const col=cols===2?(i%2===1?0:1):0, row=cols===2?Math.floor((i-1)/2):i-1;
+        addSpot(`STG-${n}-${i}`, base-(cols*CFG.spotW)/2+CFG.spotW/2+col*CFG.spotW, CFG.stagingStart+CFG.spotD/2+row*CFG.spotD, n, inferred);
+      }
+    }
+  }
+  // walkways seen in photos
+  const half=CFG.doorPitch/2, wz=CFG.walkwayZ;
+  // perpendicular walkways reaching the wall beside 154 and between 161/162 (photos)
+  {const x=doorX(154)+half; line(x-0.6,3,x-0.6,wz,"--tape-green"); line(x+0.6,3,x+0.6,wz,"--tape-pink");}
+  {const x=doorX(161)+4.6; line(x-0.6,7,x-0.6,34,"--tape-green"); line(x+0.6,7,x+0.6,34,"--tape-pink");
+   line(x-0.6,34,x+8,40,"--tape-green"); line(x+0.6,34,x+9.2,40,"--tape-pink");}
+  // main walkway hugging the door aprons from 159 up the dock, jogging in to the kiosk at 157/158 (photos)
+  const ax=doorX(158)+half+2;
+  line(ax,7,W-10,7,"--tape-green"); line(ax,9.2,W-10,9.2,"--tape-pink");
+  line(doorX(157)+half-0.6,3,ax,7,"--tape-green"); line(doorX(157)+half+0.6,3,ax,9.2,"--tape-pink");
+  // emergency exit W022, sprinkler risers, and the walkway leading straight to the exit (photo)
+  {const ex=doorX(162)+22;
+   pick(box(4,8,0.8,ex,4,0.4,"--hatch"),{kind:"equip",id:"Emergency exit W022",src:"photo",note:"Between 162 and 163; walkway runs straight to it"});
+   line(ex-1.5,9.2,ex-1.5,45,"--tape-green"); line(ex-0.3,9.2,ex-0.3,45,"--tape-pink");
+   line(ex+0.3,9.2,ex+0.3,45,"--tape-pink"); line(ex+1.5,9.2,ex+1.5,45,"--tape-green");
+   for(let k=0;k<6;k++) box(0.6,22,0.6,doorX(162)+8+k*1.6,11,0.8,"--fg");
+   hatch(doorX(162)+5,doorX(162)+16,10,16);}
+  label("Main walkway",doorX(167),2,8,5,"--muted");
+  // repeating roller tables (dunnage airbags) with keep-clear hatching, seen down the dock (approximate spacing)
+  for(let n=166;n<=174;n+=2){
+    pick(box(14,2.6,3,doorX(n)+half,1.3,18,"--steel",0.45),{kind:"equip",id:"Roller table near "+n+"/"+(n+1),src:"approx",note:"Seen down the dock; exact door not confirmed"});
+    hatch(doorX(n)+half-8,doorX(n)+half+8,13,23);
+  }
+  pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
+  pick(box(4,1,5,doorX(154)+half-4,0.5,36,"--tape-blue",0.6),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
+  // overhead feed from max-reach units toward the sorter (from photo + sketch arcs)
+  [149,150,154].forEach(n=>{const f=box(3,0.6,26,doorX(n)+8,9,44,"--steel",0.7);f.rotation.y=-0.5;});
+  // auto scan + palletizing (sketch)
+  pick(box(4,4,10,doorX(155),2,58,"--steel",0.45),{kind:"equip",id:"Auto scan",src:"sketch"});
+  for(let k=0;k<4;k++) pick(box(2.5,2.5,16,doorX(156)+k*CFG.doorPitch,1.25,60,"--steel",0.45),{kind:"equip",id:"Palletizing lane "+(k+1),src:"sketch"});
+  // mezzanine + spirals (approx)
+  const [m0,m1]=CFG.mezz;
+  box(W-30,1.5,m1-m0,cx+5,22,(m0+m1)/2,"--amz-yellow",0.35);
+  for(let n=CFG.firstDoor+2;n<=CFG.lastDoor;n+=2){const s=new THREE.Mesh(new THREE.CylinderGeometry(3,3,20,16),mat("--line",0.8));s.position.set(doorX(n),11,(m0+m1)/2);scene.add(s);}
+  label("Mezzanine + spiral chutes (approx.)",cx,28,(m0+m1)/2,8,"--muted");
+  const [g0,g1]=CFG.greenMile; line(-15,g0,W,g0,"--tape-green");line(-15,g1,W,g1,"--tape-green");
+  label("Green mile",cx,2,(g0+g1)/2,7,"--tape-green");
+  const [f0,f1]=CFG.flat;
+  for(let k=0;k<10;k++) pick(box(14,10,8,30+k*30,5,f1,"--s-pallet",0.5),{kind:"equip",id:"Flat sorter chute "+(k+1),src:"photo",note:"Exact positions not surveyed yet"});
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,null);}
+  label("Flat sorter (approx.)",160,14,f1,7,"--muted");
+}
+function addSpot(id,x,z,door,inferred){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.5,0.25,CFG.spotD-0.5),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
+  m.position.set(x,0.13,z);scene.add(m);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CFG.spotW,0.28,CFG.spotD)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
+  e.position.copy(m.position);scene.add(e);themed.push([e.material,"--tape-blue"]);
+  spots[id]=pick(m,{kind:"spot",id,door,status:"empty",src:inferred?"inferred":door?"photo":"approx"});
+}
+build();
+
+function paint(){for(const id in spots)spots[id].material.color.set(css("--s-"+spots[id].userData.status));}
+function progress(){
+  const total=CFG.lastDoor-CFG.firstDoor+1, done=Object.keys(DOORS).length;
+  document.getElementById("barfill").style.width=(done/total*100)+"%";
+  const todo=[];for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++) if(!DOORS[n]) todo.push(n);
+  document.getElementById("prog").innerHTML=`${done} of ${total} doors confirmed · ${Object.keys(spots).filter(k=>!k.startsWith("STG-F")).length} dock spots mapped<br><em>Next up: doors ${todo[0]}–${todo[todo.length-1]}</em>`;
+}
+progress();
+
+const msg=document.getElementById("msg");
+function applyFeed(text){
+  let ok=0,bad=[];
+  text.split(/\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const [id,st]=l.split(/[,\t;]/).map(s=>s&&s.trim());const key=(id||"").toUpperCase(),status=(st||"").toLowerCase();
+    if(spots[key]&&STATUSES.includes(status)){spots[key].userData.status=status;ok++;}else if(!/^id\b/i.test(l))bad.push(id);
+  });
+  paint();msg.textContent=`Updated ${ok}`+(bad.length?` · skipped ${bad.length} (${bad.slice(0,3).join(", ")})`:"");
+}
+document.getElementById("apply").onclick=()=>applyFeed(document.getElementById("feed").value);
+document.getElementById("clear").onclick=()=>{for(const id in spots)spots[id].userData.status="empty";paint();msg.textContent="All spots cleared";};
+
+const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let down=null,sel=null;
+renderer.domElement.addEventListener("pointerdown",e=>down=[e.clientX,e.clientY]);
+renderer.domElement.addEventListener("pointerup",e=>{
+  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;
+  const r=renderer.domElement.getBoundingClientRect();ptr.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(pickables)[0];select(hit&&hit.object);
+});
+const SRC={inferred:"Seen in photos; label not read yet",photo:"Confirmed in photos",sketch:"From your sketch",approx:"Approximate position"};
+function select(o){
+  if(sel&&sel.userData.kind==="spot")sel.scale.y=1;sel=o;
+  const info=document.getElementById("info");
+  if(!o){info.textContent="Tap a door, staging spot or piece of equipment.";return;}
+  const u=o.userData,tag=u.src?`<span class="src">${SRC[u.src]}</span>`:`<span class="src">Not surveyed yet</span>`;
+  if(u.kind==="spot"){o.scale.y=4;info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:"Flat sorter"} · ${CFG.spotW} × ${CFG.spotD} ft · ${NAMES[u.status]}<br>${tag}`;}
+  else info.innerHTML=`<b>${u.id}</b>${u.note?u.note+"<br>":""}${tag}`;
+}
+
+const target=new THREE.Vector3(cx,0,50);
+function setView(v){
+  if(v==="top"){controls.target.copy(target);camera.position.set(cx,480,51);}
+  else if(v==="dock"){controls.target.set(doorX(155),0,18);camera.position.set(doorX(155)+5,55,110);}
+  else{controls.target.copy(target);camera.position.set(cx-140,230,300);}
+  controls.update();
+}
+["3d","top","dock"].forEach(v=>document.getElementById("v"+v).onclick=()=>setView(v));
+
+function resize(){const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(view);
+function themeSync(){scene.background=new THREE.Color(css("--bg"));themed.forEach(([m,t])=>m.color.set(css(t)));labels.forEach(drawLabel);paint();}
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",themeSync);
+new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+if(document.fonts)document.fonts.ready.then(()=>labels.forEach(drawLabel));
+
+msg.textContent="No data loaded";
+themeSync();resize();setView("dock");
+(function loop(){controls.update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
+</script>
