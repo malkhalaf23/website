@@ -374,9 +374,10 @@ function build(){
   const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,18+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
   laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
   laneStage("STG-161",5,laneX(21)-4.5,161,"SR-021");   // lane 21's lower-door side (photo + you)
-  // STG-163-1…10: past the 4 ft green mile to W022, 2 columns of 5, odds on the walkway side (guess), 1 nearest the wall
+  // STG-163-1…10 (from you): free-standing in the middle of the gap, 2 columns of 5, odds on the walkway side (guess), 1 nearest the wall
   for(let i=1;i<=10;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
-    addSpot("STG-163-"+i,laneX(19)+(odd?12.5:16.5),18+CFG.spotD/2+row*CFG.spotD,{door:163,short:"163-"+i});}
+    const mid=(laneX(19)+10.5+laneX(17)-7.5)/2;   // centred between the W022 green mile and lane 17's red zone, not tied to a lane
+    addSpot("STG-163-"+i,mid+(odd?-2:2),18+CFG.spotD/2+row*CFG.spotD,{door:163,short:"163-"+i});}
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
