@@ -116,6 +116,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: red/white zone = no staging. Every scan lane has two, one on each side of the table at its dock end, 6 ft wide × 7 ft long, no text. Lane staging columns start 1 ft past them on the same side (laneStage()).
 
+- FROM THE USER: 35 ft between lanes SR-019 and SR-017, with staging in between (layout to come from the user).
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
