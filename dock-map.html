@@ -119,7 +119,7 @@ const CFG = {
   stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
   mezzY:17,            // mezzanine deck height (approx.)
   mezz:[44,58], greenMile:[92,100], flat:[112,142],
-  lanePitch:22           // ship order lanes SR-002…SR-028, spacing guessed; anchored on SR-018 in line with 164/165  // approximate
+  lanePitch:22           // ship order lanes SR-002…SR-028, numbers rise toward higher doors; anchored on SR-018 in line with 164/165, spacing guessed  // approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
@@ -356,7 +356,7 @@ function build(){
   pick(box(4,4,10,doorX(155),2,CFG.greenMile[1]+6,"--steel",0.4),{kind:"equip",id:"Auto scan",src:"sketch"});
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
-  const laneX=n=>(doorX(164)+doorX(165))/2+(18-n)/2*CFG.lanePitch, lz0=CFG.mezz[1]-1;
+  const laneX=n=>(doorX(164)+doorX(165))/2+(n-18)/2*CFG.lanePitch, lz0=CFG.mezz[1]-1;
   for(let n=2;n<=28;n+=2){
     const x=laneX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18||n===28;
     pick(rollerTable(x,lz0+15,30,0),{kind:"equip",id:id+" roller table",src:seen?"photo":"approx",note:"Ship order lane: parcels come down from the sorter and are built onto pallets"});
@@ -370,8 +370,11 @@ function build(){
     flat(x-4,x-1,lz0+31,lz0+34,"--tape-yellow",0.06,0.8);              // SHRINK WRAP spot
   }
   label("Ship order lanes SR-002 … SR-028",laneX(16),2,lz0+36,2.6,"--muted");
+  // one-way signs hanging over the green mile (photos)
+  label("ENTER HERE ↓",laneX(19)-8,16,CFG.greenMile[0]+4,2,"--panel",{bg:"--tape-green"});
+  label("DO NOT ENTER ↓",laneX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});
   // red staircase up to the mezzanine beside SR-018, with an ENTER HERE sign (photo)
-  {const x=laneX(19); // in the gap between SR-018 and SR-020
+  {const x=laneX(17); // in the gap between SR-018 and SR-016 (lower-door side of SR-018)
    pick(beam([x,CFG.mezzY,CFG.mezz[1]],[x,0.5,CFG.mezz[1]+22],4,0.6,"--s-full"),{kind:"equip",id:"Stairs to mezzanine",src:"photo",note:"Red staircase next to SR-018, yellow guardrail at its foot"});
    label("ENTER HERE",x,14,CFG.mezz[1]+10,1.6,"--tape-green",{bg:"--panel"});}
 
@@ -388,17 +391,19 @@ function build(){
   label("Flat sorter",cx,14,f1+4,3.4,"--fg");
   for(let k=0;k<20;k++)box(2.6,2.2,0.2,20+k*14,11,f1-1,"--fg",0.9);   // FLAT SORTER sign over each chute
   // building pillars with grid labels; only 1K-9 is placed by a photo, the others by direction (spacing guessed)
-  const p28=laneX(28)+6;
-  for(const [id,px,pz,src] of[["1K-9",p28,CFG.greenMile[1]+2,"photo"],["1J-9",p28,f1+6,"approx"],["1K-8",p28+50,CFG.greenMile[1]+2,"approx"]]){
+  // row K stands just past the green mile: 1K-7 a little past SR-018 (photo down the green mile), 1K-9 at SR-028; 1K-8 between
+  const p28=laneX(28)+6, p7=laneX(19), pz=CFG.greenMile[1]+2;
+  for(const [id,px,pz2,src] of[["1K-7",p7,pz,"photo"],["1K-8",(p7+p28)/2,pz,"approx"],["1K-9",p28,pz,"photo"],["1J-9",p28,f1+6,"approx"]]){const pz=pz2;
     const pl=box(1.6,30,1.6,px,15,pz,"--wall");box(2.2,3,2.2,px,1.5,pz,"--tape-yellow");box(1.7,2,1.7,px,24,pz,"--s-full");
     pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
     label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
   pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,laneX(16)-26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
   // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
-  line(198-2.5,f0-2-3,198-2.5,f0-2+20,"--s-full",0.6);
-  label("Handles toward the aisle",206.5,0.5,f0+6,0.9,"--tape-green",{weight:700});
-  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,200+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
+  const ax=laneX(26);
+  line(ax-4.5,f0-2-3,ax-4.5,f0-2+20,"--s-full",0.6);
+  label("Handles toward the aisle",ax+8.5,0.5,f0+6,0.9,"--tape-green",{weight:700});
+  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,ax-2+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
 }
 function addSpot(id,x,z,o={}){
   const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.6,0.12,CFG.spotD-0.6),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
