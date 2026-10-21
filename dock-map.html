@@ -567,15 +567,14 @@ function build(){
    for(let i=0;i<path.length-1;i++){const[a,b]=[path[i],path[i+1]];if(Math.hypot(b[0]-a[0],b[1]-a[1])>0.01)beam([a[0],y,a[1]],[b[0],y,b[1]],3,1,"--steel-dark");}
    pick(box(3,6,2,lx-rL,3,z1+rL,"--steel-dark"),{kind:"equip",id:"Flat sorter loop",src:"photo",note:"Where the flat sorter turns back, at pillar 1J-9; control cabinet underneath"});
    label("1J-9",lx-rL,27,z1+rL,2.4,"--fg",{bg:"--panel",weight:700});
-   // chutes on both sides of the U's outer leg (sketch: ~6 each side)
-   for(let k=0;k<6;k++){const zz=z1+20+k*(ztop-z1-34)/5;
-     for(const sd of[-1,1])pick(box(4,6,cw-0.6,rx+sd*4.5,3,zz,"--tape-yellow",0.35),{kind:"equip",id:"Flat sorter chute (U leg) "+(k+1)+(sd<0?"a":"b"),src:"sketch",note:"From your sketch: chutes on both sides of the far leg past the induct stations; count and spacing approximate"});}
-   // upper run: more chutes parallel to the built ones (right half), and more induct stations (middle)
-   for(let k=0;k<12;k++){const x=(cA+cB)/2+(k+0.5)*cw*1.6;
-     pick(box(cw-0.6,6,4,x,3,z2+5,"--tape-yellow",0.35),{kind:"equip",id:"Flat sorter chute (upper run) "+(k+1),src:"sketch",note:"From your sketch: more chutes on the upper run, parallel to the built ones; count approximate"});}
-   for(const [k,x] of[[5,(cA+cB)/2-20],[6,(cA+cB)/2-6]]){
-     pick(box(6,4,4,x,2,z2-4,"--tape-yellow",0.6),{kind:"equip",id:"Induct Station "+k+" (sketch)",src:"sketch",note:"From your sketch: more induct stations on the upper run; number and position approximate"});
-     label("INDUCT (sketch)",x,8,z2-4,1.4,"--fg",{bg:"--panel"});}
+   // the last leg of the U is lined with induct stations on both sides (sketch: ~5 each side)
+   const induct=(id,x,z,note)=>{pick(box(5,4,5,x,2,z,"--tape-yellow",0.6),{kind:"equip",id,src:"sketch",note});};
+   for(let k=0;k<5;k++){const zz=z1+16+k*(ztop-z1-30)/4;
+     induct("Induct (U leg, inside) "+(k+1),rx-4.5,zz,"From your sketch: induct stations on both sides of the last conveyor; count and spacing approximate");
+     induct("Induct (U leg, outside) "+(k+1),rx+4.5,zz,"From your sketch: induct stations on both sides of the last conveyor; count and spacing approximate");}
+   label("INDUCT STATIONS (sketch)",rx+10,8,(z1+ztop)/2,1.8,"--fg",{bg:"--panel"});
+   // upper run: more induct stations, parallel to those on the U leg (sketch: 3 marks near the U)
+   for(let k=0;k<3;k++)induct("Induct (upper run) "+(k+1),rx-uw-14-k*8,z2+4.5,"From your sketch: more induct stations on the upper run; number and position approximate");
    label("Flat sorter loop (sketch)",rx-uw/2,14,ztop-20,2.4,"--muted");}
   pick(box(4,6,1,cB+3,3,cz+15,"--s-full",0.6),{kind:"equip",id:"Jackpot chute",src:"photo",note:"JACKPOT sign at the induct end of the cart-side aisle (parcels the sorter can't place)"});
   label("JACKPOT",cB+3,9,cz+15,1.6,"--fg",{bg:"--panel"});
