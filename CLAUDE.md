@@ -91,6 +91,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - Lane screen S0118 (photo, SR-018): two columns, A–F on the left with arrows pointing left, G–L on the right pointing right; the screen faces into the lane, which matches the user's "A–F on the right seen from the green mile". Rows also show the dock door each location ships from (DD166, DD169, DD171, DD168, DD158); green = active, grey = idle. USER: do NOT put sort codes (destination codes), times or package counts on the map — location names only. The status box accepts id,status[,door]; tapping a spot rings the door it ships from.
 
+- SR-018-A floor label (photo): QR + location name on the floor, right next to yellow/black tape that edges the roller table. Every pallet lane location has one; the tape runs along both sides of the table.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
