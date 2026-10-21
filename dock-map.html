@@ -186,7 +186,8 @@ const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-door
 // pallet lanes are built evenly: SR-028 between scan lanes 29 and 27, SR-002 across from 177, the rest spread between
 const palletX=n=>laneX(28)+(28-n)/26*(laneX(2)-laneX(28));
 // building grid columns: wall labels M-10 (above 150/151) and M-6 (above 165/166) give the spacing, ~53 ft
-const pillarX=col=>doorPos(150.5)+(10-col)*(doorPos(165.5)-doorPos(150.5))/4;   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
+// column 6 beside SR-016 (photo at STG-U), 7 just past SR-018, 9 at SR-028: about 4 pallet lanes per column
+const pillarX=col=>palletX(16+4*(col-6));   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
 function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
@@ -440,12 +441,17 @@ function build(){
   // building pillars with grid labels; only 1K-9 is placed by a photo, the others by direction (spacing guessed)
   // row K stands just past the green mile: 1K-7 a little past SR-018 (photo down the green mile), 1K-9 at SR-028; 1K-8 between
   const p28=pillarX(9), pz=CFG.greenMile[1]+2;
-  for(const [id,px,pz2,src] of[["1K-7",pillarX(7),pz,"approx"],["1K-8",pillarX(8),pz,"approx"],["1K-9",p28,pz,"photo"],["1J-9",p28,f1+6,"approx"]]){const pz=pz2;
+  for(const [id,px,pz2,src] of[["1K-6",pillarX(6),pz,"photo"],["1K-7",pillarX(7),pz,"photo"],["1K-8",pillarX(8),pz,"approx"],["1K-9",p28,pz,"photo"],["1J-9",p28,f1+6,"approx"]]){const pz=pz2;
     const pl=box(1.6,30,1.6,px,15,pz,"--wall");box(2.2,3,2.2,px,1.5,pz,"--tape-yellow");box(1.7,2,1.7,px,24,pz,"--s-full");
     pick(pl,{kind:"equip",id:"Pillar "+id,src,note:"Building grid label. Letters change toward the flat sorter, numbers along it. Spacing not paced yet"});
     label(id,px,27,pz,2.4,"--fg",{bg:"--panel",weight:700});}
   DETAIL=true;pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});DETAIL=false;
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,palletX(16)-26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
+  // STG-U (from you): across the back green mile from door 166, on the left of lane SR-016 seen from the green mile, beside pillar 1K-6.
+  // Two columns running away from the green mile: odd 1–9 in one, even 2–8 in the other (which column is which: guessed)
+  {const ux=palletX(16)-9, uz=CFG.greenMile[1]+2;
+   for(let i=1;i<=9;i++){const odd=i%2===1,row=Math.floor((i-1)/2);addSpot("STG-U-"+i,odd?ux+2:ux-2,uz+CFG.spotD/2+row*CFG.spotD,{area:"Block U · across from door 166",short:"U-"+i});}
+   label("STG-U",ux,1.5,uz-0.8,1.6,"--tape-blue",{weight:700});}
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,palletX(16)-80+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
   // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed). Red tape marks its far edge
   const ax=palletX(26);
   line(ax-4.5,f0-2-3,ax-4.5,f0-2+20,"--s-full",0.6);
