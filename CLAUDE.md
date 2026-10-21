@@ -29,6 +29,8 @@ Wall outward, door 148 (low-door end, by the entrance) to door 180 (far end):
 
 Parcel flow (Flow toggle): induct stations → overhead conveyor → mezzanine sorter → (a) spirals → scan lanes → carts → cart doors, (b) MaxxReach → fluid doors 149–151, 153, 154, (c) pallet lanes → pallets → floor staging → door shown on the lane screen; flat sorter chutes → gaylords → floor staging → doors.
 
+- Photos (latest 6): the flat sorter is two-sided — gaylords on the staging side, go-cart chutes on the far side with its own aisle. It turns on a round overhead loop at pillar 1J-9 (STG-A end, control cabinet under it). JACKPOT chute + corrugate recycling at the induct end of the far aisle. An overhead conveyor bridge runs from the main mezzanine across the back green mile to the induct platform / flat sorter. Severe weather assembly area sign by the induct platform end. A floor label STG-V-8 near pillar 1K-4 by the jam-clearing ladders: an STG-V block exists there (not on the map, ask).
+
 ## Still open
 - SR-025 screens over 155/156 vs SR-025 at 157.
 - Name of the 10-spot block between STG-Y and STG-Z; ShipDock-Main layout; door 148 and 178–180 details.

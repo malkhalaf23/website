@@ -552,6 +552,16 @@ function build(){
     pick(fr,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute "+(k+1)+" of 40, counted from the STG-A end"});
     box(cw-1.6,0.3,4,x,0.15,cz+2.5,"--s-pallet",0.6);}
   box(cB-cA,1,4,(cA+cB)/2,9,cz+7,"--steel-dark");
+  // photos: the sorter is two-sided — gaylords face the staging aisle, cart chutes (go-carts) face the far aisle.
+  // At the STG-A end it turns on a round loop (carousel) at pillar 1J-9 with its control cabinet; a JACKPOT chute and
+  // corrugate recycling close the far aisle at the induct end; the overhead bridge from the main mezzanine feeds it
+  for(let k=0;k<40;k++)pick(box(cw-1,5,4,cA+(k+0.5)*cw,2.5,cz+12,"--tape-blue",0.25),{kind:"equip",id:"Cart chute "+(k+1),src:"photo",note:"Back side of flat sorter chute "+(k+1)+": a go-cart is filled here"});
+  {const lx=cA-10,lz=cz+7;const loop=new THREE.Mesh(new THREE.TorusGeometry(9,1,8,32),mat("--steel",0.9));loop.rotation.x=Math.PI/2;loop.position.set(lx,9,lz);scene.add(loop);
+   pick(box(3,6,2,lx,3,lz,"--steel-dark"),{kind:"equip",id:"Flat sorter loop",src:"photo",note:"Round overhead loop where the flat sorter turns, at pillar 1J-9; control cabinet underneath"});
+   label("1J-9",lx,27,lz,2.4,"--fg",{bg:"--panel",weight:700});}
+  pick(box(4,6,1,cB+3,3,cz+15,"--s-full",0.6),{kind:"equip",id:"Jackpot chute",src:"photo",note:"JACKPOT sign at the induct end of the cart-side aisle (parcels the sorter can't place)"});
+  label("JACKPOT",cB+3,9,cz+15,1.6,"--fg",{bg:"--panel"});
+  pick(box(6,0.1,6,palletX(9),0.05,CFG.greenMile[1]+30,"--tape-green",0.3),{kind:"equip",id:"Severe weather assembly area",src:"photo",note:"Hanging sign on the pillar by the induct platform end"});
   label("Flat sorter · 40 chutes",(cA+cB)/2,14,cz+4,3.4,"--fg");
   DETAIL=true;for(let k=0;k<40;k++)box(2.2,2.2,0.2,cA+(k+0.5)*cw,10.5,cz-0.2,"--fg",0.9);   // FLAT SORTER sign over each chute
   DETAIL=false;
