@@ -386,7 +386,6 @@ function build(){
   laneStage("STG-170",5,laneX(11)-4.5,170,"SR-011");
   // STG-169-1…4 on the lane's other side (higher-door side); both columns sit 1 ft off the 6 ft red zone
   laneStage("STG-169",4,laneX(11)+4.5,169,"SR-011");
-  for(let i=6;i<=9;i++)addSpot("STG-170-"+i,laneX(9)+4-(i-6)*CFG.spotW,37,{door:170,short:"170-"+i,lane:"SR-009"});
   // pillar 1L-5 stands by the spirals behind lane 11 (photo): row-L numbers fall toward higher doors, like row K
   {const px=pillarX(5),pz=CFG.mezz[0]+7,pl=box(2,30,2,px,15,pz,"--wall");box(2.6,4,2.6,px,2,pz,"--tape-yellow");box(2.1,2.5,2.1,px,24,pz,"--s-full");
    pick(pl,{kind:"equip",id:"Pillar 1L-5",src:"photo",note:"Behind lane SR-011, with a JAM CLEARING STATION board"});

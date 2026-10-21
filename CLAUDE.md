@@ -126,6 +126,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: lane SR-017 has only two staging spots, STG-163-11 and STG-163-12 (placed on its lower-door side behind the red zone; side is a guess).
 
+- FROM THE USER: remove STG-170-6…9 (lane SR-009 staging) — removed from the map.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
