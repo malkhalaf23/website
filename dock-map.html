@@ -267,7 +267,8 @@ function build(){
       const ln=+d.sr.slice(3);
       pick(rollerTable(sx,20,16,0.15),{kind:"equip",id:d.sr,src:"photo",note:"Dock lane: a spiral feeds an incline down to this roller table, which runs toward the door; the green mile (walkway) along the doors lies between it and the door. Sits between pallet lanes SR-0"+(ln+1)+" and SR-0"+(ln-1)+". Dunnage airbags often sit on it"});
       label(d.sr,sx,5,15,2.2,"--fg",{bg:"--panel",weight:700});
-      hatch(sx-3,sx+3,CFG.stagingStart,CFG.stagingStart+7);   // red keep-clear at the lane's dock end: 6 ft wide × 7 ft long (from you)
+      // no-staging zones (from you): red/white 6 ft wide × 7 ft long on each side of the table at the lane's dock end
+      hatch(sx-7.5,sx-1.5,CFG.stagingStart,CFG.stagingStart+7);hatch(sx+1.5,sx+7.5,CFG.stagingStart,CFG.stagingStart+7);
       pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+1.5,3,28],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
       DETAIL=true;pick(box(2.5,3,2,sx+6,1.5,CFG.mezz[0]-3,"--steel"),{kind:"equip",id:d.sr+" printer",src:"photo",note:"Label printer table with bins at the foot of the incline, next to the spiral guard (photo at STG-161)"});DETAIL=false;
     }
@@ -358,14 +359,14 @@ function build(){
   // STG-170: a row parallel to the wall, out past the lane tables, numbered from the higher-door end (1–3 read; 5 assumed)
   // STG-165 (photo): beside the 165 green mile on its higher-door side, a 6 × 7 ft red box at the dock end,
   // 1 ft gap, then STG-165-1…5 running out toward the spirals, alongside lane SR-015's table
-  {const x=doorX(165)+7.3, z0=9.5;
-   hatch(x-3,x+3,z0,z0+7);
-   for(let i=1;i<=5;i++)addSpot("STG-165-"+i,x,z0+8+CFG.spotD/2+(i-1)*CFG.spotD,{door:165,short:"165-"+i});}
+  // lane staging starts 1 ft past the lane's red zone (z 12–19) on the same side
+  const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,CFG.stagingStart+8+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
+  laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
-  for(let i=1;i<=5;i++)addSpot("STG-170-"+i,laneX(11)-6,CFG.stagingStart+CFG.spotD/2+(i-1)*CFG.spotD,{door:170,short:"170-"+i,lane:"SR-011"});
+  laneStage("STG-170",5,laneX(11)-4.5,170,"SR-011");
   // STG-169-1…4 on the lane's other side (higher-door side); both columns sit 1 ft off the 6 ft red zone
-  for(let i=1;i<=4;i++)addSpot("STG-169-"+i,laneX(11)+6,CFG.stagingStart+CFG.spotD/2+(i-1)*CFG.spotD,{door:169,short:"169-"+i,lane:"SR-011"});
+  laneStage("STG-169",4,laneX(11)+4.5,169,"SR-011");
   for(let i=6;i<=9;i++)addSpot("STG-170-"+i,laneX(9)+4-(i-6)*CFG.spotW,37,{door:170,short:"170-"+i,lane:"SR-009"});
   // pillar 1L-5 stands by the spirals behind lane 11 (photo): row-L numbers fall toward higher doors, like row K
   {const px=pillarX(5),pz=CFG.mezz[0]+7,pl=box(2,30,2,px,15,pz,"--wall");box(2.6,4,2.6,px,2,pz,"--tape-yellow");box(2.1,2.5,2.1,px,24,pz,"--s-full");

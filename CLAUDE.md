@@ -114,6 +114,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - USER RULE: only place staging the user has told me about. Removed all guessed staging (STG-160, 162, 163, old 165, 166, 168 columns and the unlabeled taped row at ~33 ft). Kept: STG-157 and STG-167 (labels read in photos — asked to confirm), 161, 165, 169, 170, 175–177, floor blocks U and L…A.
 - Lane staging pattern (photo at 165): a 6 × 7 ft red box at the dock end, 1 ft gap, then the staging spots. STG-165-1…5 run out from the wall beside the 165 green mile, on its higher-door side, toward lane SR-015.
 
+- FROM THE USER: red/white zone = no staging. Every scan lane has two, one on each side of the table at its dock end, 6 ft wide × 7 ft long, no text. Lane staging columns start 1 ft past them on the same side (laneStage()).
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
