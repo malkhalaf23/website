@@ -190,8 +190,8 @@ const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-door
 // SR-030 (from you): one more pallet lane 35 ft past SR-028 toward lower doors, in line with fluid door 152; it has no slots
 const palletX=n=>n>28?laneX(28)-35:laneX(28)+(28-n)/26*(laneX(2)-laneX(28));
 // building grid columns: wall labels M-10 (above 150/151) and M-6 (above 165/166) give the spacing, ~53 ft
-// column 6 beside SR-016 (photo at STG-U), 7 just past SR-018, 9 at SR-028: about 4 pallet lanes per column
-const pillarX=col=>palletX(16+4*(col-6));   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
+// column 6 beside SR-016 (photo at STG-U), column 5 between SR-012 and SR-010 (you + photo): evenly spaced from there
+const pillarX=col=>palletX(16)+(col-6)*(palletX(16)-palletX(11));   // column 9 at SR-028, 6 in line with 165; numbers fall toward higher doors
 function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
@@ -469,8 +469,8 @@ function build(){
    for(const k of[0,1]){const lx=palletX(2)+1+k*5;line(lx-2,z0,lx+2,z0,"--tape-blue",0.4);line(lx+2,z0,lx+2,z0+5,"--tape-blue",0.4);line(lx+2,z0+5,lx-2,z0+5,"--tape-blue",0.4);line(lx-2,z0+5,lx-2,z0,"--tape-blue",0.4);}
    pick(box(9,0.1,5,palletX(2)+3.5,0.05,z0+2.5,"--tape-blue",0.1),{kind:"equip",id:"Jam clearing ladders",src:"photo",note:"Two rolling ladders parked in taped spots at the lane 2 end of the induct platform"});
    // 1K-4 (photos): stands beside SR-002/004 across the green mile — closer than the 4-lane grid spacing predicts
-   {const qx=palletX(4)-3,pl=box(2,30,2,qx,15,z0+1,"--wall");box(2.6,4,2.6,qx,2,z0+1,"--tape-yellow");
-    pick(pl,{kind:"equip",id:"Pillar 1K-4",src:"photo",note:"Seen beside SR-002 and SR-004 across the green mile"});label("1K-4",qx,27,z0+1,2.4,"--fg",{bg:"--panel",weight:700});}
+   {const qx=pillarX(4),pl=box(2,30,2,qx,15,z0+1,"--wall");box(2.6,4,2.6,qx,2,z0+1,"--tape-yellow");
+    pick(pl,{kind:"equip",id:"Pillar 1K-4",src:"photo",note:"Across the green mile near SR-006 (grid spacing from 1K-6 and 1K-5); photos looked nearer SR-002/004"});label("1K-4",qx,27,z0+1,2.4,"--fg",{bg:"--panel",weight:700});}
    pick(box(4,4,4,x0-4,2,z0+3,"--tape-blue"),{kind:"equip",id:"Corrugate recycling",src:"photo",note:"Blue corrugate bin and grey TRASH ONLY bin at the end of the induct platform"});}
   // department entrance side, past STG-AB toward lower doors (walk-through photos; all positions approximate):
   // the back green mile carries on past AB, pallet storage sits behind the fluid doors, then the walkway turns out past the

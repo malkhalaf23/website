@@ -152,6 +152,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - Photos from SR-002 and pillar 1K-4: the induct platform runs on from the stations to about lane 2, with an overhead conveyor crossing the back green mile from the main mezzanine there, two jam-clearing ladders in taped spots, electrical panels, and orange-padded pillars along its whole front. Pillar 1K-4 stands beside SR-002/SR-004 — that does not fit the 4-lanes-per-column grid (which puts 1K-4 at lane 8), so pallet lane spacing below lane 12 is probably tighter than drawn, or 1K-5 sits nearer lane 8. Recheck with a photo of 1K-5 and the lane sign beside it.
 
+- FROM THE USER + photo: pillar 1K-5 is between lanes 12 and 10 (6 FT / K5 mark, SR-010 beside it, door 178 visible). Grid now pillarX(c)=palletX(16)+(c-6)*(palletX(16)-palletX(11)) — ~2.5 pallet lanes (~58 ft) per column. That puts 1K-4 ≈ SR-006, 1K-7 ≈ SR-021, 1K-9 ≈ SR-031 (beside SR-028/030). Resolves the 1K-4 conflict.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
