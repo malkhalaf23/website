@@ -276,7 +276,7 @@ function build(){
   {const p=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,28,10),mat("--wall"));p.position.set(doorX(150)+half,14,0.9);scene.add(p);
    label("STORM DRAIN",doorX(150)+half,6,1.6,0.9,"--tape-green",{bg:"--panel"});}
   for(const hx of[doorX(149)+half,doorX(156),doorX(166),doorX(172)])
-    pick(box(5,6,0.2,hx,22,hx<doorX(151)?8:CFG.mezz[0]-1,"--s-full",0.85),{kind:"equip",id:"Prohibited hazmat sign",src:hx<doorX(151)?"photo":"approx",note:"Hanging sign listing hazmat labels that may not ship"});
+    pick(box(5,6,0.2,hx,22,hx<doorX(151)?8:CFG.mezz[0]-1,"--s-full",0.85),{kind:"equip",id:"Prohibited hazmat sign",src:hx===doorX(156)?"approx":"photo",note:"Hanging sign listing hazmat labels that may not ship"});
   // STOP decals where walkways cross (photos at 154, 157/158, 162 and down the dock)
   for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(168)+9,11]]){
     const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
@@ -298,11 +298,17 @@ function build(){
    pick(box(10,0.1,2,doorX(162)+10.5,0.05,1.5,"--s-full",0.5),{kind:"equip",id:"Sprinkler risers 621–643",src:"photo",note:"With electrical panels, on the wall between 162 and 163"});
    hatch(doorX(162)+5,doorX(162)+16,10,16);}
   // repeating roller tables with airbags and keep-clear hatching, seen down the dock (spacing approximate)
-  for(const n of[165,171,173]){ // 165/166 seen in the 166–169 photo; 171+ only in the long view down the dock
+  for(const n of[165,173]){ // 165/166 seen in the 166–169 photo; 173 only in the long view down the dock
     const seen=n===165, tx=seen?doorX(n)-1:doorX(n)+half;
     hatch(tx-8,tx+8,13,23);
     pick(rollerTable(tx,18,14,Math.PI/2,0.9),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:seen?"photo":"approx",note:seen?"Dunnage airbags on it, next to the carts at 166":"Seen down the dock with dunnage airbags; exact door not confirmed"});
   }
+  // STG-170: a row parallel to the wall, numbered from the higher-door end (170-1 to 170-3 read; 5 spots assumed, position approx.)
+  for(let i=1;i<=5;i++)addSpot("STG-170-"+i,doorX(170)+18-(i-1)*CFG.spotW,24,{door:170,approx:true,short:"170-"+i});
+  // behind that row: a roller table along the wall direction, fed by an incline from a spiral (photo from the 170 row)
+  {const tx=doorX(171)+2;
+   pick(rollerTable(tx,39,20,Math.PI/2),{kind:"equip",id:"Roller table 170/172",src:"photo",note:"Runs along the dock, fed by an incline from a spiral. Hearing protection and DANGER signs on its posts"});
+   pick(beam([tx-6,CFG.mezzY-4,CFG.mezz[0]+2],[tx+6,3,39],2.4,0.4,"--steel",0.85),{kind:"equip",id:"Incline to roller table 170/172",src:"photo"});}
   pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel-dark"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
   {const x=doorX(154)+half-4;flat(x-2.5,x+2.5,33,38,"--tape-blue",0.06,0.5);
    pick(box(5,0.2,5,x,0.1,35.5,"--tape-blue",0.2),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
@@ -327,6 +333,7 @@ function build(){
   for(let x=doorX(150);x<mx1-4;x+=CFG.doorPitch){
     const s=new THREE.Mesh(helixGeo,spiralMat);s.position.set(x,0,m0+4);scene.add(s);mezzParts.push(s);
     const ring=new THREE.Mesh(new THREE.RingGeometry(2.2,4.4,24),mat("--steel",0.6,{side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,0.08,m0+4);scene.add(ring);
+    const guard=new THREE.Mesh(new THREE.CylinderGeometry(2.6,2.6,4,8),mat("--tape-yellow",0.9));guard.position.set(x,2,m0+4);scene.add(guard);mezzParts.push(guard); // yellow guard round each spiral foot
   }
   label("Mezzanine sorter · spiral chutes",cx,2,m0+10,2.8,"--muted");
 
