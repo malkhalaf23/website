@@ -109,6 +109,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER + photo: lane SR-009 has staging STG-170-6 … STG-170-9, a row of 4 along the dock just past the lane's table; facing away from the door, 6 is on the left (higher-door side) and 9 on the right. STG-170-1…5 belong to lane SR-011 (user + photo): a column of 5 on the lane's right facing away from the door, starting at the keep-clear and running out beside the table. Pillar 1L-5 behind lane 11 (photo) — row L numbers fall toward higher doors, matching pillarX().
 
+- FROM THE USER: each scan lane has a red keep-clear zone 6 ft wide × 7 ft long at its dock end; staging columns sit 1 ft off it. Lane SR-011: STG-170-1…5 on its right (facing away from the door), STG-169-1…4 on its left.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
