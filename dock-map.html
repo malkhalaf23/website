@@ -92,7 +92,7 @@ const CFG = {
   gapAfter162:32,     // riser wall + W022 exit sit between 162 and 163
   stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
   walkwayZ:42,         // walkway running behind the staging columns
-  mezz:[44,58], greenMile:[85,93], flat:[105,119]  // from sketch, positions approximate
+  mezz:[44,58], greenMile:[85,93], flat:[105,135]  // from sketch, positions approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
@@ -232,15 +232,23 @@ function build(){
   label("Green mile",cx,2,(g0+g1)/2,7,"--tape-green");
   const [f0,f1]=CFG.flat;
   for(let k=0;k<10;k++) pick(box(14,10,8,30+k*30,5,f1,"--s-pallet",0.5),{kind:"equip",id:"Flat sorter chute "+(k+1),src:"photo",note:"Exact positions not surveyed yet"});
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,null);}
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,null,false,"Block F · flat sorter");}
+  // SR-028 at the flat sorter (pillar 1K-9): roller table with SR-028-A–F on one side and G–L on the other (photo; layout approximate)
+  {const x=150,z0=f0-4;
+   pick(box(3,2.6,30,x,1.3,z0+15,"--steel",0.8),{kind:"equip",id:"SR-028 roller table",src:"photo",note:"Station screen S0128 lists SR-028-A to SR-028-L. Pillar 1K-9"});
+   pick(box(2,9,2,x,4.5,z0-2,"--muted"),{kind:"equip",id:"SR-028 station",src:"photo",note:"Printer, screen S0128, on building pillar 1K-9"});
+   "ABCDEF".split("").forEach((c,i)=>addSpot("SR-028-"+c,x-4,z0+CFG.spotD/2+i*CFG.spotD,null,false,"SR-028 · flat sorter"));
+   "GHIJKL".split("").forEach((c,i)=>addSpot("SR-028-"+c,x+4,z0+CFG.spotD/2+i*CFG.spotD,null,false,"SR-028 · flat sorter"));}
+  // STG-A: 2 columns × 4, odd numbers on the aisle side (photo; position not surveyed)
+  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,200+col*CFG.spotW,f0-2+row*CFG.spotD,null,false,"Block A · position unknown");}
   label("Flat sorter (approx.)",160,14,f1,7,"--muted");
 }
-function addSpot(id,x,z,door,inferred){
+function addSpot(id,x,z,door,inferred,area){
   const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.5,0.25,CFG.spotD-0.5),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
   m.position.set(x,0.13,z);scene.add(m);
   const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CFG.spotW,0.28,CFG.spotD)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
   e.position.copy(m.position);scene.add(e);themed.push([e.material,"--tape-blue"]);
-  spots[id]=pick(m,{kind:"spot",id,door,status:"empty",src:inferred?"inferred":door?"photo":"approx"});
+  spots[id]=pick(m,{kind:"spot",id,door,area,status:"empty",src:inferred?"inferred":door?"photo":"approx"});
 }
 build();
 
@@ -249,7 +257,7 @@ function progress(){
   const total=CFG.lastDoor-CFG.firstDoor+1, done=Object.keys(DOORS).length;
   document.getElementById("barfill").style.width=(done/total*100)+"%";
   const todo=[];for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++) if(!DOORS[n]) todo.push(n);
-  document.getElementById("prog").innerHTML=`${done} of ${total} doors confirmed · ${Object.keys(spots).filter(k=>!k.startsWith("STG-F")).length} dock spots mapped<br><em>Next up: doors ${todo[0]}–${todo[todo.length-1]}</em>`;
+  document.getElementById("prog").innerHTML=`${done} of ${total} doors confirmed · ${Object.values(spots).filter(o=>o.userData.door).length} dock spots · ${Object.values(spots).filter(o=>!o.userData.door).length} sorter-side spots<br><em>Next up: doors ${todo[0]}–${todo[todo.length-1]}</em>`;
 }
 progress();
 
@@ -278,7 +286,7 @@ function select(o){
   const info=document.getElementById("info");
   if(!o){info.textContent="Tap a door, staging spot or piece of equipment.";return;}
   const u=o.userData,tag=u.src?`<span class="src">${SRC[u.src]}</span>`:`<span class="src">Not surveyed yet</span>`;
-  if(u.kind==="spot"){o.scale.y=4;info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:"Flat sorter"} · ${CFG.spotW} × ${CFG.spotD} ft · ${NAMES[u.status]}<br>${tag}`;}
+  if(u.kind==="spot"){o.scale.y=4;info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft · ${NAMES[u.status]}<br>${tag}`;}
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
 
