@@ -394,8 +394,9 @@ function build(){
     const x=palletX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18;
     pick(rollerTable(x,lz0+15,30,0),{kind:"equip",id:id+" roller table",src:seen?"photo":"approx",note:"Ship order lane: parcels come down from the sorter and are built onto pallets"});
     beam([x,CFG.mezzY,CFG.mezz[1]-3],[x,3,lz0+1],2.4,0.4,"--steel",0.85);
-    "ABCDEF".split("").forEach((c,i)=>addSpot(id+"-"+c,x-4.5,lz0+CFG.spotD/2+i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
-    "GHIJKL".split("").forEach((c,i)=>addSpot(id+"-"+c,x+4.5,lz0+CFG.spotD/2+i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
+    // standing on the back green mile facing the lane: A–F on the right (higher-door side), G–L on the left, A and G nearest you
+    "ABCDEF".split("").forEach((c,i)=>addSpot(id+"-"+c,x+4.5,lz0+30-CFG.spotD/2-i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
+    "GHIJKL".split("").forEach((c,i)=>addSpot(id+"-"+c,x-4.5,lz0+30-CFG.spotD/2-i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
     const pole=box(0.5,12,0.5,x,6,lz0+31.5,"--steel-dark");box(5,2.4,0.3,x,10.5,lz0+31.5,"--steel-dark");
     pick(pole,{kind:"equip",id,src:seen?"photo":"approx",note:"Ship order lane "+id+": locations "+id+"-A to -L. Twin screens and andon light on the pole, printer and shrink wrap at its foot"+(seen?"":". Position by spacing only")});
     label(id,x,13.5,lz0+31.5,2.2,"--fg",{bg:"--panel",weight:700});

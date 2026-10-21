@@ -87,11 +87,13 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Third pass: 176/177 keep-clear between spot 1 and the wall is yellow/black (not red), and both blocks are framed in green tape; STG-176 odd spots on the lower-door column, confirmed. Hanging SHIPPING CLERK and "Truckers cage" signs at the driver's cage. Every door has a TDR COMPLETE sign and a KEYS box.
 - PHOTO VS USER CONFLICTS (left as the user said, asked to recheck): (1) 151 and 152 photos show open dock plates with carts and no MaxxReach, only 149/150 and 153/154 booms visible; (2) the twin SR-025 screens hang over 155/156 with a roller table at 156, while the user puts SR-029 at 155 and SR-025 at 157.
 
+- FROM THE USER, pallet lane spots: standing on the back green mile at the end of a ship order lane, facing the lane, A–F run on the right-hand side (higher-door side) and G–L on the left. Assumed A and G are the spots nearest the green mile (to confirm).
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
-- Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167. Which side of each lane holds A–F.
+- Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167.
 - Stage areas at 173–175: how many columns and spots each. STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
 - Real door spacing and the 162→163 gap, by pacing it off.
 
