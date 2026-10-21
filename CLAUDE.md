@@ -21,6 +21,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Doors 166–169 (photo): STG-167 is 1 column of 4 spots (not 5), sitting between 167 and 168, on the higher-number side. So the "lower-number side" rule does not hold everywhere. Carts on blue tape at 165/166 (STG-166 inferred, 4 spots assumed). Red/white hatching in front of 166–168. SR-013 (twin screens) hangs in front of 169 with its roller table and incline at 169/170. Airbag roller table at 165/166. Posters: 168 "Keep safe spacing between moving carts", 166 PPE. Louvers above 168, 169. Screen DD166.
 - STG-168 (photo from the 168 apron looking out): 168-1 nearest the door, 168-2 behind it; column sits between 168 and 169, so 166–169 columns sit on the higher-number side of their door. 4 spots assumed. Further out, a row of spots parallel to the wall with STG-1… labels (the taped lane at ~33 ft). STOP decal at the walkway by 168/169.
 - STG-170 (photo): a ROW parallel to the wall, not a column. 170-1 at the higher-door end, then 170-2, 170-3… toward lower doors; ~5 spots. Placed at ~24 ft out, just past SR-013's table (position approx). Behind it, a roller table runs along the dock at ~39 ft, fed by an incline from a spiral; hearing-protection and DANGER signs on its posts. Every spiral foot has a yellow octagonal guard. Hazmat signs hang along the mezzanine edge here.
+- In front of 165 (photo): a walkway runs from the main walkway straight out under the mezzanine (with a small jog) toward the green mile. STOP and "check dome mirror" decals at its foot, bollards and a hearing-protection sign where it passes under the deck. Pillar 1L-6 stands just past the spirals in line with 165. A taped column with carts sits left of the walkway (STG-165, label unread); a pallet sits on STG-166's tape to the right. Stations with screens and inclines sit either side (near 164 and 166/167), numbers not read.
+- Pillar grid: row L is the dock-side row (1L-6 at 165, ~50 ft out), row K is one bay further (1K-9 at SR-028), J further again. So a bay is roughly 50 ft deep. Which way the numbers run along the dock is still unknown.
 - SR numbers drop going up the dock: 025 (155), 023 (158), 021 (162), 013 (169). So 019/017/015 probably sit at 163–168, not seen yet.
 - Door 176 staging: 2 columns, 8 spots, odd numbers front, even behind.
 - MaxxReach extendable conveyors at doors 149, 150 and 154, each with taped and chained keep-out areas. 151 and 152 have no conveyor.
@@ -50,7 +52,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Confirm the 153 MaxxReach and the 152/153 exit. Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
 - Readable labels for the STG-160, STG-162 and STG-163 columns.
-- Doors 170–175 up close (roller tables there are approximate). STG-166 label; how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
+- Doors 170–175 up close (roller tables there are approximate). STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
 - Real door spacing and the 162→163 gap, by pacing it off.
 
 ## Working style

@@ -138,7 +138,7 @@ const DOORS = {
   162:{src:"photo", load:"cart", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
   163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}},
   164:{src:"photo"},
-  165:{src:"photo"},
+  165:{src:"photo", load:"cart", staging:{cols:1,spots:4,off:-5,inferred:true}, note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
   166:{src:"photo", load:"cart", hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-4,inferred:true}, note:"Carts staged on blue tape in front of 165/166; label not read"},
   167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
   168:{src:"photo", load:"cart", hatch:true, louver:true, poster:"Keep safe spacing between moving carts", staging:{cols:1,spots:4,off:5.5,inferred:true}, note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169, toward SR-013"},
@@ -281,7 +281,7 @@ function build(){
   for(const [sx,sz] of[[doorX(154)+half+3,10],[doorX(157)+half+3,6],[doorX(161)+4.6,36],[doorX(168)+9,11]]){
     const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(sx,0.12,sz);scene.add(st);}
   // go-carts park in a taped lane on the sorter side of the aisle past 165 (photo; carts not modelled)
-  for(let x=doorX(165)+4;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
+  for(let x=doorX(165)+9;x<doorX(175)+4;x+=4.2)addSpot(null,x,33,{note:"Taped lane of staging spots on the sorter side (labels start STG-1…, not readable yet)"});
   // dome mirror and floor sign at the corner by the PIT area (photo)
   {const m=new THREE.Mesh(mirrorGeo,mat("--steel",0.95));m.rotation.x=Math.PI;m.position.set(doorX(176)+CFG.doorPitch+3,14,8);scene.add(m);
    label("Check dome mirror",doorX(176)+4,0.5,6,1,"--s-full",{weight:700});}
@@ -303,6 +303,22 @@ function build(){
     hatch(tx-8,tx+8,13,23);
     pick(rollerTable(tx,18,14,Math.PI/2,0.9),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:seen?"photo":"approx",note:seen?"Dunnage airbags on it, next to the carts at 166":"Seen down the dock with dunnage airbags; exact door not confirmed"});
   }
+  // in front of 165 (photo): walkway straight out under the mezzanine past pillar 1L-6, with a jog; STOP + dome-mirror decals at its foot
+  {const x=doorX(165)+3.5;
+   walk([[x,8.1],[x,30],[x-2.5,35],[x-2.5,CFG.greenMile[0]]]);
+   hatch(doorX(164)+1,doorX(165)-1.5,6,12);
+   const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(x+4,0.12,12);scene.add(st);
+   label("Check dome mirror",x,0.5,11,0.9,"--s-full",{weight:700});
+   for(const bx of[x-4,x+3])box(0.6,4,0.6,bx,2,CFG.mezz[0]-1,"--tape-yellow");   // bollards where it passes under the deck
+   pick(box(1.2,5,0.3,x+3,2.5,CFG.mezz[0]+1,"--tape-pink"),{kind:"equip",id:"Hearing protection sign",src:"photo",note:"On a stand where the 165 walkway passes under the mezzanine"});
+   const pl=box(2,30,2,doorX(165)+0.5,15,CFG.mezz[0]+7,"--wall");box(2.6,4,2.6,doorX(165)+0.5,2,CFG.mezz[0]+7,"--tape-yellow");box(2.1,2.5,2.1,doorX(165)+0.5,24,CFG.mezz[0]+7,"--s-full");
+   pick(pl,{kind:"equip",id:"Pillar 1L-6",src:"photo",note:"Straight out from door 165, just past the spirals. Row L is the dock-side row; K (at SR-028) and J lie further toward the flat sorter"});
+   label("1L-6",doorX(165)+0.5,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
+   // stations with screens and inclines either side of the walkway (numbers not read; maybe SR-015/017/019)
+   for(const [sx,id] of[[doorX(164)-3,"Station near 164"],[doorX(166)+5,"Station near 166/167"]]){
+     pick(rollerTable(sx,36,12,0),{kind:"equip",id:id+" roller table",src:"approx",note:"Fed by an incline from a spiral; station number not read"});
+     beam([sx,CFG.mezzY-3,CFG.mezz[0]+2],[sx,3,40],2.4,0.4,"--steel",0.85);
+     pick(box(3.4,2.2,0.3,sx+2,12,CFG.mezz[0]-2,"--steel-dark"),{kind:"equip",id:id+" screen",src:"photo",note:"Station screen hanging by the spiral; text not read"});}}
   // STG-170: a row parallel to the wall, numbered from the higher-door end (170-1 to 170-3 read; 5 spots assumed, position approx.)
   for(let i=1;i<=5;i++)addSpot("STG-170-"+i,doorX(170)+18-(i-1)*CFG.spotW,24,{door:170,approx:true,short:"170-"+i});
   // behind that row: a roller table along the wall direction, fed by an incline from a spiral (photo from the 170 row)
