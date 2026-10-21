@@ -68,7 +68,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER, pallet lanes: each even (ship order) lane sits between its odd neighbours: SR-028 between 29 and 27, SR-026 between 27 and 25, SR-020 between 21 and 19, and so on. Odd scan lanes stop at SR-007; pallet lanes continue to SR-002, which sits across from 177. Anchors [29,153] (user thinks scan lanes start at 29) and [2,177] added, so SR-006 ≈ 173, SR-004 ≈ 175.
 
-- CORRECTION FROM THE USER: auto scan lanes start at door 155 with SR-029 in front of 155. SR-025 at 157 and SR-023 at 159 stay as stated earlier, so SR-027 is placed at 156 (my inference; to confirm). Pallet lanes follow: SR-028 ≈ 155.5, SR-026 ≈ 156.5. Nothing in front of 153.
+- CORRECTION FROM THE USER: auto scan lanes start at door 155 with SR-029 in front of 155. SR-025 at 157 and SR-023 at 159 stay as stated earlier, so SR-027 is at 156 (confirmed by the user). Pallet lanes follow: SR-028 ≈ 155.5, SR-026 ≈ 156.5. Nothing in front of 153.
 
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
