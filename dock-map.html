@@ -625,8 +625,10 @@ function flowArrow(pts,token,y=24){
 function flowLabel(t,x,z,tok){const l=label(t,x,26,z,2.4,"--panel",{bg:tok,weight:700});flowParts.push(l);}
 {const gm=CFG.greenMile[0]-2, mz=(CFG.mezz[0]+CFG.mezz[1])/2, ind=CFG.greenMile[1]+12;
  // 1 induct → sorter
- flowArrow([[palletX(8),ind],[palletX(3),ind],[palletX(3),mz]],"--accent");
- flowLabel("1 Induct → sorter",palletX(6),ind+6,"--accent");
+ // 1 induct stations put packages onto the flat sorter loop (you): platform stations 1–4 drop onto the bottom run
+ const fz=CFG.greenMile[1]+2+5*CFG.spotD+4+7;
+ flowArrow([[palletX(8),ind],[palletX(8),fz],[palletX(18),fz]],"--accent");
+ flowLabel("1 Induct stations → flat sorter loop",palletX(8),ind-6,"--accent");
  // 2 sorter → spirals → scan lane → carts → cart door
  flowArrow([[laneX(21),mz],[laneX(21),20],[doorX(161),3]],"--tape-green");
  flowLabel("2 Scan lane → carts → trailer",laneX(21),14,"--tape-green");
@@ -638,7 +640,7 @@ function flowLabel(t,x,z,tok){const l=label(t,x,26,z,2.4,"--panel",{bg:tok,weigh
  flowLabel("4 Pallet lane → staging → door",palletX(18)+12,gm-12,"--s-pallet");
  // 5 flat sorter chute → gaylord → floor staging → door
  flowArrow([[palletX(20),CFG.greenMile[1]+40],[palletX(20),CFG.greenMile[1]+10]],"--s-full");
- flowLabel("5 Flat sorter → gaylord → staging",palletX(20),CFG.greenMile[1]+44,"--s-full");}
+ flowLabel("5 Flat sorter chutes → gaylords / carts → staging",palletX(20),CFG.greenMile[1]+44,"--s-full");}
 
 /* ===== cameras: an orthographic plan (default) and a perspective 3D view ===== */
 const persp=new THREE.PerspectiveCamera(45,1,1,4000), ortho=new THREE.OrthographicCamera(-1,1,1,-1,-1000,2000);
