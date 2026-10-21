@@ -92,30 +92,32 @@ const CFG = {
   gapAfter162:32,     // riser wall + W022 exit sit between 162 and 163
   stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
   walkwayZ:42,         // walkway running behind the staging columns
-  mezz:[55,67], greenMile:[85,93], flat:[105,119]  // from sketch, positions approximate
+  mezz:[44,58], greenMile:[85,93], flat:[105,119]  // from sketch, positions approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
-  149:{src:"photo", maxreach:true, note:"Door screen shows its load (e.g. DD149 · CP-CENTRAL)"},
-  150:{src:"photo", maxreach:true, note:"MaxxReach unit; keep-out hatching in front"},
-  151:{src:"photo", note:"No conveyor; open floor in front, likely loaded from carts"},
-  152:{src:"photo", note:"No conveyor; carts staged nearby"},
-  153:{src:"photo", note:"Setup in front not confirmed yet"},
-  154:{src:"photo", maxreach:true, note:"AED on wall to the right"},
-  155:{src:"photo", sr:"SR-025"},
+  149:{src:"photo", maxreach:true, load:"fluid", note:"Screen: DD149 · UR-GROUND · CP-CENTRAL"},
+  150:{src:"photo", maxreach:true, load:"fluid", note:"MaxxReach unit; keep-out hatching in front"},
+  151:{src:"photo", load:"cart?", note:"No conveyor; open floor in front, likely loaded from carts"},
+  152:{src:"photo", load:"cart?", note:"No conveyor; carts staged nearby. Screen: AZNG route"},
+  153:{src:"photo", maxreach:"inferred", load:"fluid", note:"Door closed; a second MaxxReach boom sits beside 154's with its wall end at 153. Screen: DD153"},
+  154:{src:"photo", maxreach:true, load:"fluid", note:"AED on wall to the right"},
+  155:{src:"photo", sr:"SR-025", note:"Marked \"DP\" on your sketch"},
   156:{src:"photo", hatch:true},
-  157:{src:"photo", staging:{cols:1,spots:5}},
+  157:{src:"photo", load:"cart", staging:{cols:1,spots:5}},
   158:{src:"photo", sr:"SR-023", note:"Kiosk and walkway between 157 and 158"},
   159:{src:"photo", hatch:true},
-  160:{src:"photo", staging:{cols:1,spots:5,inferred:true}, note:"Clear path in front for dock carts"},
-  161:{src:"photo", hatch:true, staging:{cols:1,spots:5}},
-  162:{src:"photo", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
-  163:{src:"photo", staging:{cols:1,spots:5,off:6,inferred:true}},
+  160:{src:"photo", load:"cart", staging:{cols:1,spots:5,inferred:true}, note:"Screen: DD160 · DYT3-CART-A. Column seen between 159 and 160, label not read"},
+  161:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:5}},
+  162:{src:"photo", load:"cart", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
+  163:{src:"photo", load:"cart", staging:{cols:1,spots:5,off:6,inferred:true}},
   164:{src:"photo"},
   165:{src:"photo"},
-  176:{src:"photo", staging:{cols:2,spots:8}}
+  176:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8}, note:"Another 2-column block sits past this one, then the PIT charging area"}
 };
 const STATUSES=["empty","cart","pallet","full","ready"];
+// Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
+const LOADS={fluid:"Fluid (MaxxReach)",cart:"Carts","cart?":"Carts (guess: no conveyor)"};
 const NAMES={empty:"Empty",cart:"Cart staged",pallet:"Pallet",full:"Full / needs load",ready:"Ready to load"};
 
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -155,14 +157,14 @@ function build(){
   box(W+15,30,1,cx,15,-0.5,"--wall");
   for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++){
     const d=DOORS[n], x=doorX(n), seen=!!d;
-    pick(box(9,10,0.6,x,5,0.3,seen?"--door":"--door-faint"),{kind:"door",n,id:"Door "+n,src:seen?"photo":null,note:d&&d.note});
+    pick(box(9,10,0.6,x,5,0.3,seen?"--door":"--door-faint"),{kind:"door",n,id:"Door "+n,src:seen?"photo":null,note:d&&d.note,load:d&&d.load});
     label(String(n),x,12.5,1,4,seen?"--fg":"--muted");
     flat(x-4.5,x+4.5,0.6,5,"--amz-yellow",0.07,seen?1:0.35);   // dock leveler / apron
     if(!d) continue;
     if(d.hatch) hatch(x-5,x+5,6,12);
     if(d.fluid) pick(box(3,2.5,24,x,1.25,17,"--steel",0.45),{kind:"equip",id:"Fluid lane · Door "+n,src:"sketch",note:"Floor-loaded lane from your sketch"});
     if(d.maxreach){
-      pick(box(6,4,32,x,2,21,"--steel"),{kind:"equip",id:"Max-reach conveyor · Door "+n,src:"photo",note:"Extends into the trailer; keep-out tape and chain around it"});
+      pick(box(6,4,32,x,2,21,"--steel"),{kind:"equip",id:"Max-reach conveyor · Door "+n,src:d.maxreach===true?"photo":"inferred",note:"Extends into the trailer; keep-out tape and chain around it"});
       hatch(x-6,x+6,5,38);
     }
     if(d.sr){ // station between this door and the next, with its roller table angled toward the dock
@@ -170,6 +172,9 @@ function build(){
       pick(box(2,9,2,sx,4.5,20,"--muted"),{kind:"equip",id:d.sr+" station",src:"photo",note:"Between doors "+n+" and "+(n+1)+" · monitor, andon light, printer"});
       const r=pick(box(3,2.6,15,sx,1.3,13,"--steel",0.8),{kind:"equip",id:d.sr+" roller table",src:"photo",note:"Feeds toward the doors; dunnage airbags often sit on it"});
       r.rotation.y=0.25;
+      // incline coming down from the sorter to the roller table (photos at 157–161)
+      const inc=pick(box(2.5,0.6,CFG.mezz[0]-20,sx+3,7,(CFG.mezz[0]+20)/2,"--steel",0.6),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter feeding this station"});
+      inc.rotation.x=-0.3;
     }
     if(d.staging){
       // columns sit just to the lower-number side of their door
@@ -203,10 +208,18 @@ function build(){
     pick(box(14,2.6,3,doorX(n)+half,1.3,18,"--steel",0.45),{kind:"equip",id:"Roller table near "+n+"/"+(n+1),src:"approx",note:"Seen down the dock; exact door not confirmed"});
     hatch(doorX(n)+half-8,doorX(n)+half+8,13,23);
   }
+  // exit door between 152 and 153 (sketch only)
+  pick(box(4,8,0.8,doorX(152)+half,4,0.4,"--hatch",0.6),{kind:"equip",id:"Exit (152/153)",src:"sketch",note:"Marked on your sketch; not seen in photos yet"});
+  // past 176: a second staging block (label not read) and the fenced PIT charging area (photo)
+  {const x=doorX(176)+CFG.doorPitch;
+   flat(x-9.2,x-1.2,CFG.stagingStart,CFG.stagingStart+20,"--tape-blue",0.07,0.35);
+   pick(box(8,0.3,20,x-5.2,0.15,CFG.stagingStart+10,"--s-empty",0.01),{kind:"equip",id:"Staging block past 176",src:"approx",note:"2 columns like 176's; label not read. Maybe door 177?"});
+   pick(box(1,7,40,x+6,3.5,26,"--amz-yellow",0.7),{kind:"equip",id:"PIT charging area",src:"photo",note:"Fenced with yellow barrier and netting, at the end of the dock"});
+   label("PIT charging",x+16,9,26,5,"--muted");}
   pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
   pick(box(4,1,5,doorX(154)+half-4,0.5,36,"--tape-blue",0.6),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
   // overhead feed from max-reach units toward the sorter (from photo + sketch arcs)
-  [149,150,154].forEach(n=>{const f=box(3,0.6,26,doorX(n)+8,9,44,"--steel",0.7);f.rotation.y=-0.5;});
+  [149,150,153,154].forEach(n=>{const f=box(3,0.6,26,doorX(n)+8,9,44,"--steel",0.7);f.rotation.y=-0.5;});
   // auto scan + palletizing (sketch)
   pick(box(4,4,10,doorX(155),2,58,"--steel",0.45),{kind:"equip",id:"Auto scan",src:"sketch"});
   for(let k=0;k<4;k++) pick(box(2.5,2.5,16,doorX(156)+k*CFG.doorPitch,1.25,60,"--steel",0.45),{kind:"equip",id:"Palletizing lane "+(k+1),src:"sketch"});
@@ -266,7 +279,7 @@ function select(o){
   if(!o){info.textContent="Tap a door, staging spot or piece of equipment.";return;}
   const u=o.userData,tag=u.src?`<span class="src">${SRC[u.src]}</span>`:`<span class="src">Not surveyed yet</span>`;
   if(u.kind==="spot"){o.scale.y=4;info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:"Flat sorter"} · ${CFG.spotW} × ${CFG.spotD} ft · ${NAMES[u.status]}<br>${tag}`;}
-  else info.innerHTML=`<b>${u.id}</b>${u.note?u.note+"<br>":""}${tag}`;
+  else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
 
 const target=new THREE.Vector3(cx,0,50);

@@ -24,10 +24,17 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Walkways (green + pink tape): main one runs along the door aprons from ~159 up the dock and jogs to the kiosk at 157/158. Perpendicular walkways reach the wall beside 154, between 161/162, and straight to W022.
 - Keep-clear red/white hatching in front of 156, 159, 161.
 - Each door has a screen showing its load (e.g. "DD149 · CP-CENTRAL"). This is a likely live data source.
-- Mezzanine sorter with spiral chutes runs the length of the dock. The flat sorter area holds STG-F spots. Positions of both are approximate.
+- Mezzanine sorter with spiral chutes runs the length of the dock. Its spirals start just past the staging columns (~44 ft off the wall). Gravity inclines run down from it to the SR roller tables. The flat sorter area holds STG-F spots. Positions are approximate.
+- STG-F spots follow the same numbering as 176: odd numbers in front, even behind (F-9 in front of F-10, with F-7/F-8 beside them).
+- Door load type, worked out from the door screens and equipment: MaxxReach doors are fluid-loaded (149, 150, 154, and probably 153). Doors with staging columns are cart-loaded (160's screen reads DYT3-CART-A). 151 and 152 have no conveyor, so they are probably cart doors.
+- 153: door closed. A second MaxxReach boom sits beside 154's, with its wall end at 153 (inferred).
+- Sketch: an exit between 152 and 153, and 155 marked "DP". The sketch's "fluid lanes" at 149/150 match the MaxxReach doors in the photos.
+- Past 176: a second 2-column staging block (label not read), then the fenced PIT charging area. 176 has keep-clear hatching between spot 1 and the wall.
+- Main walkway and the roller tables with airbags continue all the way down past 166–175. Go-carts line the sorter side (not modelled).
 
 ## Still open
-- Door 153 floor setup. Label on the box in front of 160. Readable labels for the STG-160, STG-162 and STG-163 columns.
+- Confirm the 153 MaxxReach and the 152/153 exit. What "DP" at 155 means. Is there a door 177 (for the block past 176)?
+- Readable labels for the STG-160, STG-162 and STG-163 columns.
 - Doors 166–175 up close (roller tables there are approximate).
 - Real door spacing and the 162→163 gap, by pacing it off.
 
