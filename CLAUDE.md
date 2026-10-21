@@ -12,6 +12,7 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 - Doors with no entry render faded as "not surveyed yet". The progress bar counts `DOORS` entries.
 - Everything tapped shows its source: confirmed in photos, label not read yet, from the sketch, or approximate.
 - A CSV box (`id,status`) colors staging spots: empty, cart, pallet, full, ready.
+- Views: Plan (orthographic, default; rotates so the dock runs top-to-bottom on phones), Doors 149–163 close-up, 3D. Mezzanine toggle. Find box jumps to a door, spot or station. Helpers: `hatch()` striped tape, `rollerTable()`, `walk()` green/pink walkway, `beam()` for inclines, `addSpot()`.
 
 ## Facts confirmed from photos
 - Doors 149–176 on one wall, ~9 ft wide on ~13 ft centres (estimated). Open doors show their number high, closed doors low.
