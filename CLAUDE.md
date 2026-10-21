@@ -134,6 +134,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: lane SR-021, on its side toward lane 23, has only two spots: STG-159-5 and STG-159-6 (heard "15-5 … six"). STG-161-1…5 are on lane 21's side toward lane 19 (confirmed). Lane SR-019's side toward lane 21 has one spot, STG-161-6.
 
+- FROM THE USER: lanes SR-025, SR-027 and SR-029 have no staging (old STG-157-1…5 removed). Lane SR-013: STG-167-1…4 on its side toward lane 15, STG-168-1…5 on its side toward lane 11 (old door-based STG-167 replaced).
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.

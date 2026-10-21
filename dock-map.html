@@ -140,7 +140,7 @@ const DOORS = {
   154:{src:"photo", maxreach:true, load:"fluid", note:"Fluid lane with a MaxxReach. The driver's cage (emergency exit used by drivers) is between 154 and 155"},
   155:{src:"photo", load:"cart", sr:"SR-029", srOff:0, note:"Auto scan lanes start here with SR-029"},
   156:{src:"photo", load:"cart", sr:"SR-027", srOff:0, hatch:true, poster:"Test the weight and lift within your power zone"},
-  157:{src:"photo", load:"cart", sr:"SR-025", srOff:0, staging:{cols:1,spots:5}},
+  157:{src:"photo", load:"cart", sr:"SR-025", srOff:0},
   158:{src:"photo", load:"cart", screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
   159:{src:"photo", load:"cart", sr:"SR-023", srOff:0, hatch:true, louver:true, screen:"DD159 · DYT3-CART-A", note:"Dock lane SR-023 sits in front of this door, between pallet lanes SR-022 and SR-024. Trailer AZNG DVC260128"},
   160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", note:"Column seen between 159 and 160, label not read"},
@@ -150,7 +150,7 @@ const DOORS = {
   164:{src:"photo", sr:"SR-017", srOff:0, poster:"Check brakes before moving carts"},
   165:{src:"photo", load:"cart", note:"Column with carts and straps on it, left of the walkway; label not read. A walkway runs from here straight out under the mezzanine"},
   166:{src:"photo", load:"cart", sr:"SR-015", srOff:0, hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", note:"Carts and a pallet staged on blue tape between the 165 green mile and lane SR-015; label not read"},
-  167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Stage area. Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
+  167:{src:"photo", load:"cart", hatch:true, note:"Stage area. Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
   168:{src:"photo", load:"cart", sr:"SR-013", srOff:0, hatch:true, louver:true, poster:"Keep safe spacing between moving carts", note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169"},
   169:{src:"photo", louver:true, sr:"SR-011", srOff:6.5, note:"Lane SR-011 sits between 169 and 170"},
   170:{src:"photo", sr:"SR-009", srOff:6.5, note:"Lane SR-009 sits between 170 and 171"},
@@ -386,6 +386,8 @@ function build(){
   addSpot("STG-157-6",laneX(23)-4.5,18+CFG.spotD/2,{door:157,short:"157-6",lane:"SR-023"});
   laneStage("STG-159",4,laneX(23)+4.5,159,"SR-023");   // lane 23's other side, toward lane 21 (from you)
   addSpot("STG-161-6",laneX(19)-4.5,18+CFG.spotD/2,{door:161,short:"161-6",lane:"SR-019"});   // lane 19's side toward lane 21: one spot (from you)
+  laneStage("STG-167",4,laneX(13)-4.5,167,"SR-013");   // lane 13, side toward lane 15 (from you)
+  laneStage("STG-168",5,laneX(13)+4.5,168,"SR-013");   // lane 13, side toward lane 11 (from you)
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
