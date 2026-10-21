@@ -212,6 +212,16 @@ function stripes(a,b){const k=a+b;if(stripeTex[k])return stripeTex[k];
   const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d");g.fillStyle=b;g.fillRect(0,0,64,64);g.strokeStyle=a;g.lineWidth=14;
   for(let i=-64;i<=128;i+=32){g.beginPath();g.moveTo(i,64);g.lineTo(i+64,0);g.stroke();}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return stripeTex[k]=t;}
+// red/white striped tape: one strip between two floor points
+function tape(x0,z0,x1,z1,w=0.45){const len=Math.hypot(x1-x0,z1-z0),t=stripes("#d64545","#f4f4f4").clone();t.needsUpdate=true;t.repeat.set(len/1.2,1);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(len,w),new THREE.MeshBasicMaterial({map:t}));
+  m.rotation.order="YXZ";m.rotation.set(-Math.PI/2,-Math.atan2(z1-z0,x1-x0),0);m.position.set((x0+x1)/2,0.08,(z0+z1)/2);scene.add(m);return m;}
+// no-staging zone as taped on the floor (photo): striped border plus a few diagonal strips, bare floor between
+function noStage(x0,x1,z0,z1){
+  tape(x0,z0,x1,z0);tape(x1,z0,x1,z1);tape(x1,z1,x0,z1);tape(x0,z1,x0,z0);
+  // parallel 45° strips (lines x+z=c), clipped to the box
+  const span=(x1-x0)+(z1-z0);for(let k=1;k<=3;k++){const c=x0+z0+k*span/4;
+    const a=[Math.max(x0,c-z1),c-Math.max(x0,c-z1)], b=[Math.min(x1,c-z0),c-Math.min(x1,c-z0)];tape(a[0],a[1],b[0],b[1]);}}
 function hatch(x0,x1,z0,z1,kind="red"){
   const t=stripes(kind==="red"?"#d64545":"#e8b400",kind==="red"?"#f4f4f4":"#26292c").clone();t.needsUpdate=true;t.repeat.set((x1-x0)/5,(z1-z0)/5);
   const m=new THREE.Mesh(new THREE.PlaneGeometry(x1-x0,z1-z0),new THREE.MeshBasicMaterial({map:t,transparent:true,opacity:0.8}));
@@ -253,7 +263,8 @@ function build(){
     label(String(n),x,12,2.5,4.2,seen?"--fg":"--muted");
     box(8,0.12,5,x,0.06,3.1,"--steel",seen?1:0.4);   // dock leveler plate
     if(!d) continue;
-    if(d.hatch){const hx=d.staging&&d.staging.cols===2?x+(d.staging.off??-CFG.doorPitch*0.4):x, hw=d.staging&&d.staging.cols===2?4:5;   // 2-column blocks: keep-clear spans the block
+    if(d.hatch==="yellow"){   // red door-front hatching turned out to be the scan lanes' no-staging zones
+      const hx=d.staging&&d.staging.cols===2?x+(d.staging.off??-CFG.doorPitch*0.4):x, hw=d.staging&&d.staging.cols===2?4:5;   // 2-column blocks: keep-clear spans the block
       hatch(hx-hw,hx+hw,6,12,d.hatch==="yellow"?"yellow":"red");}
     if(d.maxreach){
       const inf=d.maxreach!==true, g=box(6,4,30,x,2,21,"--steel");
@@ -265,11 +276,12 @@ function build(){
     if(d.sr){ // station between this door and the next; roller table angled toward the dock, fed by an incline from the sorter
       const sx=x+(d.srOff??CFG.doorPitch/2);
       const ln=+d.sr.slice(3);
-      pick(rollerTable(sx,20,16,0.15),{kind:"equip",id:d.sr,src:"photo",note:"Dock lane: a spiral feeds an incline down to this roller table, which runs toward the door; the green mile (walkway) along the doors lies between it and the door. Sits between pallet lanes SR-0"+(ln+1)+" and SR-0"+(ln-1)+". Dunnage airbags often sit on it"});
+      pick(rollerTable(sx,18,16,0),{kind:"equip",id:d.sr,src:"photo",note:"Dock lane: a spiral feeds an incline down to this roller table, which runs toward the door; the green mile (walkway) along the doors lies between it and the door. Sits between pallet lanes SR-0"+(ln+1)+" and SR-0"+(ln-1)+". Dunnage airbags often sit on it"});
       label(d.sr,sx,5,15,2.2,"--fg",{bg:"--panel",weight:700});
       // no-staging zones (from you): red/white 6 ft wide × 7 ft long on each side of the table at the lane's dock end
-      hatch(sx-7.5,sx-1.5,CFG.stagingStart,CFG.stagingStart+7);hatch(sx+1.5,sx+7.5,CFG.stagingStart,CFG.stagingStart+7);
-      pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+1.5,3,28],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
+      // they start at the green mile, right against the table's end, as in the photo
+      noStage(sx-7.5,sx-1.5,10,17);noStage(sx+1.5,sx+7.5,10,17);
+      pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx,3,26],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
       DETAIL=true;pick(box(2.5,3,2,sx+6,1.5,CFG.mezz[0]-3,"--steel"),{kind:"equip",id:d.sr+" printer",src:"photo",note:"Label printer table with bins at the foot of the incline, next to the spiral guard (photo at STG-161)"});DETAIL=false;
     }
     if(d.staging){
@@ -347,7 +359,6 @@ function build(){
   // in front of 165 (photo): walkway straight out under the mezzanine past pillar 1L-6, with a jog; STOP + dome-mirror decals at its foot
   {const x=doorX(165)+3.5;
    walk([[x,8.1],[x,30],[x-2.5,35],[x-2.5,CFG.greenMile[0]]]);
-   hatch(doorX(164)+1,doorX(165)-1.5,6,12);
    DETAIL=true;const st=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.06,8),mat("--s-full"));st.position.set(x+4,0.12,12);scene.add(st);
    label("Check dome mirror",x,0.5,11,0.9,"--s-full",{weight:700});
    for(const bx of[x-4,x+3])box(0.6,4,0.6,bx,2,CFG.mezz[0]-1,"--tape-yellow");   // bollards where it passes under the deck
@@ -360,7 +371,7 @@ function build(){
   // STG-165 (photo): beside the 165 green mile on its higher-door side, a 6 × 7 ft red box at the dock end,
   // 1 ft gap, then STG-165-1…5 running out toward the spirals, alongside lane SR-015's table
   // lane staging starts 1 ft past the lane's red zone (z 12–19) on the same side
-  const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,CFG.stagingStart+8+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
+  const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,18+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
   laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
