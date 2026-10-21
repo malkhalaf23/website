@@ -196,7 +196,7 @@ function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
   for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
   if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
   const[a,xa]=A[A.length-2],[b,xb]=A[A.length-1];return xb+(n-b)*(xb-xa)/(b-a);}
-const W=Math.max(doorX(CFG.lastDoor)+40,laneX(2)+20), X0=-70, cx=(X0+W)/2, D=CFG.flat[1]+50;
+const W=Math.max(doorX(CFG.lastDoor)+40,palletX(2)+60), X0=-70, cx=(X0+W)/2, D=CFG.flat[1]+50;
 
 const themed=[];
 function mat(token,opacity=1,extra={}){const m=new THREE.MeshLambertMaterial(Object.assign({color:css(token),transparent:opacity<1,opacity},extra));themed.push([m,token]);return m;}
@@ -478,6 +478,18 @@ function build(){
    pick(pl,{kind:"equip",id:"Pillar 1H-9",src:"photo",note:"At the department entrance, beside the Fastenal machine (earplugs)"});label("1H-9",ex+4,27,fz-6,2.4,"--fg",{bg:"--panel",weight:700});
    pick(box(3,7,2,ex+8,3.5,fz-12,"--tape-blue"),{kind:"equip",id:"Fastenal machine",src:"photo",note:"PPE vending (earplugs) with a padded orange pillar beside it"});
    label("ENTRANCE · Main Office · AFE",ex,2,fz+3,2.6,"--fg",{bg:"--panel"});}
+  // past SR-002 toward higher doors (from you + photos): STG-Y-1…7 beside lane 2, 6 ft, a 10-spot block (name not
+  // given yet: unlabelled), the green mile, then STG-Z-1…7. Rows run along the lanes like P and O; highest number at the
+  // back green mile end (as P)
+  {const gz=CFG.greenMile[0]-0.5;
+   const row=(name,n,x)=>{for(let i=1;i<=n;i++){const z=gz-2-(n-i)*CFG.spotW;
+       if(name)addSpot("STG-"+name+"-"+i,x,z,{area:"Block "+name+" · past SR-002",short:name+"-"+i,turned:true});
+       else addSpot(null,x,z,{note:"10-spot block between STG-Y and the green mile; name not given yet",turned:true});}
+     label(name?"STG-"+name:"STG-?",x,1.5,gz+0.8,1.6,"--tape-blue",{weight:700});};
+   const yx=palletX(2)+2.3+3+2.5; row("Y",7,yx);
+   const mx=yx+2.5+6+2.5; row(null,10,mx);
+   const gx=mx+2.5+3; walk([[gx,gz],[gx,CFG.mezz[1]]]);
+   row("Z",7,gx+3+2.5);}
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
   const lz0=CFG.mezz[1]-1;
