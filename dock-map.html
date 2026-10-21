@@ -175,6 +175,9 @@ const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 view.prepend(renderer.domElement);
 const scene=new THREE.Scene();
+// mirrored display (from you): door numbers run right-to-left on screen. Layout coordinates are unchanged;
+// only the scene is flipped, so camera targets use world x = MX * layout x
+const MX=-1; scene.scale.x=MX;
 // small details (door kit, signs, decals) are tagged so the layout view can hide them
 let DETAIL=false; const details=[]; {const add=scene.add.bind(scene);scene.add=(...o)=>{if(DETAIL)details.push(...o);return add(...o);};}
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.95));
@@ -538,7 +541,7 @@ function makePlanControls(){ // in portrait the dock runs top to bottom so it fi
 function fitPlan(x0,x1,z0,z1){
   const w=view.clientWidth,h=view.clientHeight,a=w/h, sx=portrait?(z1-z0):(x1-x0), sy=portrait?(x1-x0):(z1-z0);
   const H=Math.max(sy,sx/a)*1.06; ortho.left=-H*a/2;ortho.right=H*a/2;ortho.top=H/2;ortho.bottom=-H/2;ortho.zoom=1;ortho.updateProjectionMatrix();
-  const c=new THREE.Vector3((x0+x1)/2,0,(z0+z1)/2);ctlPlan.target.copy(c);ortho.position.set(c.x,500,c.z);ctlPlan.update();
+  const c=new THREE.Vector3(MX*(x0+x1)/2,0,(z0+z1)/2);ctlPlan.target.copy(c);ortho.position.set(c.x,500,c.z);ctlPlan.update();
 }
 function setMode(m){
   mode=m;camera=m==="3d"?persp:ortho;ctl3d.enabled=m==="3d";ctlPlan.enabled=m!=="3d";
@@ -546,7 +549,7 @@ function setMode(m){
   document.getElementById("hint").textContent=m==="3d"?"Drag to orbit · pinch or scroll to zoom · tap anything":"Drag to move · pinch or scroll to zoom · tap anything";
   if(m==="plan")fitPlan(X0,W,0,D);
   else if(m==="dock")fitPlan(doorX(149)-10,doorX(163)+12,-2,44);
-  else{ctl3d.target.set(doorX(156),0,22);persp.position.set(doorX(156)-60,90,150);ctl3d.update();}
+  else{ctl3d.target.set(MX*doorX(156),0,22);persp.position.set(MX*(doorX(156)-60),90,150);ctl3d.update();}
   mezzFade();
 }
 let mezzOn=true;
@@ -604,12 +607,12 @@ function select(o){
   doorMark.visible=false;
   sel=o;const info=document.getElementById("info");
   if(!o){marker.visible=false;info.textContent="Tap a door, staging spot or piece of equipment.";return;}
-  const p=new THREE.Vector3();o.getWorldPosition(p);marker.position.set(p.x,0.3,p.z);marker.visible=true;
+  const p=new THREE.Vector3();o.getWorldPosition(p);marker.position.set(MX*p.x,0.3,p.z);marker.visible=true;
   const u=o.userData,tag=`<span class="src">${u.src?SRC[u.src]:"Not surveyed yet"}</span>`;
   if(u.kind==="spot"){
     const live=u.shipDoor?"Ships from door "+u.shipDoor:"";
     info.innerHTML=`<b>${u.id}</b>${u.lane?"Staging for lane "+u.lane+" · ":""}${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}${live?"<br>"+live:""}<br>${tag}`;
-    if(u.shipDoor&&byId["DOOR "+u.shipDoor]){const p=new THREE.Vector3();byId["DOOR "+u.shipDoor].getWorldPosition(p);doorMark.position.set(p.x,0.3,4);doorMark.visible=true;}else doorMark.visible=false;}
+    if(u.shipDoor&&byId["DOOR "+u.shipDoor]){const p=new THREE.Vector3();byId["DOOR "+u.shipDoor].getWorldPosition(p);doorMark.position.set(MX*p.x,0.3,4);doorMark.visible=true;}else doorMark.visible=false;}
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
 document.getElementById("find").addEventListener("keydown",e=>{
@@ -617,8 +620,8 @@ document.getElementById("find").addEventListener("keydown",e=>{
   const cands=[q,"DOOR"+q,"STG-"+q,"SR-"+q].map(k=>k.replace(/^DOOR/,"DOOR "));
   let o=cands.map(k=>byId[k]).find(Boolean)||Object.entries(byId).find(([k])=>k.replace(/\s/g,"").includes(q))?.[1];
   if(!o){msg.textContent=`Nothing called "${e.target.value}" on the map`;return;}
-  select(o);const p=new THREE.Vector3();o.getWorldPosition(p);
-  if(mode==="3d"){ctl3d.target.set(p.x,0,p.z);persp.position.set(p.x-25,45,p.z+60);ctl3d.update();}
+  select(o);const p=new THREE.Vector3();o.getWorldPosition(p);p.x*=MX;   // back to layout x
+  if(mode==="3d"){ctl3d.target.set(MX*p.x,0,p.z);persp.position.set(MX*(p.x-25),45,p.z+60);ctl3d.update();}
   else{fitPlan(p.x-30,p.x+30,Math.max(-2,p.z-22),p.z+22);}
 });
 
