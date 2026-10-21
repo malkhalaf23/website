@@ -2,62 +2,75 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: 3D floor view on top, control strip below; floor tape colors double as the UI palette */
+/* Layout: a floor-plan / 3D view fills the screen, a compact control strip sits below.
+   Floor tape colours from the real dock double as the UI palette. */
 :root{
-  --bg:#eef0f2; --panel:#ffffff; --fg:#1d2329; --muted:#5d6872; --line:#d3d8dd;
-  --floor:#c9ced3; --wall:#f4f5f6; --door:#8a96a1; --door-faint:#dde1e5;
-  --tape-blue:#2f5bd3; --tape-green:#2fae6a; --tape-pink:#b4469a; --hatch:#d64545;
-  --amz-yellow:#f2c200; --steel:#7d8790; --accent:#2f5bd3;
-  --s-empty:#e3e6e9; --s-cart:#2f5bd3; --s-pallet:#b8873c; --s-full:#d64545; --s-ready:#2fae6a;
+  --bg:#e9ecef; --panel:#ffffff; --fg:#1b2127; --muted:#5b6670; --line:#d0d6dc;
+  --floor:#cfd4d8; --floor-2:#c3c9ce; --wall:#f6f7f8; --door:#7f8b96; --door-faint:#dde1e5;
+  --tape-blue:#2f5bd3; --tape-green:#2fae6a; --tape-pink:#b4469a; --tape-yellow:#e8b400;
+  --steel:#9aa3ab; --steel-dark:#4c555d; --mezz:#f2c200; --grate:#6c7680;
+  --s-empty:#eef1f4; --s-cart:#2f5bd3; --s-pallet:#b8873c; --s-full:#d64545; --s-ready:#2fae6a;
+  --accent:#2f5bd3;
   --display:"Archivo",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121619; --panel:#1a1f24; --fg:#e6e9ec; --muted:#97a1aa; --line:#2b3238;
-  --floor:#3a4148; --wall:#262c31; --door:#9aa5af; --door-faint:#323940; --steel:#8c969f; --s-empty:#4f575f; color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#121619; --panel:#1a1f24; --fg:#e6e9ec; --muted:#97a1aa; --line:#2b3238;
-  --floor:#3a4148; --wall:#262c31; --door:#9aa5af; --door-faint:#323940; --steel:#8c969f; --s-empty:#4f575f; color-scheme:dark}
+  --bg:#11151a; --panel:#181d23; --fg:#e4e8ec; --muted:#97a1aa; --line:#2a3138;
+  --floor:#2f363d; --floor-2:#283037; --wall:#3a424a; --door:#8f9aa5; --door-faint:#3b434b;
+  --steel:#8a949d; --steel-dark:#5d666f; --grate:#55606a; --s-empty:#46505a; --accent:#6d8fff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151a; --panel:#181d23; --fg:#e4e8ec; --muted:#97a1aa; --line:#2a3138;
+  --floor:#2f363d; --floor-2:#283037; --wall:#3a424a; --door:#8f9aa5; --door-faint:#3b434b;
+  --steel:#8a949d; --steel-dark:#5d666f; --grate:#55606a; --s-empty:#46505a; --accent:#6d8fff; color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--display);display:flex;flex-direction:column}
-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
-  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line)}
-h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.01em}
-.sub{font-family:var(--mono);font-size:12px;color:var(--muted)}
-#view{position:relative;flex:1 1 60%;min-height:340px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;
+  padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--panel)}
+h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.01em}
+.sub{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#view{position:relative;flex:1 1 auto;min-height:62vh}
 #view canvas{display:block;width:100%;height:100%;touch-action:none}
-#hint{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none}
-.views{position:absolute;top:10px;right:max(10px,env(safe-area-inset-right,0px));display:flex;gap:6px}
-button{font-family:var(--mono);font-size:12px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
-button:hover{border-color:var(--accent)} button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;
+#hint{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:10px;font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none;background:color-mix(in srgb,var(--bg) 75%,transparent);padding:2px 6px;border-radius:4px}
+button,input{font-family:var(--mono);font-size:12px;background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+button{cursor:pointer}
+button:hover{border-color:var(--accent)} button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+#find{width:150px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px 24px;
   padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-top:1px solid var(--line);background:var(--panel)}
 .box{min-width:0;display:flex;flex-direction:column;gap:8px}
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-#info{font-family:var(--mono);font-size:13px;line-height:1.6}
+#info{font-family:var(--mono);font-size:12.5px;line-height:1.6}
 #info b{font-family:var(--display);font-size:18px;display:block}
 .src{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:12px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.legend i{width:12px;height:12px;border-radius:2px;display:inline-block}
-.prog{font-family:var(--mono);font-size:12px;line-height:1.7;font-variant-numeric:tabular-nums}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px 12px;font-family:var(--mono);font-size:11.5px}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:14px;height:10px;border-radius:2px;flex:none}
+.prog{font-family:var(--mono);font-size:12px;line-height:1.6;font-variant-numeric:tabular-nums}
 .prog em{font-style:normal;color:var(--muted)}
 .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
 .bar>i{display:block;height:100%;background:var(--tape-green)}
-textarea{width:100%;box-sizing:border-box;min-height:70px;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px;resize:vertical}
+textarea{width:100%;box-sizing:border-box;min-height:62px;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px;resize:vertical}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 #msg{font-family:var(--mono);font-size:12px;color:var(--muted)}
 </style>
 
 <header>
-  <h1>Ship Dock Twin</h1>
-  <span class="sub">Doors 149–176 · staging spots 4 × 5 ft · built section by section from photos</span>
+  <div>
+    <h1>Ship Dock Twin</h1>
+    <div class="sub">Doors 149–176 · staging spots 4 × 5 ft · built from floor photos</div>
+  </div>
+  <div class="tools">
+    <button id="vplan" aria-pressed="true">Plan</button>
+    <button id="vdock" aria-pressed="false">Doors 149–163</button>
+    <button id="v3d" aria-pressed="false">3D</button>
+    <button id="vmezz" aria-pressed="true" title="Show or hide the mezzanine deck">Mezzanine</button>
+    <input id="find" placeholder="Find: 157-3, 161, SR-028" aria-label="Find a door, spot or station">
+  </div>
 </header>
 
 <div id="view">
-  <div class="views">
-    <button id="v3d">3D</button><button id="vtop">Top</button><button id="vdock">Doors 149–161</button>
-  </div>
-  <div id="hint">Drag to orbit · pinch or scroll to zoom · tap anything</div>
+  <div id="hint">Drag to move · pinch or scroll to zoom · tap anything</div>
 </div>
 
 <section class="strip">
@@ -66,33 +79,46 @@ textarea{width:100%;box-sizing:border-box;min-height:70px;font-family:var(--mono
     <div id="info">Tap a door, staging spot or piece of equipment.</div>
   </div>
   <div class="box">
-    <div class="label">Survey progress</div>
-    <div class="bar"><i id="barfill"></i></div>
-    <div class="prog" id="prog"></div>
+    <div class="label">Key</div>
     <div class="legend">
-      <span><i style="background:var(--door)"></i>Confirmed in photos</span>
-      <span><i style="background:var(--door-faint);border:1px solid var(--line)"></i>Not surveyed yet</span>
+      <span><i style="background:var(--tape-blue)"></i>Staging spot tape</span>
+      <span><i style="background:linear-gradient(90deg,var(--tape-green) 50%,var(--tape-pink) 50%)"></i>Walkway</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#d64545 0 3px,#fff 3px 6px)"></i>Keep clear</span>
+      <span><i style="background:repeating-linear-gradient(45deg,#e8b400 0 3px,#222 3px 6px)"></i>Equipment keep-out</span>
+      <span><i style="background:var(--steel)"></i>Conveyor / roller table</span>
+      <span><i style="background:var(--mezz)"></i>Mezzanine edge</span>
+      <span><i style="background:var(--door)"></i>Door seen in photos</span>
+      <span><i style="background:var(--door-faint);outline:1px solid var(--line)"></i>Not surveyed yet</span>
     </div>
   </div>
   <div class="box">
-    <label class="label" for="feed">Load spot data (CSV: id,status)</label>
-    <textarea id="feed" spellcheck="false" placeholder="STG-157-1,cart"></textarea>
-    <div class="row"><button class="primary" id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
+    <div class="label">Survey progress</div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="prog" id="prog"></div>
+  </div>
+  <div class="box">
+    <label class="label" for="feed">Spot status (CSV: id,status)</label>
+    <textarea id="feed" spellcheck="false">STG-157-1,cart
+STG-157-2,cart
+STG-161-1,full
+STG-161-2,ready
+STG-176-1,pallet</textarea>
+    <div class="row"><button id="apply">Apply</button><button id="clear">Clear all</button><span id="msg"></span></div>
   </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-/* ===== LAYOUT (feet). x runs along the dock wall, z runs out into the building. ===== */
+/* ===== LAYOUT (feet). x runs along the dock wall (door numbers grow with x), z runs out into the building. ===== */
 const CFG = {
   firstDoor:149, lastDoor:176,
   doorPitch:13,        // estimated from photos: ~9 ft doors on ~13 ft centres
   spotW:4, spotD:5,    // measured by you
-  gapAfter162:32,     // riser wall + W022 exit sit between 162 and 163
+  gapAfter162:32,      // riser wall + W022 exit sit between 162 and 163
   stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
-  walkwayZ:42,         // walkway running behind the staging columns
-  mezz:[44,58], greenMile:[85,93], flat:[105,135]  // from sketch, positions approximate
+  mezzY:17,            // mezzanine deck height (approx.)
+  mezz:[44,58], greenMile:[85,93], flat:[105,135]  // approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
@@ -119,148 +145,239 @@ const STATUSES=["empty","cart","pallet","full","ready"];
 // Door load type: fluid = loose parcels through a MaxxReach; cart = loaded from staged carts. "?" = guessed.
 const LOADS={fluid:"Fluid (MaxxReach)",cart:"Carts","cart?":"Carts (guess: no conveyor)"};
 const NAMES={empty:"Empty",cart:"Cart staged",pallet:"Pallet",full:"Full / needs load",ready:"Ready to load"};
+const SRC={inferred:"Seen in photos; label not read yet",photo:"Confirmed in photos",sketch:"From your sketch",approx:"Approximate position"};
 
+/* ===== scene ===== */
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const view=document.getElementById("view");
 const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 view.prepend(renderer.domElement);
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(45,1,1,4000);
-const controls=new THREE.OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true; controls.maxPolarAngle=Math.PI/2.05;
-scene.add(new THREE.HemisphereLight(0xffffff,0x888888,0.9));
-const sun=new THREE.DirectionalLight(0xffffff,0.5); sun.position.set(200,400,300); scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.95));
+const sun=new THREE.DirectionalLight(0xffffff,0.45); sun.position.set(150,400,250); scene.add(sun);
 
 const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
-const W=doorX(CFG.lastDoor)+30, cx=W/2-15;
-const themed=[]; // [material, token]
-function mat(token,opacity=1){const m=new THREE.MeshLambertMaterial({color:css(token),transparent:opacity<1,opacity});themed.push([m,token]);return m;}
-function box(w,h,d,x,y,z,token,opacity){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(token,opacity));m.position.set(x,y,z);scene.add(m);return m;}
-function flat(x0,x1,z0,z1,token,y=0.06,opacity){return box(x1-x0,0.1,z1-z0,(x0+x1)/2,y,(z0+z1)/2,token,opacity);}
-function line(x0,z0,x1,z1,token,w=0.6){const len=Math.hypot(x1-x0,z1-z0),m=box(len,0.12,w,(x0+x1)/2,0.08,(z0+z1)/2,token);m.rotation.y=-Math.atan2(z1-z0,x1-x0);return m;}
-const labels=[];
-function label(text,x,y,z,size,token="--fg"){
-  const c=document.createElement("canvas"),g=c.getContext("2d");c.width=512;c.height=128;
-  const s=new THREE.Sprite(new THREE.SpriteMaterial({depthTest:false}));
-  s.userData={text,token,c,g};s.scale.set(size*4,size,1);s.position.set(x,y,z);scene.add(s);labels.push(s);drawLabel(s);return s;
-}
-function drawLabel(s){const{text,token,c,g}=s.userData;g.clearRect(0,0,512,128);g.font="800 60px Archivo, system-ui, sans-serif";g.fillStyle=css(token);g.textAlign="center";g.textBaseline="middle";g.fillText(text,256,64);
-  if(s.material.map)s.material.map.dispose();s.material.map=new THREE.CanvasTexture(c);s.material.needsUpdate=true;}
-const pickables=[],spots={};
-function pick(o,data){o.userData=data;pickables.push(o);return o;}
-function hatch(x0,x1,z0,z1){flat(x0,x1,z0,z1,"--hatch",0.05,0.25);
-  [[x0,z0,x1,z0],[x1,z0,x1,z1],[x1,z1,x0,z1],[x0,z1,x0,z0]].forEach(a=>line(...a,"--hatch",0.4));}
+const W=doorX(CFG.lastDoor)+40, X0=-15, cx=(X0+W)/2, D=CFG.flat[1]+12;
 
+const themed=[];
+function mat(token,opacity=1,extra={}){const m=new THREE.MeshLambertMaterial(Object.assign({color:css(token),transparent:opacity<1,opacity},extra));themed.push([m,token]);return m;}
+function box(w,h,d,x,y,z,token,opacity){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(token,opacity));m.position.set(x,y,z);scene.add(m);return m;}
+function flat(x0,x1,z0,z1,token,y=0.04,opacity){return box(x1-x0,0.08,z1-z0,(x0+x1)/2,y,(z0+z1)/2,token,opacity);}
+function line(x0,z0,x1,z1,token,w=0.5,y=0.1){const len=Math.hypot(x1-x0,z1-z0),m=box(len,0.06,w,(x0+x1)/2,y,(z0+z1)/2,token);m.rotation.y=-Math.atan2(z1-z0,x1-x0);return m;}
+function beam(a,b,w,h,token,opacity){ // box stretched between two 3D points
+  const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),m=new THREE.Mesh(new THREE.BoxGeometry(w,h,A.distanceTo(B)),mat(token,opacity));
+  m.position.copy(A).add(B).multiplyScalar(0.5);m.lookAt(B);scene.add(m);return m;}
+function walk(pts,y){ // green + pink tape pair along a polyline (pink on the right-hand side of travel)
+  for(let i=0;i<pts.length-1;i++){const[a,b]=[pts[i],pts[i+1]],dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L,nz=dx/L;
+    line(a[0]-nx*.6,a[1]-nz*.6,b[0]-nx*.6,b[1]-nz*.6,"--tape-green",0.5,y);line(a[0]+nx*.6,a[1]+nz*.6,b[0]+nx*.6,b[1]+nz*.6,"--tape-pink",0.5,y);}
+}
+// striped floor tape (fixed real-world colours, the same in both themes)
+const stripeTex={};
+function stripes(a,b){const k=a+b;if(stripeTex[k])return stripeTex[k];
+  const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d");g.fillStyle=b;g.fillRect(0,0,64,64);g.strokeStyle=a;g.lineWidth=14;
+  for(let i=-64;i<=128;i+=32){g.beginPath();g.moveTo(i,64);g.lineTo(i+64,0);g.stroke();}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return stripeTex[k]=t;}
+function hatch(x0,x1,z0,z1,kind="red"){
+  const t=stripes(kind==="red"?"#d64545":"#e8b400",kind==="red"?"#f4f4f4":"#26292c").clone();t.needsUpdate=true;t.repeat.set((x1-x0)/5,(z1-z0)/5);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(x1-x0,z1-z0),new THREE.MeshBasicMaterial({map:t,transparent:true,opacity:0.8}));
+  m.rotation.x=-Math.PI/2;m.position.set((x0+x1)/2,0.07,(z0+z1)/2);scene.add(m);return m;}
+function rollerTable(x,z,len,rot,opacity=1){ // frame + roller texture
+  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;scene.add(g);
+  const t=stripes("#8f98a0","#c9ced3").clone();t.needsUpdate=true;t.repeat.set(1,len/1.2);t.rotation=Math.PI/4;
+  const top=new THREE.Mesh(new THREE.BoxGeometry(3,0.3,len),new THREE.MeshLambertMaterial({map:t,transparent:opacity<1,opacity}));top.position.y=2.8;g.add(top);
+  for(const s of[-1,1])for(const e of[-1,1]){const leg=new THREE.Mesh(new THREE.BoxGeometry(0.3,2.7,0.3),mat("--tape-yellow"));leg.position.set(s*1.3,1.35,e*(len/2-0.5));g.add(leg);}
+  return top;}
+
+/* labels: sprites always face the camera, so they read in plan and in 3D */
+const labels=[];
+function label(text,x,y,z,size,token="--fg",opts={}){
+  const c=document.createElement("canvas"),g=c.getContext("2d");
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({depthTest:!!opts.depth,transparent:true}));
+  s.userData={text,token,c,g,size,bg:opts.bg,weight:opts.weight||800};s.position.set(x,y,z);s.renderOrder=opts.depth?0:5;scene.add(s);labels.push(s);drawLabel(s);return s;}
+function drawLabel(s){const u=s.userData,{c,g}=u,px=64,font=`${u.weight} ${px}px Archivo, system-ui, sans-serif`;
+  g.font=font;const w=Math.ceil(g.measureText(u.text).width)+(u.bg?36:12);c.width=w;c.height=px*1.4;
+  g.font=font;g.textAlign="center";g.textBaseline="middle";
+  if(u.bg){g.fillStyle=css(u.bg);const r=14;g.beginPath();g.moveTo(r,0);g.arcTo(w,0,w,c.height,r);g.arcTo(w,c.height,0,c.height,r);g.arcTo(0,c.height,0,0,r);g.arcTo(0,0,w,0,r);g.fill();}
+  g.fillStyle=css(u.token);g.fillText(u.text,w/2,c.height/2+2);
+  if(s.material.map)s.material.map.dispose();s.material.map=new THREE.CanvasTexture(c);s.material.map.anisotropy=4;s.material.needsUpdate=true;
+  s.scale.set(u.size*w/c.height,u.size,1);}
+
+const pickables=[],spots={},byId={},mezzParts=[];
+function pick(o,data){o.userData=Object.assign(o.userData||{},data);pickables.push(o);if(data.id)byId[data.id.toUpperCase()]=o;return o;}
+
+/* ===== build ===== */
 function build(){
-  flat(-15,W,0,130,"--floor",0);
-  box(W+15,30,1,cx,15,-0.5,"--wall");
+  // floor, with the dock lane (door side) slightly darker than the sorter floor
+  flat(X0,W,0,D,"--floor",0);
+  flat(X0,W,0,CFG.mezz[0],"--floor-2",0.01);
+  box(W-X0,30,1,cx,15,-0.5,"--wall");
+
   for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++){
     const d=DOORS[n], x=doorX(n), seen=!!d;
     pick(box(9,10,0.6,x,5,0.3,seen?"--door":"--door-faint"),{kind:"door",n,id:"Door "+n,src:seen?"photo":null,note:d&&d.note,load:d&&d.load});
-    label(String(n),x,12.5,1,4,seen?"--fg":"--muted");
-    flat(x-4.5,x+4.5,0.6,5,"--amz-yellow",0.07,seen?1:0.35);   // dock leveler / apron
+    label(String(n),x,12,2.5,4.2,seen?"--fg":"--muted");
+    box(8,0.12,5,x,0.06,3.1,"--steel",seen?1:0.4);   // dock leveler plate
     if(!d) continue;
     if(d.hatch) hatch(x-5,x+5,6,12);
-    if(d.fluid) pick(box(3,2.5,24,x,1.25,17,"--steel",0.45),{kind:"equip",id:"Fluid lane · Door "+n,src:"sketch",note:"Floor-loaded lane from your sketch"});
     if(d.maxreach){
-      pick(box(6,4,32,x,2,21,"--steel"),{kind:"equip",id:"Max-reach conveyor · Door "+n,src:d.maxreach===true?"photo":"inferred",note:"Extends into the trailer; keep-out tape and chain around it"});
-      hatch(x-6,x+6,5,38);
+      const inf=d.maxreach!==true, g=box(6,4,30,x,2,21,"--steel");
+      box(4.6,0.2,29,x,4.1,21,"--steel-dark");
+      pick(g,{kind:"equip",id:"MaxxReach · Door "+n,src:inf?"inferred":"photo",note:"Extendable conveyor into the trailer, fed from the sorter. Chained keep-out around it"});
+      hatch(x-6,x+6,5,37,"yellow");
+      beam([x,CFG.mezzY,CFG.mezz[0]],[x,4.3,35],2.6,0.5,"--steel",0.85); // feed from the sorter down to the boom tail
     }
-    if(d.sr){ // station between this door and the next, with its roller table angled toward the dock
+    if(d.sr){ // station between this door and the next; roller table angled toward the dock, fed by an incline from the sorter
       const sx=x+(d.srOff??CFG.doorPitch/2);
-      pick(box(2,9,2,sx,4.5,20,"--muted"),{kind:"equip",id:d.sr+" station",src:"photo",note:"Between doors "+n+" and "+(n+1)+" · monitor, andon light, printer"});
-      const r=pick(box(3,2.6,15,sx,1.3,13,"--steel",0.8),{kind:"equip",id:d.sr+" roller table",src:"photo",note:"Feeds toward the doors; dunnage airbags often sit on it"});
-      r.rotation.y=0.25;
-      // incline coming down from the sorter to the roller table (photos at 157–161)
-      const inc=pick(box(2.5,0.6,CFG.mezz[0]-20,sx+3,7,(CFG.mezz[0]+20)/2,"--steel",0.6),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter feeding this station"});
-      inc.rotation.x=-0.3;
+      pick(box(1,10,1,sx-3,5,26,"--steel-dark"),{kind:"equip",id:d.sr,src:"photo",note:"Station between doors "+n+" and "+(n+1)+": screen, andon light, printer"});
+      label(d.sr,sx-3,11.5,26,2.4,"--fg",{bg:"--panel",weight:700});
+      pick(rollerTable(sx,15,16,0.25),{kind:"equip",id:d.sr+" roller table",src:"photo",note:"Feeds toward the doors; dunnage airbags often sit on it"});
+      hatch(sx-6,sx+6,8,23);
+      pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+2,3,23],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
     }
     if(d.staging){
       // columns sit just to the lower-number side of their door
       const {cols,spots:count,inferred,off}=d.staging, base=x+(off??-CFG.doorPitch*0.4);
       for(let i=1;i<=count;i++){
         const col=cols===2?(i%2===1?0:1):0, row=cols===2?Math.floor((i-1)/2):i-1;
-        addSpot(`STG-${n}-${i}`, base-(cols*CFG.spotW)/2+CFG.spotW/2+col*CFG.spotW, CFG.stagingStart+CFG.spotD/2+row*CFG.spotD, n, inferred);
+        addSpot(`STG-${n}-${i}`, base-(cols*CFG.spotW)/2+CFG.spotW/2+col*CFG.spotW, CFG.stagingStart+CFG.spotD/2+row*CFG.spotD, {door:n,inferred,short:`${n}-${i}`});
       }
     }
   }
+  const half=CFG.doorPitch/2;
   // walkways seen in photos
-  const half=CFG.doorPitch/2, wz=CFG.walkwayZ;
-  // perpendicular walkways reaching the wall beside 154 and between 161/162 (photos)
-  {const x=doorX(154)+half; line(x-0.6,3,x-0.6,wz,"--tape-green"); line(x+0.6,3,x+0.6,wz,"--tape-pink");}
-  {const x=doorX(161)+4.6; line(x-0.6,7,x-0.6,34,"--tape-green"); line(x+0.6,7,x+0.6,34,"--tape-pink");
-   line(x-0.6,34,x+8,40,"--tape-green"); line(x+0.6,34,x+9.2,40,"--tape-pink");}
-  // main walkway hugging the door aprons from 159 up the dock, jogging in to the kiosk at 157/158 (photos)
-  const ax=doorX(158)+half+2;
-  line(ax,7,W-10,7,"--tape-green"); line(ax,9.2,W-10,9.2,"--tape-pink");
-  line(doorX(157)+half-0.6,3,ax,7,"--tape-green"); line(doorX(157)+half+0.6,3,ax,9.2,"--tape-pink");
-  // emergency exit W022, sprinkler risers, and the walkway leading straight to the exit (photo)
+  walk([[doorX(154)+half,3],[doorX(154)+half,42]]);
+  {const x=doorX(161)+4.6; walk([[x,7],[x,34],[x+8.6,40]]);}
+  walk([[doorX(157)+half,3],[doorX(158)+half+2,8.1],[W-12,8.1]]);
+  // emergency exit W022, sprinkler risers, walkway straight to the exit
   {const ex=doorX(162)+22;
-   pick(box(4,8,0.8,ex,4,0.4,"--hatch"),{kind:"equip",id:"Emergency exit W022",src:"photo",note:"Between 162 and 163; walkway runs straight to it"});
-   line(ex-1.5,9.2,ex-1.5,45,"--tape-green"); line(ex-0.3,9.2,ex-0.3,45,"--tape-pink");
-   line(ex+0.3,9.2,ex+0.3,45,"--tape-pink"); line(ex+1.5,9.2,ex+1.5,45,"--tape-green");
-   for(let k=0;k<6;k++) box(0.6,22,0.6,doorX(162)+8+k*1.6,11,0.8,"--fg");
+   pick(box(4,8,0.8,ex,4,0.4,"--s-full"),{kind:"equip",id:"Exit W022",src:"photo",note:"Emergency exit between 162 and 163; a walkway runs straight to it"});
+   label("EXIT W022",ex,10,2,2.2,"--s-full",{bg:"--panel"});
+   walk([[ex-0.9,9.2],[ex-0.9,45]]);walk([[ex+0.9,45],[ex+0.9,9.2]]);
+   for(let k=0;k<6;k++) box(0.6,22,0.6,doorX(162)+8+k*1.6,11,0.8,"--s-full");
+   pick(box(10,0.1,2,doorX(162)+10.5,0.05,1.5,"--s-full",0.5),{kind:"equip",id:"Sprinkler risers 621–643",src:"photo",note:"With electrical panels, on the wall between 162 and 163"});
    hatch(doorX(162)+5,doorX(162)+16,10,16);}
-  label("Main walkway",doorX(167),2,8,5,"--muted");
-  // repeating roller tables (dunnage airbags) with keep-clear hatching, seen down the dock (approximate spacing)
+  // repeating roller tables with airbags and keep-clear hatching, seen down the dock (spacing approximate)
   for(let n=166;n<=174;n+=2){
-    pick(box(14,2.6,3,doorX(n)+half,1.3,18,"--steel",0.45),{kind:"equip",id:"Roller table near "+n+"/"+(n+1),src:"approx",note:"Seen down the dock; exact door not confirmed"});
     hatch(doorX(n)+half-8,doorX(n)+half+8,13,23);
+    pick(rollerTable(doorX(n)+half,18,14,Math.PI/2,0.9),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:"approx",note:"Seen down the dock with dunnage airbags; exact door not confirmed"});
   }
-  // exit door between 152 and 153 (sketch only)
-  pick(box(4,8,0.8,doorX(152)+half,4,0.4,"--hatch",0.6),{kind:"equip",id:"Exit (152/153)",src:"sketch",note:"Marked on your sketch; not seen in photos yet"});
-  // past 176: a second staging block (label not read) and the fenced PIT charging area (photo)
+  pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel-dark"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
+  {const x=doorX(154)+half-4;flat(x-2.5,x+2.5,33,38,"--tape-blue",0.06,0.5);
+   pick(box(5,0.2,5,x,0.1,35.5,"--tape-blue",0.2),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
+   label("Trailer seals",x,1.5,35.5,1.6,"--tape-blue");}
+  pick(box(4,8,0.8,doorX(152)+half,4,0.4,"--s-full",0.45),{kind:"equip",id:"Exit (152/153)",src:"sketch",note:"Marked on your sketch; not seen in photos yet"});
+  // past 176: a second staging block (label not read) and the fenced PIT charging area
   {const x=doorX(176)+CFG.doorPitch;
-   flat(x-9.2,x-1.2,CFG.stagingStart,CFG.stagingStart+20,"--tape-blue",0.07,0.35);
-   pick(box(8,0.3,20,x-5.2,0.15,CFG.stagingStart+10,"--s-empty",0.01),{kind:"equip",id:"Staging block past 176",src:"approx",note:"2 columns like 176's; label not read. Maybe door 177?"});
-   pick(box(1,7,40,x+6,3.5,26,"--amz-yellow",0.7),{kind:"equip",id:"PIT charging area",src:"photo",note:"Fenced with yellow barrier and netting, at the end of the dock"});
-   label("PIT charging",x+16,9,26,5,"--muted");}
-  pick(box(2.5,6,2,doorX(157)+half,3,3,"--steel"),{kind:"equip",id:"Kiosk",src:"photo",note:"Between doors 157 and 158, at the end of the walkway"});
-  pick(box(4,1,5,doorX(154)+half-4,0.5,36,"--tape-blue",0.6),{kind:"equip",id:"Trailer seals",src:"photo",note:"Blue-taped supply spot"});
-  // overhead feed from max-reach units toward the sorter (from photo + sketch arcs)
-  [149,150,153,154].forEach(n=>{const f=box(3,0.6,26,doorX(n)+8,9,44,"--steel",0.7);f.rotation.y=-0.5;});
-  // auto scan + palletizing (sketch)
-  pick(box(4,4,10,doorX(155),2,58,"--steel",0.45),{kind:"equip",id:"Auto scan",src:"sketch"});
-  for(let k=0;k<4;k++) pick(box(2.5,2.5,16,doorX(156)+k*CFG.doorPitch,1.25,60,"--steel",0.45),{kind:"equip",id:"Palletizing lane "+(k+1),src:"sketch"});
-  // mezzanine + spirals (approx)
-  const [m0,m1]=CFG.mezz;
-  box(W-30,1.5,m1-m0,cx+5,22,(m0+m1)/2,"--amz-yellow",0.35);
-  for(let n=CFG.firstDoor+2;n<=CFG.lastDoor;n+=2){const s=new THREE.Mesh(new THREE.CylinderGeometry(3,3,20,16),mat("--line",0.8));s.position.set(doorX(n),11,(m0+m1)/2);scene.add(s);}
-  label("Mezzanine + spiral chutes (approx.)",cx,28,(m0+m1)/2,8,"--muted");
-  const [g0,g1]=CFG.greenMile; line(-15,g0,W,g0,"--tape-green");line(-15,g1,W,g1,"--tape-green");
-  label("Green mile",cx,2,(g0+g1)/2,7,"--tape-green");
+   for(let c=0;c<2;c++)for(let r=0;r<4;r++)addSpot(null,x-7.2+c*CFG.spotW,CFG.stagingStart+CFG.spotD/2+r*CFG.spotD,{note:"Block past 176; label not read"});
+   hatch(x-9.2,x-1.2,5,CFG.stagingStart);
+   pick(box(1,7,40,x+6,3.5,26,"--mezz",0.75),{kind:"equip",id:"PIT charging area",src:"photo",note:"Fenced with yellow barrier and netting, at the end of the dock"});
+   label("PIT charging",x+16,2,26,2.6,"--muted");}
+
+  // mezzanine sorter: deck, posts, edge rail, spiral chutes along its front edge
+  const [m0,m1]=CFG.mezz, my=CFG.mezzY, mx0=doorX(149)-8, mx1=W-14;
+  const deck=box(mx1-mx0,0.8,m1-m0,(mx0+mx1)/2,my,(m0+m1)/2,"--grate",0.55);mezzParts.push(deck);
+  pick(deck,{kind:"equip",id:"Mezzanine sorter",src:"approx",note:"Runs the length of the dock; spirals start ~44 ft off the wall"});
+  for(const z of[m0,m1])mezzParts.push(beam([mx0,my+3.5,z],[mx1,my+3.5,z],0.3,0.3,"--mezz"),beam([mx0,my+1.8,z],[mx1,my+1.8,z],0.25,0.25,"--mezz"));
+  for(let x=mx0;x<=mx1;x+=26)for(const z of[m0+1,m1-1])mezzParts.push(box(1.2,my,1.2,x,my/2,z,"--mezz"));
+  class Helix extends THREE.Curve{constructor(r,h,turns){super();this.r=r;this.h=h;this.t=turns;}
+    getPoint(t,v=new THREE.Vector3()){const a=t*this.t*Math.PI*2;return v.set(Math.cos(a)*this.r,1.5+t*(this.h-1.5),Math.sin(a)*this.r);}}
+  const helixGeo=new THREE.TubeGeometry(new Helix(3.2,my,2.6),120,1.3,6,false), spiralMat=mat("--steel",0.9);
+  for(let x=doorX(150);x<mx1-4;x+=CFG.doorPitch){
+    const s=new THREE.Mesh(helixGeo,spiralMat);s.position.set(x,0,m0+4);scene.add(s);mezzParts.push(s);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(2.2,4.4,24),mat("--steel",0.6,{side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,0.08,m0+4);scene.add(ring);
+  }
+  label("Mezzanine sorter · spiral chutes",cx,2,m0+10,2.8,"--muted");
+
+  // from your sketch only: auto scan and palletizing lanes behind 155–158
+  pick(box(4,4,10,doorX(155),2,68,"--steel",0.4),{kind:"equip",id:"Auto scan",src:"sketch"});
+  for(let k=0;k<4;k++){const x=doorX(156)+k*CFG.doorPitch;line(x-1.5,62,x-1.5,80,"--muted",0.3);line(x+1.5,62,x+1.5,80,"--muted",0.3);
+    pick(box(3,0.1,18,x,0.05,71,"--muted",0.15),{kind:"equip",id:"Palletizing lane "+(k+1),src:"sketch"});}
+  label("Palletizing (sketch)",doorX(157)+half,2,82,2.2,"--muted");
+
+  // green mile
+  const [g0,g1]=CFG.greenMile; line(X0,g0,W,g0,"--tape-green",0.8);line(X0,g1,W,g1,"--tape-green",0.8);
+  label("Green mile",cx,1.5,(g0+g1)/2,3,"--tape-green");
+
+  // flat sorter: a row of chutes with staging in front
   const [f0,f1]=CFG.flat;
-  for(let k=0;k<10;k++) pick(box(14,10,8,30+k*30,5,f1,"--s-pallet",0.5),{kind:"equip",id:"Flat sorter chute "+(k+1),src:"photo",note:"Exact positions not surveyed yet"});
-  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,null,false,"Block F · flat sorter");}
-  // SR-028 at the flat sorter (pillar 1K-9): roller table with SR-028-A–F on one side and G–L on the other (photo; layout approximate)
+  for(let k=0;k<20;k++){const x=20+k*14;
+    const ch=beam([x,8,f1+6],[x,3,f1-2],8,0.6,"--steel",0.9);
+    pick(ch,{kind:"equip",id:"Flat sorter chute "+(k+1),src:"approx",note:"Chute positions not surveyed yet"});}
+  box(W-X0-20,1,4,cx+5,8.5,f1+8,"--steel-dark");
+  label("Flat sorter",cx,12,f1+4,3.4,"--fg");
+  for(let i=1;i<=20;i++){const col=Math.floor((i-1)/2),row=i%2===1?0:1;addSpot("STG-F-"+i,26+col*6.5,f0-2-row*CFG.spotD,{area:"Block F · flat sorter",short:"F-"+i});}
+  // SR-028 at pillar 1K-9: roller table with SR-028-A–F on one side and G–L on the other
   {const x=150,z0=f0-4;
-   pick(box(3,2.6,30,x,1.3,z0+15,"--steel",0.8),{kind:"equip",id:"SR-028 roller table",src:"photo",note:"Station screen S0128 lists SR-028-A to SR-028-L. Pillar 1K-9"});
-   pick(box(2,9,2,x,4.5,z0-2,"--muted"),{kind:"equip",id:"SR-028 station",src:"photo",note:"Printer, screen S0128, on building pillar 1K-9"});
-   "ABCDEF".split("").forEach((c,i)=>addSpot("SR-028-"+c,x-4,z0+CFG.spotD/2+i*CFG.spotD,null,false,"SR-028 · flat sorter"));
-   "GHIJKL".split("").forEach((c,i)=>addSpot("SR-028-"+c,x+4,z0+CFG.spotD/2+i*CFG.spotD,null,false,"SR-028 · flat sorter"));}
-  // STG-A: 2 columns × 4, odd numbers on the aisle side (photo; position not surveyed)
-  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,200+col*CFG.spotW,f0-2+row*CFG.spotD,null,false,"Block A · position unknown");}
-  label("Flat sorter (approx.)",160,14,f1,7,"--muted");
+   pick(rollerTable(x,z0+15,30,0),{kind:"equip",id:"SR-028 roller table",src:"photo",note:"Station screen S0128 lists SR-028-A to SR-028-L. Pillar 1K-9"});
+   pick(box(1,10,1,x,5,z0-2,"--steel-dark"),{kind:"equip",id:"SR-028",src:"photo",note:"Printer and screen S0128, on building pillar 1K-9"});
+   label("SR-028",x,11.5,z0-2,2.4,"--fg",{bg:"--panel",weight:700});
+   "ABCDEF".split("").forEach((c,i)=>addSpot("SR-028-"+c,x-4,z0+CFG.spotD/2+i*CFG.spotD,{area:"SR-028 · flat sorter",short:c,approx:true}));
+   "GHIJKL".split("").forEach((c,i)=>addSpot("SR-028-"+c,x+4,z0+CFG.spotD/2+i*CFG.spotD,{area:"SR-028 · flat sorter",short:c,approx:true}));}
+  // STG-A: 2 columns × 4, odd numbers on the aisle side (position not surveyed)
+  for(let i=1;i<=8;i++){const col=i%2===1?1:0,row=Math.floor((i-1)/2);addSpot("STG-A-"+i,200+col*CFG.spotW,f0-2+row*CFG.spotD,{area:"Block A · position not surveyed",short:"A-"+i,approx:true});}
 }
-function addSpot(id,x,z,door,inferred,area){
-  const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.5,0.25,CFG.spotD-0.5),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
-  m.position.set(x,0.13,z);scene.add(m);
-  const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CFG.spotW,0.28,CFG.spotD)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
+function addSpot(id,x,z,o={}){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(CFG.spotW-0.6,0.12,CFG.spotD-0.6),new THREE.MeshLambertMaterial({color:css("--s-empty")}));
+  m.position.set(x,0.1,z);scene.add(m);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CFG.spotW,0.16,CFG.spotD)),new THREE.LineBasicMaterial({color:css("--tape-blue")}));
   e.position.copy(m.position);scene.add(e);themed.push([e.material,"--tape-blue"]);
-  spots[id]=pick(m,{kind:"spot",id,door,area,status:"empty",src:inferred?"inferred":door?"photo":"approx"});
+  if(!id){pick(m,{kind:"equip",id:"Staging spot (label not read)",src:"approx",note:o.note});return;}
+  if(o.short)label(o.short,x,0.4,z,0.95,"--fg",{weight:700});
+  spots[id]=pick(m,{kind:"spot",id,door:o.door,area:o.area,status:"empty",src:o.inferred?"inferred":o.approx?"approx":"photo"});
 }
 build();
 
+/* ===== cameras: an orthographic plan (default) and a perspective 3D view ===== */
+const persp=new THREE.PerspectiveCamera(45,1,1,4000), ortho=new THREE.OrthographicCamera(-1,1,1,-1,-1000,2000);
+let camera=ortho, mode="plan", portrait=false, ctlPlan=null;
+const ctl3d=new THREE.OrbitControls(persp,renderer.domElement);ctl3d.enableDamping=true;ctl3d.maxPolarAngle=Math.PI/2.05;ctl3d.enabled=false;
+function makePlanControls(){ // in portrait the dock runs top to bottom so it fills a phone screen
+  if(ctlPlan)ctlPlan.dispose();
+  ortho.up.set(portrait?-1:0,0,portrait?0:-1);
+  ctlPlan=new THREE.OrbitControls(ortho,renderer.domElement);
+  Object.assign(ctlPlan,{enableRotate:false,screenSpacePanning:true,enableDamping:true,minZoom:0.5,maxZoom:40});
+  ctlPlan.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.PAN};
+  ctlPlan.touches={ONE:THREE.TOUCH.PAN,TWO:THREE.TOUCH.DOLLY_PAN};
+  ctlPlan.enabled=mode!=="3d";
+}
+function fitPlan(x0,x1,z0,z1){
+  const w=view.clientWidth,h=view.clientHeight,a=w/h, sx=portrait?(z1-z0):(x1-x0), sy=portrait?(x1-x0):(z1-z0);
+  const H=Math.max(sy,sx/a)*1.06; ortho.left=-H*a/2;ortho.right=H*a/2;ortho.top=H/2;ortho.bottom=-H/2;ortho.zoom=1;ortho.updateProjectionMatrix();
+  const c=new THREE.Vector3((x0+x1)/2,0,(z0+z1)/2);ctlPlan.target.copy(c);ortho.position.set(c.x,500,c.z);ctlPlan.update();
+}
+function setMode(m){
+  mode=m;camera=m==="3d"?persp:ortho;ctl3d.enabled=m==="3d";ctlPlan.enabled=m!=="3d";
+  ["plan","dock","3d"].forEach(k=>document.getElementById("v"+k).setAttribute("aria-pressed",k===m));
+  document.getElementById("hint").textContent=m==="3d"?"Drag to orbit · pinch or scroll to zoom · tap anything":"Drag to move · pinch or scroll to zoom · tap anything";
+  if(m==="plan")fitPlan(X0,W,0,D);
+  else if(m==="dock")fitPlan(doorX(149)-10,doorX(163)+12,-2,44);
+  else{ctl3d.target.set(doorX(156),0,22);persp.position.set(doorX(156)-60,90,150);ctl3d.update();}
+  mezzFade();
+}
+let mezzOn=true;
+function mezzFade(){ // in plan the deck is see-through so the floor underneath stays readable
+  mezzParts.forEach(p=>{p.visible=mezzOn;});
+  const deck=mezzParts[0].material;deck.opacity=mode==="3d"?0.55:0.12;
+}
+document.getElementById("vmezz").onclick=e=>{mezzOn=!mezzOn;e.currentTarget.setAttribute("aria-pressed",mezzOn);mezzFade();};
+["plan","dock","3d"].forEach(v=>document.getElementById("v"+v).onclick=()=>setMode(v));
+
+function resize(){const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);persp.aspect=w/h;persp.updateProjectionMatrix();
+  const p=h>w*1.15;if(p!==portrait||!ctlPlan){portrait=p;makePlanControls();}
+  if(mode!=="3d")setMode(mode);}
+new ResizeObserver(resize).observe(view);
+
+/* ===== spot data ===== */
 function paint(){for(const id in spots)spots[id].material.color.set(css("--s-"+spots[id].userData.status));}
 function progress(){
   const total=CFG.lastDoor-CFG.firstDoor+1, done=Object.keys(DOORS).length;
   document.getElementById("barfill").style.width=(done/total*100)+"%";
   const todo=[];for(let n=CFG.firstDoor;n<=CFG.lastDoor;n++) if(!DOORS[n]) todo.push(n);
-  document.getElementById("prog").innerHTML=`${done} of ${total} doors confirmed · ${Object.values(spots).filter(o=>o.userData.door).length} dock spots · ${Object.values(spots).filter(o=>!o.userData.door).length} sorter-side spots<br><em>Next up: doors ${todo[0]}–${todo[todo.length-1]}</em>`;
+  const all=Object.values(spots), dock=all.filter(o=>o.userData.door).length;
+  document.getElementById("prog").innerHTML=`${done} of ${total} doors confirmed<br>${dock} dock spots · ${all.length-dock} sorter-side spots<br><em>Next up: doors ${todo[0]}–${todo[todo.length-1]}</em>`;
 }
 progress();
-
 const msg=document.getElementById("msg");
 function applyFeed(text){
   let ok=0,bad=[];
@@ -273,40 +390,40 @@ function applyFeed(text){
 document.getElementById("apply").onclick=()=>applyFeed(document.getElementById("feed").value);
 document.getElementById("clear").onclick=()=>{for(const id in spots)spots[id].userData.status="empty";paint();msg.textContent="All spots cleared";};
 
+/* ===== picking, info and find ===== */
 const ray=new THREE.Raycaster(),ptr=new THREE.Vector2();let down=null,sel=null;
+const marker=new THREE.Mesh(new THREE.RingGeometry(3,3.8,32),new THREE.MeshBasicMaterial({color:css("--accent"),depthTest:false,transparent:true}));
+marker.rotation.x=-Math.PI/2;marker.renderOrder=9;marker.visible=false;scene.add(marker);themed.push([marker.material,"--accent"]);
 renderer.domElement.addEventListener("pointerdown",e=>down=[e.clientX,e.clientY]);
 renderer.domElement.addEventListener("pointerup",e=>{
   if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>6)return;
   const r=renderer.domElement.getBoundingClientRect();ptr.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
-  ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(pickables)[0];select(hit&&hit.object);
+  ray.setFromCamera(ptr,camera);const hit=ray.intersectObjects(pickables.filter(o=>o.visible))[0];select(hit&&hit.object);
 });
-const SRC={inferred:"Seen in photos; label not read yet",photo:"Confirmed in photos",sketch:"From your sketch",approx:"Approximate position"};
 function select(o){
-  if(sel&&sel.userData.kind==="spot")sel.scale.y=1;sel=o;
-  const info=document.getElementById("info");
-  if(!o){info.textContent="Tap a door, staging spot or piece of equipment.";return;}
-  const u=o.userData,tag=u.src?`<span class="src">${SRC[u.src]}</span>`:`<span class="src">Not surveyed yet</span>`;
-  if(u.kind==="spot"){o.scale.y=4;info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft · ${NAMES[u.status]}<br>${tag}`;}
+  sel=o;const info=document.getElementById("info");
+  if(!o){marker.visible=false;info.textContent="Tap a door, staging spot or piece of equipment.";return;}
+  const p=new THREE.Vector3();o.getWorldPosition(p);marker.position.set(p.x,0.3,p.z);marker.visible=true;
+  const u=o.userData,tag=`<span class="src">${u.src?SRC[u.src]:"Not surveyed yet"}</span>`;
+  if(u.kind==="spot")info.innerHTML=`<b>${u.id}</b>${u.door?"Door "+u.door:u.area} · ${CFG.spotW} × ${CFG.spotD} ft<br>Status: ${NAMES[u.status]}<br>${tag}`;
   else info.innerHTML=`<b>${u.id}</b>${u.load?"Loading: "+LOADS[u.load]+"<br>":""}${u.note?u.note+"<br>":""}${tag}`;
 }
+document.getElementById("find").addEventListener("keydown",e=>{
+  if(e.key!=="Enter")return;const q=e.target.value.trim().toUpperCase().replace(/\s+/g,"");if(!q)return;
+  const cands=[q,"DOOR"+q,"STG-"+q,"SR-"+q].map(k=>k.replace(/^DOOR/,"DOOR "));
+  let o=cands.map(k=>byId[k]).find(Boolean)||Object.entries(byId).find(([k])=>k.replace(/\s/g,"").includes(q))?.[1];
+  if(!o){msg.textContent=`Nothing called "${e.target.value}" on the map`;return;}
+  select(o);const p=new THREE.Vector3();o.getWorldPosition(p);
+  if(mode==="3d"){ctl3d.target.set(p.x,0,p.z);persp.position.set(p.x-25,45,p.z+60);ctl3d.update();}
+  else{fitPlan(p.x-30,p.x+30,Math.max(-2,p.z-22),p.z+22);}
+});
 
-const target=new THREE.Vector3(cx,0,50);
-function setView(v){
-  if(v==="top"){controls.target.copy(target);camera.position.set(cx,480,51);}
-  else if(v==="dock"){controls.target.set(doorX(155),0,18);camera.position.set(doorX(155)+5,55,110);}
-  else{controls.target.copy(target);camera.position.set(cx-140,230,300);}
-  controls.update();
-}
-["3d","top","dock"].forEach(v=>document.getElementById("v"+v).onclick=()=>setView(v));
-
-function resize(){const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
-new ResizeObserver(resize).observe(view);
+/* ===== theme ===== */
 function themeSync(){scene.background=new THREE.Color(css("--bg"));themed.forEach(([m,t])=>m.color.set(css(t)));labels.forEach(drawLabel);paint();}
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",themeSync);
 new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 if(document.fonts)document.fonts.ready.then(()=>labels.forEach(drawLabel));
 
-msg.textContent="No data loaded";
-themeSync();resize();setView("dock");
-(function loop(){controls.update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
+themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · example data";
+(function loop(){(mode==="3d"?ctl3d:ctlPlan).update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
 </script>
