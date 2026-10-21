@@ -112,6 +112,7 @@ STG-176-1,pallet</textarea>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 /* ===== LAYOUT (feet). x runs along the dock wall (door numbers grow with x), z runs out into the building. ===== */
+const CFG_PITCH=13;
 const CFG = {
   firstDoor:149, lastDoor:176,
   doorPitch:13,        // estimated from photos: ~9 ft doors on ~13 ft centres
@@ -120,7 +121,9 @@ const CFG = {
   stagingStart:12,     // staging column starts ~12 ft off the wall (after apron + keep-clear)
   mezzY:17,            // mezzanine deck height (approx.)
   mezz:[44,58], greenMile:[92,100], flat:[112,142],
-  lanePitch:22           // ship order lanes SR-002…SR-028, numbers rise toward higher doors; anchored on SR-018 in line with 164/165, spacing guessed  // approximate
+  // lanes SR-0nn: one numbered sequence along the dock. Odd = dock lane (spiral → incline → roller table toward a door),
+  // even = ship order (pallet) lane behind the mezzanine. Numbers FALL toward higher doors. Anchors: [lane, door it lines up with]
+  laneAnchors:[[25,155.5],[23,159],[21,162.5],[18,164.5],[13,169.5]]  // approximate
 };
 /* What each door looks like. src: "photo" = seen in your photos, "sketch" = from your drawing only. */
 const DOORS = {
@@ -133,8 +136,8 @@ const DOORS = {
   155:{src:"photo", sr:"SR-025"},
   156:{src:"photo", hatch:true, poster:"Test the weight and lift within your power zone"},
   157:{src:"photo", load:"cart", staging:{cols:1,spots:5}},
-  158:{src:"photo", sr:"SR-023", screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
-  159:{src:"photo", hatch:true, louver:true},
+  158:{src:"photo", sr:"SR-023", srOff:CFG_PITCH, screen:"DD158", poster:"Pivot (don't twist) and protect your body", note:"Kiosk and walkway between 157 and 158"},
+  159:{src:"photo", load:"cart", hatch:true, louver:true, screen:"DD159 · DYT3-CART-A", note:"Dock lane SR-023 sits in front of this door, between pallet lanes SR-022 and SR-024. Trailer AZNG DVC260128"},
   160:{src:"photo", load:"cart", screen:"DD160 · DYT3-CART-A", poster:"Watch for moving equipment - Stay alert", staging:{cols:1,spots:5,inferred:true}, note:"Column seen between 159 and 160, label not read"},
   161:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:5}},
   162:{src:"photo", load:"cart", sr:"SR-021", srOff:6, staging:{cols:1,spots:5,off:12,inferred:true}, note:"Sprinkler risers (621–643) and exit W022 sit past it, before 163"},
@@ -144,7 +147,7 @@ const DOORS = {
   166:{src:"photo", load:"cart", hatch:true, screen:"DD166", poster:"Wear proper PPE, including hard hat", staging:{cols:1,spots:4,off:-4,inferred:true}, note:"Carts staged on blue tape in front of 165/166; label not read"},
   167:{src:"photo", load:"cart", hatch:true, staging:{cols:1,spots:4,off:5.5}, note:"Door closed. Its column (4 spots) sits on the 168 side, unlike 157–161"},
   168:{src:"photo", load:"cart", hatch:true, louver:true, poster:"Keep safe spacing between moving carts", staging:{cols:1,spots:4,off:5.5,inferred:true}, note:"STG-168-1 and 168-2 read; 4 spots assumed like 167. Column sits between 168 and 169"},
-  169:{src:"photo", louver:true, sr:"SR-013", note:"Twin screens hang in front of this door (read as SR-013; recheck, lanes are even-numbered)"},
+  169:{src:"photo", louver:true, sr:"SR-013", note:"Dock lane SR-013's twin screens hang in front of this door"},
   176:{src:"photo", load:"cart", hatch:true, staging:{cols:2,spots:8}, note:"Another 2-column block sits past this one, then the PIT charging area"}
 };
 const STATUSES=["empty","cart","pallet","full","ready"];
@@ -166,7 +169,13 @@ scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.95));
 const sun=new THREE.DirectionalLight(0xffffff,0.45); sun.position.set(150,400,250); scene.add(sun);
 
 const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
-const W=doorX(CFG.lastDoor)+40, X0=-15, cx=(X0+W)/2, D=CFG.flat[1]+12;
+// x of a lane from its number: straight lines between the anchors; past the last anchor, the average spacing of 23→13
+const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-doorX(n));};
+function laneX(n){const A=CFG.laneAnchors.map(([l,d])=>[l,doorPos(d)]);
+  for(let i=0;i<A.length-1;i++){const[a,xa]=A[i],[b,xb]=A[i+1];if(n<=a&&n>=b)return xa+(n-a)*(xb-xa)/(b-a);}
+  if(n>A[0][0]){const[a,xa]=A[0],[b,xb]=A[1];return xa+(n-a)*(xb-xa)/(b-a);}
+  const[a,xa]=A[1],[b,xb]=A[A.length-1];return xb+(n-b)*(xb-xa)/(b-a);}
+const W=Math.max(doorX(CFG.lastDoor)+40,laneX(2)+20), X0=-15, cx=(X0+W)/2, D=CFG.flat[1]+12;
 
 const themed=[];
 function mat(token,opacity=1,extra={}){const m=new THREE.MeshLambertMaterial(Object.assign({color:css(token),transparent:opacity<1,opacity},extra));themed.push([m,token]);return m;}
@@ -237,9 +246,11 @@ function build(){
     }
     if(d.sr){ // station between this door and the next; roller table angled toward the dock, fed by an incline from the sorter
       const sx=x+(d.srOff??CFG.doorPitch/2);
-      pick(rollerTable(sx,15,16,0.25),{kind:"equip",id:"Roller table "+n+"/"+(n+1),src:"photo",note:"Feeds toward the doors; dunnage airbags often sit on it. A screen here read as "+d.sr+", but ship order lanes are even-numbered and sit behind the mezzanine, so that reading needs a recheck"});
+      const ln=+d.sr.slice(3);
+      pick(rollerTable(sx,15,16,0.25),{kind:"equip",id:d.sr,src:"photo",note:"Dock lane: a spiral feeds an incline down to this roller table, which runs toward the door. Sits between pallet lanes SR-0"+(ln+1)+" and SR-0"+(ln-1)+". Dunnage airbags often sit on it"});
+      label(d.sr,sx,5,15,2.2,"--fg",{bg:"--panel",weight:700});
       hatch(sx-6,sx+6,8,23);
-      pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+2,3,23],2.4,0.4,"--steel",0.85),{kind:"equip",id:"Incline "+n+"/"+(n+1),src:"approx",note:"Gravity incline from the sorter down to the roller table"});
+      pick(beam([sx+3,CFG.mezzY,CFG.mezz[0]],[sx+2,3,23],2.4,0.4,"--steel",0.85),{kind:"equip",id:d.sr+" incline",src:"approx",note:"Gravity incline from the sorter down to the roller table"});
     }
     if(d.staging){
       // columns sit just to the lower-number side of their door
@@ -319,7 +330,7 @@ function build(){
    pick(pl,{kind:"equip",id:"Pillar 1L-6",src:"photo",note:"Straight out from door 165, just past the spirals. Row L is the dock-side row; K (at SR-028) and J lie further toward the flat sorter"});
    label("1L-6",doorX(165)+0.5,27,CFG.mezz[0]+7,2.4,"--fg",{bg:"--panel",weight:700});
    // stations with screens and inclines either side of the walkway (numbers not read; screens not read)
-   for(const [sx,id] of[[doorX(164)-3,"Station near 164"],[doorX(166)+5,"Station near 166/167"]]){
+   for(const [sx,id] of[[doorX(164)-3,"Dock lane near 164 (probably SR-019)"],[doorX(166)+5,"Dock lane near 166/167 (probably SR-017 or SR-015)"]]){
      pick(rollerTable(sx,36,12,0),{kind:"equip",id:id+" roller table",src:"approx",note:"Fed by an incline from a spiral; station number not read"});
      beam([sx,CFG.mezzY-3,CFG.mezz[0]+2],[sx,3,40],2.4,0.4,"--steel",0.85);
      pick(box(3.4,2.2,0.3,sx+2,12,CFG.mezz[0]-2,"--steel-dark"),{kind:"equip",id:id+" screen",src:"photo",note:"Station screen hanging by the spiral; text not read"});}}
@@ -361,9 +372,9 @@ function build(){
   pick(box(4,4,10,doorX(155),2,CFG.greenMile[1]+6,"--steel",0.4),{kind:"equip",id:"Auto scan",src:"sketch"});
   // ship order lanes SR-002…SR-028 (even only) behind the mezzanine: a roller table fed from the deck, pallet spots
   // A–F on one side and G–L on the other, printer + shrink wrap at the green-mile end, twin screens on a pole
-  const laneX=n=>(doorX(164)+doorX(165))/2+(n-18)/2*CFG.lanePitch, lz0=CFG.mezz[1]-1;
+  const lz0=CFG.mezz[1]-1;
   for(let n=2;n<=28;n+=2){
-    const x=laneX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18||n===28;
+    const x=laneX(n), id="SR-"+String(n).padStart(3,"0"), seen=n===18;
     pick(rollerTable(x,lz0+15,30,0),{kind:"equip",id:id+" roller table",src:seen?"photo":"approx",note:"Ship order lane: parcels come down from the sorter and are built onto pallets"});
     beam([x,CFG.mezzY,CFG.mezz[1]-3],[x,3,lz0+1],2.4,0.4,"--steel",0.85);
     "ABCDEF".split("").forEach((c,i)=>addSpot(id+"-"+c,x-4.5,lz0+CFG.spotD/2+i*CFG.spotD,{area:id+" · ship order lane",short:c,approx:!seen}));
@@ -380,7 +391,7 @@ function build(){
   label("ENTER HERE ↓",laneX(19)-8,16,CFG.greenMile[0]+4,2,"--panel",{bg:"--tape-green"});
   label("DO NOT ENTER ↓",laneX(21),16,CFG.greenMile[0]+4,2,"--panel",{bg:"--s-full"});DETAIL=false;
   // red staircase up to the mezzanine beside SR-018, with an ENTER HERE sign (photo)
-  {const x=laneX(17); // in the gap between SR-018 and SR-016 (lower-door side of SR-018)
+  {const x=laneX(19); // between SR-018 and SR-020 (lower-door side of SR-018)
    pick(beam([x,CFG.mezzY,CFG.mezz[1]],[x,0.5,CFG.mezz[1]+22],4,0.6,"--s-full"),{kind:"equip",id:"Stairs to mezzanine",src:"photo",note:"Red staircase next to SR-018, yellow guardrail at its foot"});
    label("ENTER HERE",x,14,CFG.mezz[1]+10,1.6,"--tape-green",{bg:"--panel"});}
 
