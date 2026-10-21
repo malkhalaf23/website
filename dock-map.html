@@ -448,10 +448,10 @@ function build(){
   DETAIL=true;pick(box(4,3,0.2,p28+20,20,CFG.greenMile[1]+2,"--s-full",0.9),{kind:"equip",id:"Do not enter sign",src:"photo",note:"Hanging near SR-028"});DETAIL=false;
   // Floor staging across the back green mile (from you). STG-U (9 spots) faces lane SR-016, beside pillar 1K-6. From U toward
   // lower doors (toward lanes 18, 20 …) a block every 6 ft: L, K, J, I, H, G, F, E, D, C, B, A, each 10 spots in two columns
-  // running away from the green mile, odd 1–9 in one and even 2–10 in the other. Which column holds the odds: guessed
+  // running away from the green mile, odd 1–9 on the right when you face away from the SR lanes (lower-door side), even 2–10 on the left
   {const z0=CFG.greenMile[1]+2, pitch=2*CFG.spotW+6;
    const block=(name,cx,n)=>{for(let i=1;i<=n;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
-       addSpot("STG-"+name+"-"+i,odd?cx+2:cx-2,z0+CFG.spotD/2+row*CFG.spotD,{area:"Block "+name+" · floor staging",short:name+"-"+i});}
+       addSpot("STG-"+name+"-"+i,odd?cx-2:cx+2,z0+CFG.spotD/2+row*CFG.spotD,{area:"Block "+name+" · floor staging",short:name+"-"+i});}
      label("STG-"+name,cx,1.5,z0-0.8,1.6,"--tape-blue",{weight:700});};
    const ux=palletX(16)-9;
    block("U",ux,9);

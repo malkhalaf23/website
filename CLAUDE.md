@@ -103,6 +103,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER, floor staging row: across the back green mile, starting at STG-U (lane 16, 9 spots) and going toward lower doors (lanes 18, 20 …), a block every 6 ft: L, K, J, I, H, G, F, E, D, C, B, A. Each has 10 spots, odd 1–9 in one column and even 2–10 in the other (photo: STG-K-9). Replaces the old guessed STG-F and STG-A blocks. Orange-padded pillars stand among these blocks.
 
+- FROM THE USER: in the floor staging blocks (U, L…A), odd numbers are on the right when facing away from the SR lanes, i.e. the lower-door column.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
