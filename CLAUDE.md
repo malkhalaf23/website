@@ -122,6 +122,8 @@ A 3D layout map of a warehouse outbound ship dock, built section by section from
 
 - FROM THE USER: lane SR-019 has STG-162-1…5 on its side toward lane 17 (higher-door side), in the 35 ft gap.
 
+- FROM THE USER + photo: after STG-162 a 4 ft green mile runs straight to exit W022, then STG-163-1…10 (2 columns of 5 assumed, odds on the walkway side guessed), toward lane 17. W022 moved to sit at the end of that walkway.
+
 ## Still open
 - Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
 - Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.

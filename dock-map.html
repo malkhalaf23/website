@@ -349,10 +349,10 @@ function build(){
   walk([[doorX(155)-2,8.1],[W-12,8.1]]);                                  // green mile along the doors, from 155 on
   walk([[doorX(157)+half,3],[doorX(158)+half-2,8.1]]);                     // short branch to the kiosk at 157/158
   // emergency exit W022, sprinkler risers, walkway straight to the exit
-  {const ex=doorX(162)+33; // exit W022 sits past SR-019, which is midway between 162 and 163
+  {const ex=laneX(19)+8.5; // exit W022: a 4 ft green mile runs straight to it between STG-162 and STG-163 (photo)
    pick(box(4,8,0.8,ex,4,0.4,"--s-full"),{kind:"equip",id:"Exit W022",src:"photo",note:"Emergency exit between 162 and 163; a walkway runs straight to it"});
    label("EXIT W022",ex,10,2,2.2,"--s-full",{bg:"--panel"});
-   walk([[ex-0.9,9.2],[ex-0.9,45]]);walk([[ex+0.9,45],[ex+0.9,9.2]]);
+   walk([[ex-1.4,9.2],[ex-1.4,45]]);walk([[ex+1.4,45],[ex+1.4,9.2]]);
    for(let k=0;k<6;k++) box(0.6,22,0.6,doorX(162)+8+k*1.6,11,0.8,"--s-full");
    pick(box(10,0.1,2,doorX(162)+10.5,0.05,1.5,"--s-full",0.5),{kind:"equip",id:"Sprinkler risers 621–643",src:"photo",note:"With electrical panels, on the wall between 162 and 163"});
    hatch(doorX(162)+5,doorX(162)+16,10,16);}
@@ -374,6 +374,9 @@ function build(){
   const laneStage=(id,n,x,door,lane)=>{for(let i=1;i<=n;i++)addSpot(id+"-"+i,x,18+CFG.spotD/2+(i-1)*CFG.spotD,{door,short:id.slice(4)+"-"+i,lane});};
   laneStage("STG-165",5,laneX(15)-4.5,165,"SR-015");
   laneStage("STG-161",5,laneX(21)-4.5,161,"SR-021");   // lane 21's lower-door side (photo + you)
+  // STG-163-1…10: past the 4 ft green mile to W022, 2 columns of 5, odds on the walkway side (guess), 1 nearest the wall
+  for(let i=1;i<=10;i++){const odd=i%2===1,row=Math.floor((i-1)/2);
+    addSpot("STG-163-"+i,laneX(19)+(odd?12.5:16.5),18+CFG.spotD/2+row*CFG.spotD,{door:163,short:"163-"+i});}
   laneStage("STG-162",5,laneX(19)+4.5,162,"SR-019");   // on lane 19's side toward lane 17 (from you)
   // STG-170 (from you + photos): 1–5 are a column for lane SR-011, on its right facing away from the door (lower-door side),
   // running out from the keep-clear; 6–9 are a row along the dock for lane SR-009, 6 on the higher-door end
