@@ -1,169 +1,40 @@
 # Ship Dock Twin
 
-A 3D layout map of a warehouse outbound ship dock, built section by section from photos the user takes on the floor. Goal: an accurate floor layout that can later show real data per staging spot. Layout only: never model carts, pallets or boxes.
+A 3D layout map of a warehouse outbound ship dock, built from floor photos and the user's descriptions. Goal: an accurate floor layout that can later show real data per staging spot. Layout only: never model carts, pallets or boxes. Never show sort/destination codes, times or package counts (location names only).
 
 ## Files
-- This repo also holds an unrelated Hugo site (bettercap docs: `content/`, `docs/`, `themes/` …). Leave it alone; dock work only touches the two files below.
-- `dock-map.html`: the whole app. One self-contained page using Three.js r128 + OrbitControls from jsDelivr. Open it in a browser to view.
+- This repo also holds an unrelated Hugo site (bettercap docs: `content/`, `docs/`, `themes/` …). Leave it alone; dock work only touches `dock-map.html` and this file.
+- `dock-map.html`: the whole app. One self-contained page, Three.js r128 + OrbitControls from jsDelivr. Published as a private artifact: https://claude.ai/artifact/TxdeD2V6JQy9foHPaJXBo2 (republish the same file to keep the URL).
 
-## How the code is organized (top of the script)
-- `CFG`: all dimensions in feet. x runs along the dock wall (door numbers increase with x), z runs out into the building.
-- `DOORS`: one entry per door seen in photos. Fields: `src`, `note`, `hatch` (keep-clear zone), `maxreach`, `sr` + `srOff` (SR station and its roller table), `staging` (`cols`, `spots`, `off`, `inferred`).
-- Doors with no entry render faded as "not surveyed yet". The progress bar counts `DOORS` entries.
-- Everything tapped shows its source: confirmed in photos, label not read yet, from the sketch, or approximate.
-- A CSV box (`id,status`) colors staging spots: empty, cart, pallet, full, ready.
-- Views: Plan (orthographic, default; rotates so the dock runs top-to-bottom on phones), Doors 149–163 close-up, 3D. Mezzanine toggle. Find box jumps to a door, spot or station. Helpers: `hatch()` striped tape, `rollerTable()`, `walk()` green/pink walkway, `beam()` for inclines, `addSpot()` (pass `null` id for a taped spot whose label is unread). Per-door wall kit is drawn in one loop from `DOORS` fields `screen`, `poster`, `louver`.
+## Code map
+- `CFG`: dimensions in feet. x runs along the dock wall (door numbers grow with x), z runs into the building. `doorX(n)` is based on door 149; `CFG.laneAnchors` [lane, door] place the odd scan lanes; `laneX()` interpolates; `palletX(n)` spreads pallet lanes SR-028→SR-002 evenly (SR-030 is 35 ft past SR-028); `pillarX(c)` is the K-row grid (1K-6 at SR-016, 1K-5 between SR-012/010).
+- `DOORS`: one entry per door: `src`, `note`, `load`, `screen`, `poster`, `louver`, `hatch` (`"yellow"` only), `maxreach`, `sr` + `srOff` (odd scan lane in front), `staging` (2-column blocks at 175–177).
+- Helpers: `addSpot(id,x,z,{door,lane,area,short,turned})`, `laneStage()` (lane staging column starting 1 ft past the red zone), `noStage()` (6×7 ft red/white no-staging zone), `rollerTable()`, `walk()` (green+pink walkway), `beam()`, `hatch()`.
+- Toggles: Plan / Doors close-up / 3D, Flow (parcel paths), Details (signs, door kit, decals; tagged via `DETAIL`), Mezzanine (hides both decks). The scene is mirrored for display (`MX = -1`): door 149 shows on the right. Camera/marker code converts with `MX`.
+- Status box: `id,status[,door]`; tapping a spot shows its lane and rings the door it ships from.
 
-## Facts confirmed from photos
-- Doors 149–176 on one wall, ~9 ft wide on ~13 ft centres (estimated). Open doors show their number high, closed doors low.
-- Staging spots: 4 ft wide × 5 ft deep (measured by user), in columns of 5 running straight out from the wall, starting ~12 ft off it. Spot 1 is nearest the door. QR code in each spot, label on one side edge.
-- Columns usually sit just to the lower-number side of their door (157, 160, 161). Exception: 162 and 163 flank the walkway to exit W022.
-- Doors 166–169 (photo): STG-167 is 1 column of 4 spots (not 5), sitting between 167 and 168, on the higher-number side. So the "lower-number side" rule does not hold everywhere. Carts on blue tape at 165/166 (STG-166 inferred, 4 spots assumed). Red/white hatching in front of 166–168. SR-013 (twin screens) hangs in front of 169 with its roller table and incline at 169/170. Airbag roller table at 165/166. Posters: 168 "Keep safe spacing between moving carts", 166 PPE. Louvers above 168, 169. Screen DD166.
-- STG-168 (photo from the 168 apron looking out): 168-1 nearest the door, 168-2 behind it; column sits between 168 and 169, so 166–169 columns sit on the higher-number side of their door. 4 spots assumed. Further out, a row of spots parallel to the wall with STG-1… labels (the taped lane at ~33 ft). STOP decal at the walkway by 168/169.
-- STG-170 (photo): a ROW parallel to the wall, not a column. 170-1 at the higher-door end, then 170-2, 170-3… toward lower doors; ~5 spots. Placed at ~24 ft out, just past SR-013's table (position approx). Behind it, a roller table runs along the dock at ~39 ft, fed by an incline from a spiral; hearing-protection and DANGER signs on its posts. Every spiral foot has a yellow octagonal guard. Hazmat signs hang along the mezzanine edge here.
-- In front of 165 (photo): a walkway runs from the main walkway straight out under the mezzanine (with a small jog) toward the green mile. STOP and "check dome mirror" decals at its foot, bollards and a hearing-protection sign where it passes under the deck. Pillar 1L-6 stands just past the spirals in line with 165. A taped column with carts sits left of the walkway (STG-165, label unread); a pallet sits on STG-166's tape to the right. Stations with screens and inclines sit either side (near 164 and 166/167), numbers not read.
-- Green mile (photos): the walkway between the lane ends and the floor staging. STG-F sits across it from SR-016 (STG-F-10 by the SR-016 pole). ENTER HERE / DO NOT ENTER signs hang over it. Row-K pillars (yellow with orange bases) line its far side; 1K-7 is a little past SR-018, so pillar numbers rise toward higher doors too, about 2 lanes apart (~50 ft). Conflict: that puts 1K-7 almost in line with 1L-6 (seen in line with 165); one of the two needs a recheck.
-- Pillar grid: row L is the dock-side row (1L-6 at 165, ~50 ft out), row K is one bay further (1K-9 at SR-028), J further again. So a bay is roughly 50 ft deep. Which way the numbers run along the dock is still unknown.
-- SR numbers drop going up the dock: 025 (155), 023 (158), 021 (162), 013 (169). So 019/017/015 probably sit at 163–168, not seen yet.
-- Door 176 staging: 2 columns, 8 spots, odd numbers front, even behind.
-- MaxxReach extendable conveyors at doors 149, 150 and 154, each with taped and chained keep-out areas. 151 and 152 have no conveyor.
-- SR stations between doors, each with a roller table angled toward the dock: SR-025 (155/156), SR-023 (158/159), SR-021 (beside 162, in front of the riser wall).
-- Gap between 162 and 163 (~45 ft centre to centre, estimated): sprinkler risers 621–643, electrical panels, emergency exit W022.
-- Walkways (green + pink tape): main one runs along the door aprons from ~159 up the dock and jogs to the kiosk at 157/158. Perpendicular walkways reach the wall beside 154, between 161/162, and straight to W022.
-- Keep-clear red/white hatching in front of 156, 159, 161.
-- Each door has a screen showing its load (e.g. "DD149 · CP-CENTRAL"). This is a likely live data source.
-- Mezzanine sorter with spiral chutes runs the length of the dock. Its spirals start just past the staging columns (~44 ft off the wall). Gravity inclines run down from it to the SR roller tables. The flat sorter area holds STG-F spots. Positions are approximate.
-- STG-F spots follow the same numbering as 176: odd numbers in front, even behind (F-9 in front of F-10, with F-7/F-8 beside them).
-- Door load type, worked out from the door screens and equipment: MaxxReach doors are fluid-loaded (149, 150, 154, and probably 153). Doors with staging columns are cart-loaded (160's screen reads DYT3-CART-A). 151 and 152 have no conveyor, so they are probably cart doors.
-- 153: door closed. A second MaxxReach boom sits beside 154's, with its wall end at 153 (inferred).
-- Sketch: an exit between 152 and 153. The sketch's "fluid lanes" at 149/150 match the MaxxReach doors in the photos.
-- Past 176: a second 2-column staging block (label not read), then the fenced PIT charging area. 176 has keep-clear hatching between spot 1 and the wall.
-- Every door has the same kit: dock lock panel left, yellow wall fan, door screen right, yellow apron tape around the leveler, yellow bollards; dome mirrors hang between doors. Screens read: DD149 CP-CENTRAL, DD151, DD152 AZNG, DD153, DD158, DD160 DYT3-CART-A.
-- Posters on doors 150, 156, 158, 160; louvers above 149, 150, 159. Wall between 154 and 155: AED, electrical panels, clock, ladder rack. Storm drain pipe between 150 and 151. Hazmat signs hang over 149/150 and along the mezzanine edge. STOP decals where walkways cross.
-- Past 165, go-carts park in a taped lane on the sorter side of the aisle (lane modelled, carts not).
-- Flat sorter: a FLAT SORTER sign over each chute; pillar 1K-9 (yellow guard, red label band, 6 FT mark) at SR-028; DO NOT ENTER sign nearby; red tape edges STG-A.
-- Main walkway and the roller tables with airbags continue all the way down past 166–175. Go-carts line the sorter side (not modelled).
+## The department as a whole (all photos + user, current truth)
+Wall outward, door 148 (low-door end, by the entrance) to door 180 (far end):
+1. Doors 148–180. Fluid doors 149, 150, 151, 152, 154 with MaxxReach booms (user; photos only show booms at 149/150/153-154 — open question). 153 no lane. Driver's cage (emergency exit used by drivers) between 154 and 155. Sprinkler risers + exit W022 in the 162–163 gap. Exit W019 by 179. Hard-hat storage and PIT charging past 180.
+2. Green mile (walkway) along the doors from 155 to the end. Others run out from the driver's cage, 165, 171 and to W022.
+3. Dock zone: odd auto-scan lanes SR-029 (155), 027 (156), 025 (157), 023 (159), 021 (161), 019 (midway 162/163, 35 ft before 017), 017 (164), 015 (166), 013 (168), 011 (169/170), 009 (170/171), 007 (172). Each: spiral → incline → straight roller table out from the wall, printer at the incline foot, two 6×7 ft red/white no-staging zones at the dock end, staging columns 1 ft past them.
+   - Lane staging (user): 23: STG-157-6 | STG-159-1…4. 21: STG-159-5,6 | STG-161-1…5. 19: STG-161-6 | STG-162-1…5. Free-standing STG-163-1…10 in the 19–17 gap past a 4 ft green mile to W022. 17: STG-163-11,12. 15: STG-165-1…5. 13: STG-167-1…4 | STG-168-1…5. 11: STG-170-1…5 | STG-169-1…4. 9, 25, 27, 29: none.
+   - Stage-only doors: 175, 176, 177 each 14 spots (2 × 7, yellow/black keep-clear at the wall). 173, 174 nothing. 178–180 carts staged, no lanes.
+4. Mezzanine sorter with spirals (~44–58 ft); red stairs up beside SR-018.
+5. Ship order (pallet) lanes, even SR-030 (door ~152, no slots) and SR-028 … SR-002 (across from 177), A–L each: standing on the back green mile facing the lane, A–F on the right, G–L on the left. Pole with twin screens (screen shows each location's ship door), printer, shrink-wrap spot at the green-mile end.
+   - Between 28 and 30: STG-P-1…11, green mile, STG-O-1…10 (rows along the lane, highest number at the green mile). Past 2: STG-Y-1…7, a 10-spot block (name not given), green mile, STG-Z-1…7.
+6. Back green mile: the department's spine, from the entrance (Main Office / AFE, pillar 1H-9, Fastenal PPE machine, whiteboards) to the far end. ENTER HERE / DO NOT ENTER signs.
+7. Across it: floor staging blocks U (9), L, K, J, I, H, G, F, E, D, C, B, A (10 each), AA (10), AB (12), 6 ft apart (3 ft before AB), odds on the right facing away from the lanes, spot 1 at the green mile. Behind them an aisle, then the flat sorter: 40 chutes (gaylords) from STG-A to the induct stations (names not mapped, user). Further toward the entrance: ShipDock-Main staging (layout to come) and pallet storage.
+8. Induct platform across from lanes 12 → 2: Induct Stations 1–4 (stairs, PS collection spot), overhead conveyor over the back green mile at lanes 2–4, jam-clearing ladders, corrugate/trash bins, pillars 1K-5, 1K-4.
 
-- Flat sorter side: SR-028 sits at building pillar 1K-9. Its screen (S0128) lists 12 positions: SR-028-A–F on one side of a roller table and G–L on the other, laid out as taped columns running toward the flat sorter chutes. Exact layout and position are approximate.
-- STG-A is a 2 × 4 block (A-1…A-8) with odd numbers on the aisle side ("Keep handles facing towards the aisle"), same scheme as STG-F and 176. Lettered blocks probably run A, B, C… along the flat sorter. Position not surveyed.
-- Building pillars carry grid labels (1J-9, 1K-8, 1K-9). This is a real coordinate system: photos of pillar labels plus one paced pillar-to-pillar distance would fix the scale of the whole map.
-
-- LANES (from the user): one numbered sequence SR-0nn runs along the dock. ODD numbers are dock lanes: a spiral feeds an incline down to a roller table in front of a door (SR-025 at 155/156, SR-023 in front of 159, SR-021 at 162, SR-013 at 169). EVEN numbers SR-002…SR-028 are ship order (pallet) lanes behind the mezzanine, each with locations A–L. Each odd lane sits between its even neighbours (SR-023 between SR-022 and SR-024). Numbers fall toward higher doors. Positions come from `CFG.laneAnchors` [lane, door]; laneX() interpolates between anchors, so adding one anchor fixes a whole stretch. SR-018 (photo) lines up with 164/165. Lanes below SR-012 extrapolate past door 176, so the dock probably continues past 176.
-- Ship order lane layout (photos of SR-018): roller table fed from the deck, pallet spots A–F one side and G–L the other (floor-marked PALLET), pole with twin screens and andon light, printer table (floor tape PRINTER) and SHRINK WRAP spot at the green-mile end. Red staircase to the mezzanine beside SR-018 with ENTER HERE sign.
-- Door 159 (photo): screen DD159 · DYT3-CART-A, trailer AZNG DVC260128; SR-023's roller table with airbags, fed by an incline straight from a spiral, sits in front of it inside keep-clear hatching.
-- The green-mile photos seemed to show lane numbers rising toward higher doors; the user's lane 23 at 159 and the odd dock-lane series say the opposite, so the green-mile reading was wrong. 1K-7 and STG-F placements built on it are suspect.
-
-- FROM THE USER (overrides photos where they differ), doors 149–163:
-  - 149, 150, 151, 152 and 154: fluid lanes, each with a MaxxReach. 153 has no fluid lane.
-  - Between 154 and 155: emergency exit also used by drivers, called the driver's cage.
-  - 155–162 are cart doors.
-  - Odd (scan) dock lanes: SR-027 in front of 155, SR-025 in front of 157, SR-023 in front of 159, SR-021 in front of 161, SR-019 midway between 162 and 163. One lane number per door. (User said "I think 29" as a possible start; unconfirmed.) Even pallet lanes sit between them: SR-026 ≈ 156, SR-024 ≈ 158, SR-022 ≈ 160, SR-020 ≈ 162.
-  - Exit W022 moved to past SR-019 in the 162–163 gap; the sketch exit at 152/153 was removed.
-
-- FROM THE USER, doors 163–177 and the word "green mile":
-  - "Green mile" = a green/pink taped walkway. One runs along the doors, so a lane "in front of" a door sits beyond that walkway, never against the dock plate. It starts at door 155 (user) and runs to the end. Others run straight out from 165 and 171, and from the driver's cage at 154/155.
-  - 163 stage area, no conveyor. SR-017 in front of 164. 165 green mile. SR-015 in front of 166. 167 stage area. SR-013 in front of 168. SR-011 between 169 and 170. SR-009 between 170 and 171. 171 green mile. SR-007 in front of 172. 173, 174, 175, 176 and 177 have stage areas only, no lanes. So door 177 exists (lastDoor 177); the block past 176 is 177's.
-  - CFG.laneAnchors now holds every odd lane 27→7 from the user; even lanes interpolate between them (SR-002 ≈ 175).
-- Removed in this pass: the guessed roller tables at 165/166 and 173, the stations near 164 and 166/167, and the photo-guessed table at 170–172 (all covered by the lane list).
-
-- FROM THE USER, pallet lanes: each even (ship order) lane sits between its odd neighbours: SR-028 between 29 and 27, SR-026 between 27 and 25, SR-020 between 21 and 19, and so on. Odd scan lanes stop at SR-007; pallet lanes continue to SR-002, which sits across from 177. Anchors [29,153] (user thinks scan lanes start at 29) and [2,177] added, so SR-006 ≈ 173, SR-004 ≈ 175.
-
-- CORRECTION FROM THE USER: auto scan lanes start at door 155 with SR-029 in front of 155. SR-025 at 157 and SR-023 at 159 stay as stated earlier, so SR-027 is at 156 (confirmed by the user). Pallet lanes follow: SR-028 ≈ 155.5, SR-026 ≈ 156.5. Nothing in front of 153.
-
-- WHOLE-DEPARTMENT RECONCILIATION (all photos + user statements), wall outward:
-  1. Doors 149–177. Fluid doors 149–152, 154 (MaxxReach booms fed from the mezzanine). Driver's cage 154/155. Risers + exit W022 in the 162–163 gap.
-  2. Green mile along the doors from 155.
-  3. Dock zone (~10–40 ft): auto scan lanes SR-029 (155) … SR-007 (172), each a roller table fed by an incline from a spiral; stage columns at the cart doors; taped row at ~33 ft past 165 (incl. STG-170); stage-only doors 163, 167, 173–177.
-  4. Mezzanine with spirals (~44–58 ft); red stairs up beside SR-018.
-  5. Ship order pallet lanes SR-028 (≈155.5) … SR-002 (177), each between its odd neighbours, printer + screens at the back end.
-  6. Back walkway (the sketch's green mile) with ENTER HERE / DO NOT ENTER signs and row-K pillars.
-  7. Floor staging (STG-F across from SR-016, STG-A) and the flat sorter beyond (seen behind SR-028).
-  - The sketch's "auto scan" at 155 = the start of the scan lanes, so that separate box was removed. Its roller-table rectangles at 156–163 match the scan lanes.
-  - Pallet lanes are spread evenly (palletX(): SR-028 at 155.5, SR-002 at 177, ~23 ft apart); each still lands between or beside its odd neighbours. Exact interpolation made 28/26 and 10/8 overlap, which can't be right for built lanes.
-  - Pillar grid: 50 ft bays, column 9 at SR-028, column 6 in line with 165 (pillarX()). The green-mile photos suggesting other positions for 1K-7 and the lane order (SR-016 → SR-014) conflict with the user's lane list and were set aside; the far sign was probably misread.
-
-- Second pass over the photos: wall columns M-10 (above 150/151) and M-6 (above 165/166) set the grid spacing (~53 ft, pillarX()). Kiosk beside 164, water cooler + broom and DO NOT ENTER decal at 163, "Check brakes" poster on 164, storm drain at 175/176, kiosk at 174/175, TDR COMPLETE sign at 176. STG-161-1…5 run straight out from the wall between the 160/161 hatching and the 161/162 walkway; each scan lane has a printer table at the incline foot beside the spiral guard.
-
-- Third pass: 176/177 keep-clear between spot 1 and the wall is yellow/black (not red), and both blocks are framed in green tape; STG-176 odd spots on the lower-door column, confirmed. Hanging SHIPPING CLERK and "Truckers cage" signs at the driver's cage. Every door has a TDR COMPLETE sign and a KEYS box.
-- PHOTO VS USER CONFLICTS (left as the user said, asked to recheck): (1) 151 and 152 photos show open dock plates with carts and no MaxxReach, only 149/150 and 153/154 booms visible; (2) the twin SR-025 screens hang over 155/156 with a roller table at 156, while the user puts SR-029 at 155 and SR-025 at 157.
-
-- FROM THE USER, pallet lane spots: standing on the back green mile at the end of a ship order lane, facing the lane, A–F run on the right-hand side (higher-door side) and G–L on the left. Assumed A and G are the spots nearest the green mile (to confirm).
-
-- Lane screen S0118 (photo, SR-018): two columns, A–F on the left with arrows pointing left, G–L on the right pointing right; the screen faces into the lane, which matches the user's "A–F on the right seen from the green mile". Rows also show the dock door each location ships from (DD166, DD169, DD171, DD168, DD158); green = active, grey = idle. USER: do NOT put sort codes (destination codes), times or package counts on the map — location names only. The status box accepts id,status[,door]; tapping a spot rings the door it ships from.
-
-- SR-018-A floor label (photo): QR + location name on the floor, right next to yellow/black tape that edges the roller table. Every pallet lane location has one; the tape runs along both sides of the table.
-
-- FROM THE USER: scan lane SR-021 has 5 staging spots, named STG-161-1 … STG-161-5 (named after the door, not the lane). Staging columns now record their door's scan lane (`lane`), shown when tapped.
-
-- FROM THE USER + photos: three stage areas in front of 175, 176 and 177, each 14 spots (STG-175-1…14 etc.), 2 columns of 7 running straight out from the wall to the spiral guards, yellow/black keep-clear between the wall and spot 1, green tape round the blocks. Odd numbers kept on the lower-door column as seen at 176; the STG-175 photo from the wall looks like odd on the higher-door side, to confirm. The taped go-cart row at ~33 ft now stops before 174.
-
-- FROM THE USER: doors 173 and 174 have no stage areas (and no lanes).
-
-- FROM THE USER + photos: staging area U (STG-U-1…9) sits across the back green mile from door 166, on the left of lane SR-016 seen from the green mile, beside pillar 1K-6 and the flat sorter. Two columns: odd 1–9 (5 spots) on one side, even 2–8 (4 spots) on the other; numbering assumed to start at the green mile, odd column assumed nearer SR-016. Pillar 1K-6 stands beside STG-U / SR-016, so the grid is now pillarX(c)=palletX(16+4*(c-6)): 1K-7 ≈ SR-020, 1K-9 = SR-028 — all three pillar photos now agree. STG-F was moved out of that spot toward lower doors (position unknown now).
-
-- FROM THE USER, floor staging row: across the back green mile, starting at STG-U (lane 16, 9 spots) and going toward lower doors (lanes 18, 20 …), a block every 6 ft: L, K, J, I, H, G, F, E, D, C, B, A. Each has 10 spots, odd 1–9 in one column and even 2–10 in the other (photo: STG-K-9). Replaces the old guessed STG-F and STG-A blocks. Orange-padded pillars stand among these blocks.
-
-- FROM THE USER: in the floor staging blocks (U, L…A), odd numbers are on the right when facing away from the SR lanes, i.e. the lower-door column.
-
-- FROM THE USER: floor staging blocks start about 2 ft back from the green mile tape (z0 = greenMile[1]+2, already so). Spot 1 at that end.
-
-- FROM THE USER + photo: lane SR-009 has staging STG-170-6 … STG-170-9, a row of 4 along the dock just past the lane's table; facing away from the door, 6 is on the left (higher-door side) and 9 on the right. STG-170-1…5 belong to lane SR-011 (user + photo): a column of 5 on the lane's right facing away from the door, starting at the keep-clear and running out beside the table. Pillar 1L-5 behind lane 11 (photo) — row L numbers fall toward higher doors, matching pillarX().
-
-- FROM THE USER: each scan lane has a red keep-clear zone 6 ft wide × 7 ft long at its dock end; staging columns sit 1 ft off it. Lane SR-011: STG-170-1…5 on its right (facing away from the door), STG-169-1…4 on its left.
-
-- USER RULE: only place staging the user has told me about. Removed all guessed staging (STG-160, 162, 163, old 165, 166, 168 columns and the unlabeled taped row at ~33 ft). Kept: STG-157 and STG-167 (labels read in photos — asked to confirm), 161, 165, 169, 170, 175–177, floor blocks U and L…A.
-- Lane staging pattern (photo at 165): a 6 × 7 ft red box at the dock end, 1 ft gap, then the staging spots. STG-165-1…5 run out from the wall beside the 165 green mile, on its higher-door side, toward lane SR-015.
-
-- FROM THE USER: red/white zone = no staging. Every scan lane has two, one on each side of the table at its dock end, 6 ft wide × 7 ft long, no text. Lane staging columns start 1 ft past them on the same side (laneStage()).
-
-- FROM THE USER: 35 ft between lanes SR-019 and SR-017, with staging in between (layout to come from the user).
-
-- Red zone look (photo): striped red/white border with ~3 diagonal strips and bare floor between (noStage()), starting at the green mile edge right beside the table's end; scan lane tables run straight out from the wall (no angle), z 10–26. Lane staging starts 1 ft past the zone (z 18).
-
-- FROM THE USER: lane SR-019 has STG-162-1…5 on its side toward lane 17 (higher-door side), in the 35 ft gap.
-
-- FROM THE USER + photo: after STG-162 a 4 ft green mile runs straight to exit W022, then STG-163-1…10, centred in the gap and not tied to any lane (2 columns of 5 assumed, odds on the walkway side guessed), toward lane 17. W022 moved to sit at the end of that walkway.
-
-- FROM THE USER: lane SR-017 has only two staging spots, STG-163-11 and STG-163-12 (placed on its lower-door side behind the red zone; side is a guess).
-
-- FROM THE USER: remove STG-170-6…9 (lane SR-009 staging) — removed from the map.
-
-- FROM THE USER: lane SR-023 has one staging spot on its side toward lane 25: STG-157-6 (heard as "one … spot"; asked to confirm the count).
-
-- FROM THE USER: lane SR-023's other side (toward lane 21) has STG-159-1…4.
-
-- FROM THE USER: lane SR-021, on its side toward lane 23, has only two spots: STG-159-5 and STG-159-6 (heard "15-5 … six"). STG-161-1…5 are on lane 21's side toward lane 19 (confirmed). Lane SR-019's side toward lane 21 has one spot, STG-161-6.
-
-- FROM THE USER: lanes SR-025, SR-027 and SR-029 have no staging (old STG-157-1…5 removed). Lane SR-013: STG-167-1…4 on its side toward lane 15, STG-168-1…5 on its side toward lane 11 (old door-based STG-167 replaced).
-
-- FROM THE USER: the floor staging row continues past A (toward lower doors): STG-AA (10 spots, odd/even as usual, 6 ft after A), then 3 ft later STG-AB (12 spots, 2 columns of 6).
-
-- FROM THE USER: one more pallet (ship order) lane after SR-028, 35 ft from it toward lower doors, behind the fluid lanes in line with door 152 (SR-030, confirmed). SR-030 has no slots/locations; SR-028 keeps A–L.
-
-- FROM THE USER: between SR-028 and SR-030, from SR-028's slots toward SR-030: 6 ft empty, STG-P-1…11 (one row along the lane), 6 ft, a green mile, 1 ft, STG-O-1…10 (one row), 3 ft, then SR-030's yellow tape (photo: yellow/black taped zone beside the SR-030 conveyor). Photo: STG-P-11 is the spot nearest the back green mile, so numbers fall toward the mezzanine (O assumed the same). Turned spots (5 across × 4 along) are guesses so the rows fit.
-
-- USER: flip the map left↔right. Done as a display mirror (scene.scale.x = MX = -1); layout coordinates and all data unchanged. Camera/marker code converts with MX.
-
-- WALK-THROUGH PHOTOS (entrance → lane 30): department entrance with Main Office / AFE / hi-vis and safety-shoe signs by pillar 1H-9 and a Fastenal PPE machine; walkway lined with whiteboards (NACF AR SHIP DOCK banners); a staging area labelled ShipDock-Main-N (QR labels, e.g. ShipDock-Main-2, odd 17–23 along one edge) beside the flat sorter's end near pillar 1H-8 ("MOBILE CART" sign); pallet storage (wood + blue plastic pallets, jacks) behind fluid doors ~148–151; the back green mile continues past STG-AB to there. Door 148 exists below 149 (not on the map yet). All drawn as approximate outlines (X0 widened to -70); ShipDock-Main spots await the user's layout.
-
-- FROM THE USER + photos: induct stations sit on a second raised platform across the back green mile from pallet lanes 12 → 6. Signs INDUCT STATION 1, 2, 3, 4 (4 seen; station 1 placed at the lane 12 end, a guess). Each has stairs, a taped PS COLLECTION SPOT in front, control cabinets. Pillar 1K-5 (6 FT mark) there — matches pillarX(5)=palletX(12). Corrugate recycling + trash bins at the platform end.
-
-- FROM THE USER + photos: past SR-002 toward higher doors: STG-Y-1…7 beside lane 2, 6 ft, a 10-spot block (name missing in the message; drawn unlabelled), a green mile, STG-Z-1…7. Drawn as rows along the lanes like P/O. Photos also show doors 178, 179, 180, W019, pillar 1L-3, hard-hat storage and the PIT charging area beyond — doors past 177 not yet on the map.
-
-- Photos from SR-002 and pillar 1K-4: the induct platform runs on from the stations to about lane 2, with an overhead conveyor crossing the back green mile from the main mezzanine there, two jam-clearing ladders in taped spots, electrical panels, and orange-padded pillars along its whole front. Pillar 1K-4 stands beside SR-002/SR-004 — that does not fit the 4-lanes-per-column grid (which puts 1K-4 at lane 8), so pallet lane spacing below lane 12 is probably tighter than drawn, or 1K-5 sits nearer lane 8. Recheck with a photo of 1K-5 and the lane sign beside it.
-
-- FROM THE USER + photo: pillar 1K-5 is between lanes 12 and 10 (6 FT / K5 mark, SR-010 beside it, door 178 visible). Grid now pillarX(c)=palletX(16)+(c-6)*(palletX(16)-palletX(11)) — ~2.5 pallet lanes (~58 ft) per column. That puts 1K-4 ≈ SR-006, 1K-7 ≈ SR-021, 1K-9 ≈ SR-031 (beside SR-028/030). Resolves the 1K-4 conflict.
-
-- FROM THE USER + photos: the flat sorter has 40 chutes in one row behind the floor staging, from STG-A to the induct stations, with a walking aisle between staging and chutes. Each chute: yellow frame with strip curtain, pallet + gaylord, red side flaps, FLAT SORTER sign with label FR-3nn-A (FR-311-A, FR-323-A seen; "If you close, print and stage within 8 minutes"). Old generic 20 chutes replaced. USER: don't map chute names (the FR numbers jump); chutes are just numbered 1–40 by position. Pillar 1J-6 visible among them.
+Parcel flow (Flow toggle): induct stations → overhead conveyor → mezzanine sorter → (a) spirals → scan lanes → carts → cart doors, (b) MaxxReach → fluid doors, (c) pallet lanes → pallets → floor staging → door shown on the lane screen; flat sorter chutes → gaylords → floor staging → doors.
 
 ## Still open
-- Confirm SR-027 at 156 (or does the whole 27→19 series shift by one door?). Is there a door 177 (for the block past 176)?
-- Pillar grid labels along the dock and at the flat sorter, plus one paced pillar spacing. Where STG-A sits; which side of the SR-028 table holds A–F.
-- Readable labels for the STG-160, STG-162 and STG-163 columns.
-- Which door each lane lines up with (add to CFG.laneAnchors). Especially SR-028, SR-002 and the odd lanes near 164 and 166/167.
-- Which column of 175–177 holds the odd numbers. STG-165 and STG-166 labels; which way pillar numbers run (a pillar label near 155 would settle it); how many spots STG-168 and STG-170 have and how far STG-170 sits from the wall; the labels on the row at ~33 ft; where SR-015…019 are.
-- Real door spacing and the 162→163 gap, by pacing it off.
+- 151/152 MaxxReach (photos disagree) and SR-025 screens over 155/156 vs SR-025 at 157.
+- Name of the 10-spot block between STG-Y and STG-Z; ShipDock-Main layout; door 148 and 178–180 details.
+- Exact distances: door pitch, mezzanine depth, pallet lane depth (STG-P's 11 spots don't fit the current 34 ft), lane spacing below SR-012.
 
 ## Working style
-- PRIORITY (user, current phase): first pin down where each conveyor and each pallet line (SR-002…SR-028) sits relative to the dock doors. Small details come after. The map opens in layout view; the Details button shows signs, door fittings and decals.
-User sends photos one section at a time; update the map after each batch, say what changed and what is still a guess, then ask for the next specific shots. Keep replies short; the user is on a phone on the warehouse floor.
+- User is on a phone on the floor and sends photos plus short voice-typed descriptions. Update the map after each message, say what changed and what is still a guess, ask only the next specific questions. Keep replies short.
+- Only place staging the user has told me about. The user's statements override photo readings; flag conflicts instead of silently picking.
+- When asked, review all photos together (contact sheets in the scratchpad) rather than piece by piece.

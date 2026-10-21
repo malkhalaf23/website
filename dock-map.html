@@ -58,12 +58,13 @@ textarea{width:100%;box-sizing:border-box;min-height:62px;font-family:var(--mono
 <header>
   <div>
     <h1>Ship Dock Twin</h1>
-    <div class="sub">Doors 149–177 · staging spots 4 × 5 ft · built from floor photos</div>
+    <div class="sub">Doors 148–180 · staging spots 4 × 5 ft · built from floor photos</div>
   </div>
   <div class="tools">
     <button id="vplan" aria-pressed="true">Plan</button>
     <button id="vdock" aria-pressed="false">Doors 149–163</button>
     <button id="v3d" aria-pressed="false">3D</button>
+    <button id="vflow" aria-pressed="false" title="Show how parcels move through the department">Flow</button>
     <button id="vdetail" aria-pressed="false" title="Show signs, door fittings and floor decals">Details</button>
     <button id="vmezz" aria-pressed="true" title="Show or hide the mezzanine deck">Mezzanine</button>
     <input id="find" placeholder="Find: 157-3, 161, SR-028" aria-label="Find a door, spot or station">
@@ -118,7 +119,7 @@ STG-161-1,full</textarea>
 <script>
 /* ===== LAYOUT (feet). x runs along the dock wall (door numbers grow with x), z runs out into the building. ===== */
 const CFG = {
-  firstDoor:149, lastDoor:177,
+  firstDoor:148, lastDoor:180,
   doorPitch:13,        // estimated from photos: ~9 ft doors on ~13 ft centres
   spotW:4, spotD:5,    // measured by you
   gapAfter162:32,      // riser wall + W022 exit sit between 162 and 163
@@ -160,6 +161,10 @@ const DOORS = {
   174:{src:"photo", note:"No stage area and no lane"},
   175:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
   176:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14}, note:"Stage area only, no lane. 14 spots in 2 columns of 7"},
+  148:{src:"photo", note:"Seen past 149 in the photos from the pallet storage side; nothing surveyed in front of it"},
+  178:{src:"photo", note:"Carts staged in front (photos from lane 2 / STG-Y). No lanes"},
+  179:{src:"photo", note:"Exit W019 beside it. Carts staged in front. No lanes"},
+  180:{src:"photo", note:"Last door. Hard-hat storage and the fenced PIT charging area beside it"},
   177:{src:"photo", load:"cart", hatch:"yellow", staging:{cols:2,spots:14,off:-5.2}, note:"Stage area only, no lane. 14 spots in 2 columns of 7; labels not read. PIT charging area beyond"}
 };
 const STATUSES=["empty","active","cart","pallet","full","ready"];
@@ -183,7 +188,7 @@ let DETAIL=false; const details=[]; {const add=scene.add.bind(scene);scene.add=(
 scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.95));
 const sun=new THREE.DirectionalLight(0xffffff,0.45); sun.position.set(150,400,250); scene.add(sun);
 
-const doorX=n=>(n-CFG.firstDoor)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
+const doorX=n=>(n-149)*CFG.doorPitch+(n>=163?CFG.gapAfter162:0);
 // x of a lane from its number: straight lines between the anchors; past the last anchor, the average spacing of 23→13
 const doorPos=d=>{const n=Math.floor(d),f=d-n;return doorX(n)+f*(doorX(n+1)-doorX(n));};
 // pallet lanes are built evenly: SR-028 between scan lanes 29 and 27, SR-002 across from 177, the rest spread between
@@ -415,10 +420,12 @@ function build(){
    pick(box(8,0.1,6,x,0.05,3.9,"--tape-yellow",0.15),{kind:"equip",id:"Driver's cage",src:"photo",note:"Fenced area at the exit between 154 and 155; size not measured"});
    label("Driver's cage",x,9,4,1.6,"--fg",{bg:"--panel"});
    DETAIL=true;label("SHIPPING CLERK ↓",x,16,6,1.4,"--fg",{bg:"--panel"});label("Truckers cage",x-3,19,6,1.2,"--panel",{bg:"--tape-blue"});DETAIL=false;}
-  // past 177: the fenced PIT charging area
-  {const x=doorX(177);
-   pick(box(1,7,40,x+8,3.5,26,"--mezz",0.75),{kind:"equip",id:"PIT charging area",src:"photo",note:"Fenced with yellow barrier and netting, at the end of the dock"});
-   label("PIT charging",x+18,2,26,2.6,"--muted");}
+  // past 180 (photos): hard-hat storage fence and the PIT charging area at the end of the dock; exit W019 by 179
+  {const x=doorX(180);
+   pick(box(16,3,1,x+12,1.5,14,"--s-full",0.6),{kind:"equip",id:"Hard-hat storage",src:"photo",note:"Orange/yellow fence with tote storage beside door 180, STOP sign on an orange pillar"});
+   pick(box(1,7,40,x+22,3.5,26,"--mezz",0.75),{kind:"equip",id:"PIT charging area",src:"photo",note:"Powered industrial truck charging, past door 180"});
+   label("PIT charging",x+30,2,26,2.6,"--muted");
+   pick(box(4,8,0.8,doorX(179)+CFG.doorPitch/2,4,0.4,"--s-full"),{kind:"equip",id:"Exit W019",src:"photo",note:"Between 179 and 180"});}
 
   // mezzanine sorter: deck, posts, edge rail, spiral chutes along its front edge
   const [m0,m1]=CFG.mezz, my=CFG.mezzY, mx0=doorX(149)-8, mx1=W-14;
@@ -581,6 +588,30 @@ function addSpot(id,x,z,o={}){
   spots[id]=pick(m,{kind:"spot",id,door:o.door,lane:o.lane,area:o.area,status:"empty",src:o.inferred?"inferred":o.approx?"approx":"photo"});
 }
 build();
+/* ===== parcel flow (worked out from all the photos together) ===== */
+const flowParts=[];
+function flowArrow(pts,token,y=24){
+  for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];
+    const m=beam([a[0],y,a[1]],[b[0],y,b[1]],1.6,0.3,token);flowParts.push(m);}
+  const [a,b]=pts.slice(-2),c=new THREE.Mesh(new THREE.ConeGeometry(2.6,5,12),mat(token));
+  c.position.set(b[0],y,b[1]);c.rotation.z=-Math.PI/2;c.rotation.y=-Math.atan2(b[1]-a[1],b[0]-a[0]);scene.add(c);flowParts.push(c);}
+function flowLabel(t,x,z,tok){const l=label(t,x,26,z,2.4,"--panel",{bg:tok,weight:700});flowParts.push(l);}
+{const gm=CFG.greenMile[0]-2, mz=(CFG.mezz[0]+CFG.mezz[1])/2, ind=CFG.greenMile[1]+12;
+ // 1 induct → sorter
+ flowArrow([[palletX(8),ind],[palletX(3),ind],[palletX(3),mz]],"--accent");
+ flowLabel("1 Induct → sorter",palletX(6),ind+6,"--accent");
+ // 2 sorter → spirals → scan lane → carts → cart door
+ flowArrow([[laneX(21),mz],[laneX(21),20],[doorX(161),3]],"--tape-green");
+ flowLabel("2 Scan lane → carts → trailer",laneX(21),14,"--tape-green");
+ // 3 sorter → MaxxReach → fluid-loaded trailer
+ flowArrow([[doorX(150),mz],[doorX(150),3]],"--tape-pink");
+ flowLabel("3 Fluid (MaxxReach)",doorX(150),30,"--tape-pink");
+ // 4 sorter → pallet lane → floor staging → green mile → door shown on the lane screen
+ flowArrow([[palletX(18),mz],[palletX(18),gm],[palletX(16)-20,CFG.greenMile[1]+8],[palletX(16)-20,gm-4],[doorX(166),gm-4],[doorX(166),3]],"--s-pallet");
+ flowLabel("4 Pallet lane → staging → door",palletX(18)+12,gm-12,"--s-pallet");
+ // 5 flat sorter chute → gaylord → floor staging → door
+ flowArrow([[palletX(20),CFG.greenMile[1]+40],[palletX(20),CFG.greenMile[1]+10]],"--s-full");
+ flowLabel("5 Flat sorter → gaylord → staging",palletX(20),CFG.greenMile[1]+44,"--s-full");}
 
 /* ===== cameras: an orthographic plan (default) and a perspective 3D view ===== */
 const persp=new THREE.PerspectiveCamera(45,1,1,4000), ortho=new THREE.OrthographicCamera(-1,1,1,-1,-1000,2000);
@@ -614,6 +645,9 @@ function mezzFade(){ // in plan the deck is see-through so the floor underneath 
   mezzParts.forEach(p=>{p.visible=mezzOn;});
   const deck=mezzParts[0].material;deck.opacity=mode==="3d"?0.55:0.12;
 }
+let flowOn=false;
+function flowSync(){flowParts.forEach(o=>o.visible=flowOn);}
+document.getElementById("vflow").onclick=e=>{flowOn=!flowOn;e.currentTarget.setAttribute("aria-pressed",flowOn);flowSync();};
 let detailOn=false;
 function detailSync(){details.forEach(o=>o.visible=detailOn);}
 document.getElementById("vdetail").onclick=e=>{detailOn=!detailOn;e.currentTarget.setAttribute("aria-pressed",detailOn);detailSync();};
@@ -688,6 +722,6 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",themeSync);
 new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 if(document.fonts)document.fonts.ready.then(()=>labels.forEach(drawLabel));
 
-detailSync();themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · SR-018 from its screen at 12:07, rest example";
+detailSync();flowSync();themeSync();resize();setMode(portrait?"dock":"plan");applyFeed(document.getElementById("feed").value);msg.textContent+=" · SR-018 from its screen at 12:07, rest example";
 (function loop(){(mode==="3d"?ctl3d:ctlPlan).update();renderer.render(scene,camera);requestAnimationFrame(loop);})();
 </script>
